@@ -1,0 +1,72 @@
+https://nodejs.org/dist/latest-v10.x/docs/api/fs.html
+
+
+
+        O
+N               D
+        E
+Node Errors
+
+there are four types or erros in node
+
+                        O
+
+            Standard JavaScript errors
+            System errors  like opening absent files
+N           User-specified errors                            D
+            Assertion Errors
+
+                        E
+
+they are at least guaranteed to provide the properties on the error class raised
+
+
+
+        O
+N               D
+        E
+Error Propagation and Interception
+
+all errors caught by node generate a     throw exception
+they will exit immediately With few exceptions, Synchronous APIs will use throw to report errors.
+
+
+        O
+N               D
+        E
+Reporting Async API errors
+    sometimes the node function has a callback
+    file /Error/simple_async_error.js
+
+    sometimes your dealing with eventemitter objets.  errors can be routed to that object's 'error' event.
+    file /Error/net_eventemitter_error.js
+
+    look at each method to understand how their errors are handled
+        
+    the event-emitter and stream-based API are handled with the error event mechanism described in 
+    file: /Error/net_eventemitter_error.js
+
+    for event-emitters you need a handler registed for the uncaught Exception or an error will be thrown
+    file: /Error/event_emitter_handler.js
+
+
+Error-first callbacks
+
+
+                                                                                                                               
+                
+        O
+N               D
+        E
+Node filesystem
+                                                                                                                                               
+                                                                                                                                               
+fs.rename('/tmp/hello', '/tmp/world', (err) => {
+  if (err) throw err;
+  fs.stat('/tmp/world', (err, stats) => {
+    if (err) throw err;
+    console.log(`stats: ${JSON.stringify(stats)}`);
+  });
+});
+
+    
