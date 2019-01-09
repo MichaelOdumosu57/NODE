@@ -2,6 +2,12 @@ https://nodejs.org/dist/latest-v10.x/docs/api/fs.html
 
 
 
+
+        O
+N               
+        E
+are tips
+
         O
 N               D
         E
@@ -50,11 +56,154 @@ Reporting Async API errors
     file: /Error/event_emitter_handler.js
 
 
+        O
+N               D
+        E
 Error-first callbacks
+    if there is no error with these types of error handlers the first argument is null
+
+
+                     O
+    node_method.first_err([args], errorFirstCallback);
+    function errorFirstCallback(err, data) {
+      if (err) {
+N        console.error('There was an error', err);     D
+        return;
+      }
+    }    
+    file: /Error/first_error_callback.js
+                    E
+
+
+        O
+N           dont use try throw catch with async methods they do not work, register a handler with process.on('uncaughtException')
+        E    
+
+
+
+        O
+N               D
+        E
+Class: Error    
+
+doesn't tell you why an error happened ' it just tells you the stack trace 
+for crpyto, there is an additional stack called opensslErrorStack    
+
+
+                                                O
+
+            new Error(message)
+N            makes a new Error object with a message, error.stack prorety contains a sync stack or        E
+             the number of frames given by the property Error.stackTraceLimit which is smaller 
+
+                                                D
+
+
+
+
+
+                                                O
+
+             Error.captureStackTrace(targetObject[, constructorOpt])
+            when you call this you add a .stack property to an object it 
+            like what happens when js tells you where an error happened
+ N           file: /Error/capture_stack_trace.js                                              D
+
+            use the The constructorOpt as fuction when 
+            you want to hide error details from an end user 
+            file: /Error/capture_stack_trace.js 
+
+                                            E
+
+
+
+
+                                                O
+         Error.stackTraceLimit
+         Tells you how many steps back it took to get to the error,  
+N        if this is a neg or 0 the .stack property wont show anything                       D
+         to change it   Error.stackTraceLimit = \d
+         file: /Error/capture_stack_trace.js 
+
+                                                E
+
+
+
+
+
+                                                O
+
+                 error.code 
+N                most stable way to understand an error,                                     D
+                 they only change between major node distributuions
+                 to understand them:https://nodejs.org/dist/latest-v10.x/docs/api/errors.html#nodejs-error-codes
+                     to access it it must be accessed through an error handler which catches the error object 
+                     only then can you see the code
+                 file: Error/first_error_callback.js
+
+
+                                                E
+
+
+
+                                                O
+         error.message
+ N       the message you add when making a new error, however changing this property may not   
+         change the first line of the stack trace. if you call err.stack before changing the message,             D
+         subsequent calls to err.stack will keep the orginal message                                                
+        
+                                                E
+
+
+
+
+error.stack
+<string>
+all calls from beginning of program execution to where the error happened are listed. V8 handles this
+V8 tries to figure out the function names but when it cant is substitutes for <anonymous>
+Frames are only generated for JavaScript functions 
+if you have other embedded programming languages they will not pop up on the trace 
+file : Error/embedded_C_plus_plus_err_stack.js
+    location 
+    native, if the frame represents a call internal to V8 (as in [].forEach).
+    plain-filename.js:line:column, if the frame represents a call internal to Node.js.
+    /absolute/path/to/file.js:line:column, if the frame represents a call in a user program, or its dependencies
+the string is lazy generated
+number of frames Error.stackTraceLimit (see above)
+system-level errors are generated as augmented Error instances
+
+
 
 
                                                                                                                                
-                
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         O
 N               D
         E
