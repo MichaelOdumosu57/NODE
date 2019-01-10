@@ -157,25 +157,169 @@ N                most stable way to understand an error,                        
 
 
 
-error.stack
-<string>
-all calls from beginning of program execution to where the error happened are listed. V8 handles this
-V8 tries to figure out the function names but when it cant is substitutes for <anonymous>
-Frames are only generated for JavaScript functions 
-if you have other embedded programming languages they will not pop up on the trace 
-file : Error/embedded_C_plus_plus_err_stack.js
-    location 
-    native, if the frame represents a call internal to V8 (as in [].forEach).
-    plain-filename.js:line:column, if the frame represents a call internal to Node.js.
-    /absolute/path/to/file.js:line:column, if the frame represents a call in a user program, or its dependencies
-the string is lazy generated
-number of frames Error.stackTraceLimit (see above)
-system-level errors are generated as augmented Error instances
+                                                O
+        error.stack
+        <string>
+        all calls from beginning of program execution to where the error happened are listed. V8 handles this
+        V8 tries to figure out the function names but when it cant is substitutes for <anonymous>
+        Frames are only generated for JavaScript functions 
+        if you have other embedded programming languages they will not pop up on the trace 
+        file : Error/embedded_C_plus_plus_err_stack.js
+N            location 
+            native, if the frame represents a call internal to V8 (as in [].forEach).                                                   D
+            plain-filename.js:line:column, if the frame represents a call internal to Node.js.
+            /absolute/path/to/file.js:line:column, if the frame represents a call in a user program, or its dependencies
+        the string is lazy generated
+        number of frames Error.stackTraceLimit (see above)
+        system-level errors are generated as augmented Error instances
+
+
+                                                E
 
 
 
 
-                                                                                                                               
+                                                O    
+
+                Class: AssertionError
+                https://nodejs.org/dist/latest-v10.x/docs/api/assert.html#assert_class_assert_assertionerror
+
+                an error subclass that indicates an assertion failure 
+
+                options <OBJECT></OBJECT>
+                    message <string> a reg. error message
+                    actual <any> 
+                    expected <any>
+N                   operator <string> which operator was used for the assertion 
+                    stackStartFn <Function> removes frames unrelated to the start function where the assertion starts           D
+                    code <string> always ERR_ASSERTION
+                    generatedMessage <bool> if you cant see the message, this is helpful to 
+                    debug why the assertion error message is notcomig up
+                    file: Error/assertion_error.js
+
+
+                                                E
+
+
+
+
+
+
+                                                O                                                
+
+                    Class: RangeError
+                    when a node code gets a value outside the accetable ranges for its code 
+                    Ex:
+N                        require('net').connect(-1);                                                D
+                        //ranges are 1- 65536
+                        file:Error/simple_range_error.js
+
+
+                                                E
+
+
+
+                                                O
+
+                    Class: ReferenceError
+                    when you try to access an undefined variable 
+N                    its a simple bug unless your are advanced and your software                    D
+                    is generating and running code
+
+
+                                                E
+
+
+
+
+                                                O
+        Class: SyntaxError
+ N      when you have code that is not JavaScript and has no embedding support          D
+        file: Error/simple_syntax_error.js                    
+
+                                                E
+
+
+
+
+                                        O
+
+                     Class: TypeError
+N                    when code gets an unwanted code type                 D
+                     file: Error/simple_type_error                                                
+
+
+                                        E
+
+
+
+
+        O
+N               D
+        E
+Exceptions vs. Errors      
+a js exception means that something went wrong. they dont have to be shown as Errors, the practical difference is 
+some erros are unrecoverable and will cause the process to crash, most can be handled  
+
+
+        O
+N               D
+        E
+                                                                O
+
+                    System Errors
+                    this happens when Node attempt to do things unallowed in the OS system environment its given
+                    they are Error objects with more properties
+
+                    Class: SystemError
+                    error.address <string>
+                    error.address  describing the address to which a network connection failed.
+                    file: Error/system_errors.js
+
+                    error.code<string>
+                    it represents the error code
+
+                    error.dest<string>
+                    represents file destination with a file system error
+
+N                                                                                                                              D
+                    error.errno <string> | <number>
+                    correspondes to error codes of the libuv library 
+                    http://docs.libuv.org/en/v1.x/errors.html
+
+                    error.info<Object>
+                    gives details about the error
+
+                    error.message<string>
+                    human readable message about the Error
+
+                    error.path<string>
+                    info about an invalid path name 
+                    file: Error/system_errors.js
+
+                    error.port<number>
+                    shows if there is an unavailable port involved
+
+                    error.syscall<string>
+                    a failed syscall
+
+
+                                                                E
+
+
+
+
+
+
+Common System Errors
+http://man7.org/linux/man-pages/man3/errno.3.html
+
+
+
+
+
+                         
+
         
 
 
