@@ -1536,6 +1536,59 @@ N                                                                               
                                                                 E
 
 
+        O
+N               D
+        E
 
 
-                                                                
+
+
+
+                                                    O
+                    URL object support
+                    Added in: v7.6.0
+
+                    only file paths with the file:// URL are supported,
+                     they are  the WHATWG URL object while node referres to files like this
+                     file: FS/URL_basic_fs.js
+
+
+                    On Windows, file: URLs with a hostname convert to UNC paths, while file: 
+                    URLs with drive letters convert to local absolute paths
+                    . file: URLs without a hostname nor a drive letter will result in a throw:
+N                                                                                                               D
+
+                    file: URLs with a hostname are unsupported and will result in a throw:
+                    ex. 
+                            fs.readFileSync(new URL('file://hostname/p/a/t/h/file'));
+
+                    A file: URL having encoded slash characters will result in a throw on all platforms:
+                    ex. 
+
+                            fs.readFileSync(new URL('file:///p/a/t/h/%2F'));
+                            fs.readFileSync(new URL('file:///p/a/t/h/%2f')); 
+
+                                                E        
+
+        O
+N               D
+        E
+
+        
+
+                                                        O
+
+                File Descriptors                                                                    
+                on POSIX for every process working with files there is a file descriptor for each file to help the 
+                system keep track of whats happening to files 
+
+                Node.js makes it simple 
+N                                                                                                                          D
+                fs.open() is used to get a file descriptor, once node has given this to a file 
+                it can do anything to the file in permission bounds 
+                file: FS/open_basic.js 
+
+                many OS  limit the amount of open files at a given time, remember to close files 
+                when you  are done with them and have a error  handler that closes any files if errors are  caught
+
+                                                        E                
