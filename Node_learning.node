@@ -1,7 +1,10 @@
 https://nodejs.org/dist/latest-v10.x/docs/api/fs.html
 
 
-
+        <OBJECT></OBJECT>
+N               D
+        E
+summary of what I learned about a Node module        
 
         O
 N               
@@ -1493,6 +1496,46 @@ N                   fs.rename('/tmp/hello', '/tmp/world', (err) => {            
                     till they complete
 
                     always use callback for async fucntions, Idc if your code is one big chain it works, 
-                    
+
 
                                         E
+
+
+
+
+        O
+N               D
+        E
+
+
+
+                                                                O
+
+                    File Paths
+                    Most fs operations accept filepaths that may be specified 
+                    in the form of a string, a Buffer, or a URL object using the file: protocol.        
+
+                    String form paths are interpreted as UTF-8 character sequences 
+                    identifying the absolute or relative filename. 
+                    Relative paths will be resolved relative to the current working 
+                    directory as specified by process.cwd().
+                    file: /FS/abs_path.js    /FS/relative_path.js
+N                                                                                                                           D
+    
+                    Paths specified using a Buffer are useful primarily on 
+                    certain POSIX operating systems that treat file paths as opaque byte sequences
+                    Buffer paths can also be relative or absolute
+
+                    file: /FS/rel_and_abs_buffer_path.js
+
+                    on Windows there is a per-drive working dir concept Node follows
+                     For example fs.readdirSync('c:\\') can potentially return 
+                     a different result than fs.readdirSync('c:')
+
+
+                                                                E
+
+
+
+
+                                                                
