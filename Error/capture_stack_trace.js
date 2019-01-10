@@ -11,4 +11,3 @@ console.log("Error.stackTraceLimit",	Error.stackTraceLimit)
 Error.stackTraceLimit = 1000
 console.log("Error.stackTraceLimit",	Error.stackTraceLimit)
 
-console.log("Error.code", Error.code)

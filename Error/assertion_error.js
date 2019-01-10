@@ -4,12 +4,20 @@ const assert = require('assert');
 const { message } = new assert.AssertionError({
   actual: 1,
   expected: 2,
-  operator: 'strictEqual'
+  operator: 'strictEqual',
+  stackStartFn: b()
 });
 
+function a(){
+	b();
+}
+
+function b(){
+	assert.strictEqual(1, 3);
+}
 // Verify error output:
 try {
-  assert.strictEqual(1, 3);
+  a()
 } 
 
 catch (err) {
@@ -21,4 +29,5 @@ catch (err) {
   console.log(err.code, 'ERR_ASSERTION');
   console.log(err.operator, 'strictEqual');
   console.log(err.generatedMessage, true);
+  console.log(err.stack)
 }

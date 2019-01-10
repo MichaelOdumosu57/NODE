@@ -53,6 +53,9 @@ Reporting Async API errors
     file: /Error/net_eventemitter_error.js
 
     for event-emitters you need a handler registed for the uncaught Exception or an error will be thrown
+    process.on('uncaughtException', function (err) { 
+            console.log("a");   
+    })    
     file: /Error/event_emitter_handler.js
 
 
@@ -268,7 +271,8 @@ N               D
                                                                 O
 
                     System Errors
-                    this happens when Node attempt to do things unallowed in the OS system environment its given
+                    this happens when Node attempt to do things unallowed 
+                    in the OS system environment its given
                     they are Error objects with more properties
 
                     Class: SystemError
@@ -309,14 +313,19 @@ N                                                                               
 
 
 
+
+
+
+
+
                                                                 O
 
 
                 Common System Errors
                 http://man7.org/linux/man-pages/man3/errno.3.html
 
-                EACCES (Permission denied): An attempt was made to access a f
-                ile in a way forbidden by its file access permissions.
+                EACCES (Permission denied): An attempt was made to access a 
+                file in a way forbidden by its file access permissions.
 
                 EADDRINUSE (Address already in use):
                  An attempt to bind a server (net, http, or https) to a local address 
@@ -1362,6 +1371,14 @@ An attempt has been made to create a string larger than the maximum allowed size
 
 
 
+        <OBJECT></OBJECT>
+N               D
+        E
+What I take away from error handling
+for async errors use a error handler which has an if else handling things
+for event emitters and streams use process.on('uncaughtException', () => { //handler})       
+for sync erros use try, catch throw 
+for every method you use research how it tells you to handle its errors  
 
 
 
@@ -1380,8 +1397,10 @@ An attempt has been made to create a string larger than the maximum allowed size
 
 
 
-
-
+<NAV></NAV>
+<object></object>
+function
+Error
 
 
 
@@ -1391,14 +1410,89 @@ An attempt has been made to create a string larger than the maximum allowed size
 N               D
         E
 Node filesystem
-                                                                                                                                               
-                                                                                                                                               
-fs.rename('/tmp/hello', '/tmp/world', (err) => {
-  if (err) throw err;
-  fs.stat('/tmp/world', (err, stats) => {
-    if (err) throw err;
-    console.log(`stats: ${JSON.stringify(stats)}`);
-  });
-});
 
-    
+All file system operations have synchronous and asynchronous forms.
+                                            O
+
+                                                                                                                                               
+
+                The asynchronous form always takes a completion callback as its last argument, 
+                the exception is the 1st arg of the callback
+
+                if there is no exception the first arg is null
+N                                                                                                           D
+                const fs = require('fs');
+
+                fs.async_function('/tmasfasfp/hasdasello', (err) => {
+                  if (err) throw err;
+                  else{
+                        console.log('successfully deleted /tmp/hello');
+                  } 
+                });
+                file: FS/simple_async_fs.js
+
+
+                                            E
+
+
+
+
+
+                                            O
+
+
+                    sync exceptions are thrown immediately, 
+                    use try catch throw finally here and they can bubble up
+
+                    try {
+N                     fs.Syncfunction('/tmpasdasda/hello');                            D
+                      console.log('successfully executed');
+                    } 
+
+                    catch (err) {
+                      console.log(err.code)
+                    }
+                    file: FS/simple_sync_fs.js
+
+
+                                            E
+
+
+
+
+
+
+
+        O
+N           to bubble up means any thing as the cause of code deep in your software will bubble to the parent (the surface)
+            if the code close to the surface above it needs any data it sends 
+        E
+
+
+
+
+
+                                        O
+
+
+                    if you want your async function done 
+                    in order use them with callback logic 
+
+
+
+N                   fs.rename('/tmp/hello', '/tmp/world', (err) => {               D
+                      if (err) throw err;
+                      fs.stat('/tmp/world', (err, stats) => {
+                        if (err) throw err;
+                        console.log(`stats: ${JSON.stringify(stats)}`);
+                      });
+                    });
+                    file: FS/async_by_callback.js
+
+                    use async code in production, sync version will block 
+                    till they complete
+
+                    always use callback for async fucntions, Idc if your code is one big chain it works, 
+                    
+
+                                        E
