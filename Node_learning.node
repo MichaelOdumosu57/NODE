@@ -1753,3 +1753,297 @@ N               D
 
 Class: fs.Stats#
 an object that provides info about a file 
+
+fs.stat(), fs.lstat , fs.fstat() and sync counterparts return that class 
+
+stats.isBlockDevice()#
+Added in: v0.1.10
+Returns: <boolean>
+Returns true if the fs.Stats object describes a block device.
+
+stats.isCharacterDevice()#
+Added in: v0.1.10
+Returns: <boolean>
+Returns true if the fs.Stats object describes a character device.
+
+stats.isDirectory()#
+Added in: v0.1.10
+Returns: <boolean>
+Returns true if the fs.Stats object describes a file system directory.
+
+stats.isFIFO()#
+Added in: v0.1.10
+Returns: <boolean>
+Returns true if the fs.Stats object describes a first-in-first-out (FIFO) pipe.
+
+stats.isFile()#
+Added in: v0.1.10
+Returns: <boolean>
+Returns true if the fs.Stats object describes a regular file.
+
+stats.isSocket()#
+Added in: v0.1.10
+Returns: <boolean>
+Returns true if the fs.Stats object describes a socket.
+
+stats.isSymbolicLink()#
+Added in: v0.1.10
+Returns: <boolean>
+Returns true if the fs.Stats object describes a symbolic link.
+
+This method is only valid when using fs.lstat().
+
+stats.dev#
+<number> | <bigint>
+The numeric identifier of the device containing the file.
+
+stats.ino#
+<number> | <bigint>
+The file system specific "Inode" number for the file.
+
+stats.mode#
+<number> | <bigint>
+A bit-field describing the file type and mode.
+
+stats.nlink#
+<number> | <bigint>
+The number of hard-links that exist for the file.
+
+stats.uid#
+<number> | <bigint>
+The numeric user identifier of the user that owns the file (POSIX).
+
+stats.gid#
+<number> | <bigint>
+The numeric group identifier of the group that owns the file (POSIX).
+
+stats.rdev#
+<number> | <bigint>
+A numeric device identifier if the file is considered "special".
+
+stats.size#
+<number> | <bigint>
+The size of the file in bytes.
+
+stats.blksize#
+<number> | <bigint>
+The file system block size for i/o operations.
+
+stats.blocks#
+<number> | <bigint>
+The number of blocks allocated for this file.
+
+stats.atimeMs#
+Added in: v8.1.0
+<number> | <bigint>
+The timestamp indicating the last time this file was accessed expressed in milliseconds since the POSIX Epoch.
+
+stats.mtimeMs#
+Added in: v8.1.0
+<number> | <bigint>
+The timestamp indicating the last time this file was modified expressed in milliseconds since the POSIX Epoch.
+
+stats.ctimeMs#
+Added in: v8.1.0
+<number> | <bigint>
+The timestamp indicating the last time the file status was changed expressed in milliseconds since the POSIX Epoch.
+
+stats.birthtimeMs#
+Added in: v8.1.0
+<number> | <bigint>
+The timestamp indicating the creation time of this file expressed in milliseconds since the POSIX Epoch.
+
+stats.atime#
+Added in: v0.11.13
+<Date>
+The timestamp indicating the last time this file was accessed.
+
+stats.mtime#
+Added in: v0.11.13
+<Date>
+The timestamp indicating the last time this file was modified.
+
+stats.ctime#
+Added in: v0.11.13
+<Date>
+The timestamp indicating the last time the file status was changed.
+
+stats.birthtime#
+Added in: v0.11.13
+<Date>
+The timestamp indicating the creation time of this file.
+
+                                    
+                                    O
+                           
+        
+                            Stat Time Values
+N                if you make a change to one time value on               D
+                a file it will not change the other
+                they are independent of each other 
+
+                                    E
+
+
+        O
+N               D
+        E
+
+Class: fs.WriteStream#
+Added in: v0.1.93
+WriteStream is a Writable Stream.
+
+Event: 'close'#
+Added in: v0.1.93
+Emitted when the WriteStream's underlying file descriptor has been closed.
+
+Event: 'open'#
+Added in: v0.1.93
+fd <integer> Integer file descriptor used by the WriteStream.
+Emitted when the WriteStream's file is opened.
+
+Event: 'ready'#
+Added in: v9.11.0
+Emitted when the fs.WriteStream is ready to be used.
+
+Fires immediately after 'open'.
+
+writeStream.bytesWritten#
+Added in: v0.4.7
+The number of bytes written so far. Does not include data that is still queued for writing.
+
+writeStream.path#
+Added in: v0.1.93
+The path to the file the stream is writing to as specified in the first argument to 
+fs.createWriteStream(). If path is passed as a string, then writeStream.path will be a string.
+ If path is passed as a Buffer, then writeStream.path will be a Buffer.
+
+
+        O
+N               D
+        E
+
+
+
+                                                                O
+    
+                    fs.access(path[, mode], callback)
+                    
+                    path <string> | <Buffer> | <URL>
+                    mode <integer> Default: fs.constants.F_OK
+                    callback <Function>
+                        err <Error>
+                    
+                    it checks the permissions of a file. if there i
+                    s an error there is a callback that handles it
+                    the callback also handles no errors so
+                    you can use it dynamically its inteneded to be used like this
+
+                    The mode flag is used by the options in the  File Access Constants (see below)
+                    see examples for conditional operators in the file
+N                                                                                                                                  D
+                    Using fs.access() to check for the accessibility of a
+                    file before calling fs.open(), fs.readFile() or fs.writeFile() is not recommended
+                    
+                    In general, check for the accessibility of a file only if the file
+                    will not be used directly, for example when its accessibility is a signal from another process.
+                    
+                    On Windows, access-control policies (ACLs) on a directory may
+                    limit access to a file or directory. The fs.access() function,
+                    bypasses that and gives you that file info
+
+                    file: FS/fs_access.js
+
+    
+                                                                E
+
+
+
+
+
+
+
+
+
+
+
+
+                                                        O
+
+
+
+                                fs.accessSync(path[, mode])
+                                
+ N                              sync versiionn of fs.access
+                                If any of the accessibility checks fail,                               D
+                                an Error will be thrown. Otherwise,
+                                the method will return undefined.
+                                file: FS/fs_access_sync.js
+
+
+                                                        E
+
+
+        O
+N               D
+        E
+
+
+                                                    O
+                                
+
+                fs.appendFile(path, data[, options], callback)
+                
+                path <string> | <Buffer> | <URL> | <number> filename or file descriptor
+                data <string> | <Buffer>
+                options <Object> | <string>
+                
+                    encoding <string> | <null> Default: 'utf8'
+                    mode <integer> Default: 0o666
+                    flag <string> See support of file system flags. Default: 'a'.
+                
+                callback <Function>
+N                                                                                                   D
+                    err <Error>
+                
+                appends data to a file
+                
+                
+                The path may be specified as a numeric file descriptor that has been opened
+                for appending (using fs.open() or fs.openSync()).
+                The file descriptor will not be closed automatically.
+
+                If options is a string, then it specifies the encoding:
+                fs.appendFile('message.txt', 'data to append', 'utf8', callback);
+                
+                use the fs.close function in the callback not outside because async runs at
+                the same time which means it might close the file then the
+                method appends to it and leaves it open
+                file : FS/fs_appendFile.js
+
+
+        O
+N               find files that are open with a file descriptor with the lsof command
+        E
+
+                                                   E
+
+
+fs.appendFileSync(path, data[, options])
+
+path <string> | <Buffer> | <URL> | <number> filename or file descriptor
+data <string> | <Buffer>
+options <Object> | <string>
+
+    encoding <string> | <null> Default: 'utf8'
+    mode <integer> Default: 0o666
+    flag <string> See support of file system flags. Default: 'a'.
+
+
+sync version
+
+The path may be specified as a numeric file descriptor 
+that has been opened for appending (using fs.open() or fs.openSync()). 
+The file descriptor will not be closed automatically.
+
+file: FS/fs_appendFile_sync.js
