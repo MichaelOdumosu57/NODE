@@ -1,4 +1,5 @@
 https://nodejs.org/dist/latest-v10.x/docs/api/fs.html
+https://stackoverflow.com/questions/14031763/doing-a-cleanup-action-just-before-node-js-exits
 
 
         <OBJECT></OBJECT>
@@ -83,6 +84,7 @@ N        console.error('There was an error', err);     D
 
         O
 N           dont use try throw catch with async methods they do not work, register a handler with process.on('uncaughtException')
+            process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
         E    
 
 
@@ -285,6 +287,7 @@ N               D
 
                     error.code<string>
                     it represents the error code
+                    file: FS/simple_sync_fs.js
 
                     error.dest<string>
                     represents file destination with a file system error
@@ -309,6 +312,7 @@ N                                                                               
 
                     error.syscall<string>
                     a failed syscall
+                    file: Error/net_eventemitter_error.js
 
 
                                                                 E
@@ -1592,3 +1596,160 @@ N                                                                               
                 when you  are done with them and have a error  handler that closes any files if errors are  caught
 
                                                         E                
+
+        O
+N               D
+        E
+
+Threadpool Usage
+
+All file system APIs except fs.FSWatcher() and those that are explicitly synchronous use 
+libuv's threadpool', which can have surprising and negative performance implications for some applications
+
+to mitigate make the size larger than 4 the make value for UV_THREADPOOL_SIZE=size is 128   
+
+
+
+        O
+N               D
+        E
+
+
+Class: fs.Dirent#
+Added in: v10.10.0
+When fs.readdir() or fs.readdirSync() is called with the withFileTypes option set to true, 
+the resulting array is filled with fs.Dirent objects, rather than strings or Buffers.           
+
+dirent.isBlockDevice()#
+Added in: v10.10.0
+Returns: <boolean>
+Returns true if the fs.Dirent object describes a block device.
+
+dirent.isCharacterDevice()#
+Added in: v10.10.0
+Returns: <boolean>
+Returns true if the fs.Dirent object describes a character device.
+
+dirent.isDirectory()#
+Added in: v10.10.0
+Returns: <boolean>
+Returns true if the fs.Dirent object describes a file system directory.
+
+dirent.isFIFO()#
+Added in: v10.10.0
+Returns: <boolean>
+Returns true if the fs.Dirent object describes a first-in-first-out (FIFO) pipe.
+
+dirent.isFile()#
+Added in: v10.10.0
+Returns: <boolean>
+Returns true if the fs.Dirent object describes a regular file.
+
+dirent.isSocket()#
+Added in: v10.10.0
+Returns: <boolean>
+Returns true if the fs.Dirent object describes a socket.
+
+dirent.isSymbolicLink()#
+Added in: v10.10.0
+Returns: <boolean>
+Returns true if the fs.Dirent object describes a symbolic link.
+
+dirent.name#
+Added in: v10.10.0
+<string> | <Buffer>
+The file name that this fs.Dirent object refers to. The type of 
+this value is determined by the options.encoding passed to fs.readdir() or fs.readdirSync().                                           
+
+
+
+        O
+N               D
+        E
+
+
+
+
+Class: fs.FSWatcher
+an object that emits a change event when ever a file is modified 
+
+Event: 'change'
+eventType <string> The type of change event that has occurred
+filename <string> | <Buffer> The filename that changed (if relevant/available)
+
+depending on OS filename may not be provided ,  if encoding set to buffer fs.watch will print 
+the filename as a buffer 
+        O 
+N             it catches the first chage but not subsquent changes
+        D
+File: FS/fs_watch.js        
+
+
+
+Event: 'close'#
+Added in: v10.0.0
+Emitted when the watcher stops watching for changes.
+ The closed fs.FSWatcher object is no longer usable in the event handler.
+
+
+ Event: 'error'#
+Added in: v0.5.8
+error <Error>
+Emitted when an error occurs while watching the file. 
+The errored fs.FSWatcher object is no longer usable in the event handler.
+
+watcher.close()#
+Added in: v0.5.8
+Stop watching for changes on the given fs.FSWatcher. 
+Once stopped, the fs.FSWatcher object is no longer usable.
+
+
+
+        O
+N               D
+        E
+
+
+Class: fs.ReadStream
+
+A successful call to fs.createReadStream() 
+will return a new fs.ReadStream object.
+
+All fs.ReadStream objects are Readable Streams.
+
+Event: 'close'#
+Added in: v0.1.93
+Emitted when the fs.ReadStream's underlying file descriptor has been closed.
+
+Event: 'open'#
+Added in: v0.1.93
+fd <integer> Integer file descriptor used by the ReadStream.
+Emitted when the fs.ReadStream's file descriptor has been opened.
+
+Event: 'ready'#
+Added in: v9.11.0
+Emitted when the fs.ReadStream is ready to be used.
+
+Fires immediately after 'open'.
+
+readStream.bytesRead#
+Added in: v6.4.0
+<number>
+The number of bytes that have been read so far.
+
+readStream.path#
+Added in: v0.1.93
+<string> | <Buffer>
+The path to the file the stream is reading from as specified in the first argument to fs.createReadStream(). 
+If path is passed as a string, then readStream.path will be a string. If path is passed as a Buffer, 
+then readStream.path will be a Buffer.
+
+
+
+        O
+N               D
+        E
+
+
+Class: fs.Stats#
+an object that provides info about a file 

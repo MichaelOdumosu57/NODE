@@ -5,7 +5,7 @@ const { message } = new assert.AssertionError({
   actual: 1,
   expected: 2,
   operator: 'strictEqual',
-  stackStartFn: b()
+  stackStartFn: b() // comment this out to see the a() in the stack trace
 });
 
 function a(){

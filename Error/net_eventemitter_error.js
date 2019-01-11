@@ -7,6 +7,7 @@ connection.on('error', (err) => {
 	  // connect at all, or on any sort of error encountered by
 	  // the connection, the error will be sent here.
 	  console.error(err);
+	  console.error(err.syscall);
 });
 
 connection.pipe(process.stdout);
