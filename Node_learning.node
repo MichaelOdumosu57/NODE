@@ -2029,21 +2029,253 @@ N               find files that are open with a file descriptor with the lsof co
                                                    E
 
 
-fs.appendFileSync(path, data[, options])
-
-path <string> | <Buffer> | <URL> | <number> filename or file descriptor
-data <string> | <Buffer>
-options <Object> | <string>
-
-    encoding <string> | <null> Default: 'utf8'
-    mode <integer> Default: 0o666
-    flag <string> See support of file system flags. Default: 'a'.
 
 
-sync version
 
-The path may be specified as a numeric file descriptor 
-that has been opened for appending (using fs.open() or fs.openSync()). 
-The file descriptor will not be closed automatically.
+                                                   O
 
-file: FS/fs_appendFile_sync.js
+
+
+
+                fs.appendFileSync(path, data[, options])
+
+                path <string> | <Buffer> | <URL> | <number> filename or file descriptor
+                data <string> | <Buffer>
+                options <Object> | <string>
+
+                    encoding <string> | <null> Default: 'utf8'
+                    mode <integer> Default: 0o666
+                    flag <string> See support of file system flags. Default: 'a'.
+N                                                                                                   D
+
+                sync version
+
+                The path may be specified as a numeric file descriptor 
+                that has been opened for appending (using fs.open() or fs.openSync()). 
+                The file descriptor will not be closed automatically.
+
+                file: FS/fs_appendFile_sync.js
+
+
+
+                                                E
+
+
+
+
+        O
+N               D
+        E
+
+
+
+
+
+fs.chmod(path, mode, callback)
+
+path <string> | <Buffer> | <URL>
+mode <integer>
+callback <Function>
+
+    err <Error>
+
+async file permission change the callback only takes an exception
+
+File modes
+
+a numneric bitmask argument created with a logical OR or this table 
+
+
++----------------------+-------+--------------------------+
+| Constant             | Octal | Description              |
++----------------------+-------+--------------------------+
+| fs.constants.S_IRUSR | 0o400 | read by owner            |
++----------------------+-------+--------------------------+
+| fs.constants.S_IWUSR | 0o200 | write by owner           |
++----------------------+-------+--------------------------+
+| fs.constants.S_IXUSR | 0o100 | execute/search by owner  |
++----------------------+-------+--------------------------+
+| fs.constants.S_IRGRP | 0o40  | read by group            |
++----------------------+-------+--------------------------+
+| fs.constants.S_IWGRP | 0o20  | write by group           |
++----------------------+-------+--------------------------+
+| fs.constants.S_IXGRP | 0o10  | execute/search by group  |
++----------------------+-------+--------------------------+
+| fs.constants.S_IROTH | 0o4   | read by others           |
++----------------------+-------+--------------------------+
+| fs.constants.S_IWOTH | 0o2   | write by others          |
++----------------------+-------+--------------------------+
+| fs.constants.S_IXOTH | 0o1   | execute/search by others |
++----------------------+-------+--------------------------+
+
+
+its better to do it like this , they will be applied like so
+
+0o765 means
+owner can read write and execute
+group can read and write 
+others can read and execute 
+
+on windows on write permission can be changed , and there is no usr grp oth distinction 
+
++--------+------------------------+
+| Number | Description            |
++--------+------------------------+
+| 7      | read write and execute |
++--------+------------------------+
+| 6      | read and write         |
++--------+------------------------+
+| 5      | read and execute       |
++--------+------------------------+
+| 4      | read only              |
++--------+------------------------+
+| 3      | write and execute      |
++--------+------------------------+
+| 2      | write only             |
++--------+------------------------+
+| 1      | execute only           |
++--------+------------------------+
+| 0      | no permission          |
++--------+------------------------+    
+
+
+fs.chmodSync(path, mode)
+
+path <string> | <Buffer> | <URL>
+mode <integer>
+
+sync version of fs.chmod
+
+
+
+
+        O
+N               D
+        E
+
+fs.chown(path, uid, gid, callback)
+History
+path <string> | <Buffer> | <URL>
+uid <integer>
+gid <integer>
+callback <Function>
+
+    err <Error>
+
+    changes the owner and group of a file 
+
+
+
+fs.chownSync(path, uid, gid)
+History
+path <string> | <Buffer> | <URL>
+uid <integer>
+gid <integer>
+
+    sync version of fs choswn 
+
+
+
+        O
+N               D
+        E
+
+
+                                                O
+
+                fs.close(fd, callback)
+
+                fd <integer>
+                callback <Function>
+
+                    err <Error>
+
+N                                                                               D                                                    
+                async file close with fd as file descriptor 
+                and the error arg the only arg for a callback 
+
+                fs.closeSync(fd)[src]
+                Added in: v0.1.21
+                    fd <integer>    
+
+                sync version returns undefined 
+
+
+                                                E
+
+
+
+        O
+N               D
+        E
+
+fs.constants                                                
+
+Returns an object containing commonly used constants for file system operations. 
+
+
+
+        O
+N               D
+        E
+
+
+                                                    O
+
+                fs.copyFile(src, dest[, flags], callback)
+                Added in: v8.5.0
+
+                src <string> | <Buffer> | <URL> source filename to copy
+                dest <string> | <Buffer> | <URL> destination filename of the copy operation
+                flags <number> modifiers for copy operation. Default: 0.
+                    callback <Function>
+
+                async copy src -> dest, callback only takes error arg, if something foes wrong after opening  
+                the destination for writing Node.js will attempt to close the  file
+N                                                                                                                               D
+                flags in an interger telling the method how to copy
+
+                fs.constants.COPYFILE_EXCL - The copy operation will fail if dest already exists. 
+                                                with no flags the dest is overwritten
+                                               so if you want to overwrite your destination leave it out
+                fs.constants.COPYFILE_FICLONE - The copy operation will attempt to create a copy-on-write reflink.
+                                                 If the platform does not support copy-on-write, then a
+                                                 fallback copy mechanism is used.                                 
+                fs.constants.COPYFILE_FICLONE_FORCE - The copy operation will attempt to create a 
+                                                        copy-on-write reflink. If the platform does not support
+                                                         copy-on-write,
+                                                         then the operation will fail.
+                file: FS/copyFile.js       
+
+                to use the flags get the flag 
+                const { COPYFILE_EXCL } = fs.constants;
+
+                and do this 
+                fs.copyFile('source.txt', 'destination.txt', COPYFILE_EXCL, callback);
+
+
+
+                                                    E
+
+
+                                                    
+        O                                                
+N           if you want  to import a property from an object in a module  
+            const { [property_name] } = [module_name].[object_name];
+        E                                                 
+
+
+
+                                                O
+
+                fs.copyFileSync(src, dest[, flags])
+                Added in: v8.5.0
+                src <string> | <Buffer> | <URL> source filename to copy
+                dest <string> | <Buffer> | <URL> destination filename of the copy
+                         operations                                                          D
+N                        flags <number> modifiers for copy operation. Default: 0.
+
+                sync version of fs.copyFile        
+
+
+                                            E
