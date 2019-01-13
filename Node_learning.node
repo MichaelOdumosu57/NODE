@@ -2719,8 +2719,17 @@ N                                                                               
 
 
                                                 O
+                        need to read from a buffer 
 
 
+                        const buf3 = Buffer.from(<Buffer 88 13 70 17>);
+
+                        const buf1 = Buffer.from('this is a tést');
+                        const buf2 = Buffer.from('7468697320697320612074c3a97374', 'hex');
+
+                        const buf = Buffer.from(new String('this is a test'));
+
+                        
                         Class Method: Buffer.alloc(size[, fill[, encoding]])[src]#
                         History
                         size <integer> The desired length of the new Buffer.
@@ -3249,18 +3258,118 @@ if it results in an err.code = ENOENT , the curr and prev fs.Watchers should hav
 if a file disappears and reapears the prev in the sencond will be the same as prev in the first         
 
 
+        O
+N               D
+        E
+
+
+                                            O
+
+
+            fs.write(fd, buffer[, offset[, length[, position]]], callback)
+            fs.writeSync(fd, buffer[, offset[, length[, position]]])
+            fs.write(fd, string[, position[, encoding]], callback)  
+            fs.writeSync(fd, string[, position[, encoding]])      
+
+
+            fd <integer>
+            buffer <Buffer> | <TypedArray> | <DataView>
+            offset <integer>
+            length <integer>
+            position <integer>
+            callback <Function>
+
+                err <Error>
+                bytesWritten <integer>
+                buffer <Buffer> | <TypedArray> | <DataView>
+
+
+
+            string <string>
+            position <integer>
+            encoding <string> 'utf8' | 
+            callback <Function>
+N                                                                               D
+                err <Error>
+                written <integer>
+                string <string>    
+
+
+
+            in Linux on append mode, positional write do not work 
+            the kernel always appends data to the end of the file 
+
+            always using a number for positioning 
+
+            offset represents where to start writing from the buffer 
+            lenght how much should be written 
+            position is where in the file to start wrtitng 
+            encoding is how the string should end up, try not to place 'buffer' as there is an write option for buffers 
+
+            callback
+                bytesWritten is not the same as writen 
+
+
+
+                    O      
+            N         as you see when buffer is used you specify length, but when string is used you must write all the data so if you want to be 
+                      nit picky its gunna take extra work with those buffers    
+                    E
+
+            file: FS/write.js    
+
+                                                    E
 
 
 
 
 
+                                                    O
+
+
+                fs.writeFile(file, data[, options], callback)
+                fs.writeFileSync(file, data[, options])
+
+                file <string> | <Buffer> | <URL> | <integer> filename or file descriptor
+                data <string> | <Buffer> | <TypedArray> | <DataView>
+                options <Object> | <string>
+
+                    encoding <string> | <null> Default: 'utf8'
+                    mode <integer> Default: 0o666
+                    flag <string> See support of file system flags. Default: 'w'.
+                callback <Function>
+N                                                                                                    D
+                    err <Error>
+
+                if data is a buffer encoding is ignored
+                use fs.createWriteStream() for multiple callbacks 
+
+                fd
+
+                it must suport writing not appending 
+                it will not be closed automattically 
+                the writing would being at the beginning, 
+                Ex 
+                    file.content = 'Hello Word'
+                    data = 'aloha '
+                    file.content = 'aloha  Word'
+
+
+                                                    E
 
 
 
+        O
+N               D
+        E
 
 
+fs Promises API#
+Stability: 1 - Experimental
+The fs.promises API provides an alternative set of asynchronous file system methods that 
+return Promise objects rather than using callbacks. The API is accessible via require('fs').promises.    
 
-
+i dont have time for Experimental in production
 
 
 
