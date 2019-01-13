@@ -3374,17 +3374,154 @@ i dont have time for Experimental in production
 
 
 
+        O
+N               D
+        E
+
+FS Constants
+not every constant is available on every OS 
+
+
+File Access Constant
+fs.access().
+
+
+|----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Constant | Description                                                                                                                                                                                   |
+|----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| F_OK     | Flag indicating that the file is visible to the calling process. 
+            =This is useful for determining if a file exists but says nothing about rwx permissions
+            .= Default if no mode is specified." 
+|----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| R_OK     | Flag indicating that the file can be read by the calling process.                                                                                                                             |
+|----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| W_OK     | Flag indicating that the file can be written by the calling process.                                                                                                                          |
+|----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| X_OK     | Flag indicating that the file can be executed by the calling process.
+             This has no effect on Windows (will behave like fs.constants.F_OK).                                                     |
+|----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|          |                                                                                                                                                                                               |
+|----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|        
 
 
 
+File COpy constant 
+fs.copyFile().
+
+
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Constant               | Description                                                                                                                                                                          |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| COPYFILE_EXCL          | "If present the copy operation will fail with an error if the destination path already exists."                                                                                      |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| COPYFILE_FICLONE       | "If present the copy operation will attempt to create a copy-on-write reflink. 
+                            If the underlying platform does not support copy-on-write then a fallback copy mechanism is used."    |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| COPYFILE_FICLONE_FORCE | "If presentthe copy operation will attempt to create a copy-on-write reflink. 
+                            If the underlying platform does not support copy-on-write then the operation will fail with an error." |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|                        |                                                                                                                                                                                      |
+|------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+
+
+File Open Constants
+Constant,Description
+O_RDONLY,Flag indicating to open a file for read-only access.
+O_WRONLY,Flag indicating to open a file for write-only access.
+O_RDWR,Flag indicating to open a file for read-write access.
+O_CREAT,Flag indicating to create the file if it does not already exist.
+O_EXCL,Flag indicating that opening a file should fail if the O_CREAT flag is set and the file already exists.
+O_NOCTTY,"Flag indicating that if path identifies a terminal device, opening the path shall not cause that terminal to become the controlling terminal for the process (if the process does not already have one)."
+O_TRUNC,"Flag indicating that if the file exists and is a regular file, and the file is opened successfully for write access, its length shall be truncated to zero."
+O_APPEND,Flag indicating that data will be appended to the end of the file.
+O_DIRECTORY,Flag indicating that the open should fail if the path is not a directory.
+O_NOATIME,Flag indicating reading accesses to the file system will no longer result in an update to the atime information associated with the file. This flag is available on Linux operating systems only.
+O_NOFOLLOW,Flag indicating that the open should fail if the path is a symbolic link.
+O_SYNC,Flag indicating that the file is opened for synchronized I/O with write operations waiting for file integrity.
+O_DSYNC,Flag indicating that the file is opened for synchronized I/O with write operations waiting for data integrity.
+O_SYMLINK,Flag indicating to open the symbolic link itself rather than the resource it is pointing to.
+O_DIRECT,"When set, an attempt will be made to minimize caching effects of file I/O."
+O_NONBLOCK,Flag indicating to open the file in nonblocking mode when possible.
 
 
 
+File Type Constants 
+fs.stat object 
+Constant,Description
+S_IFMT,Bit mask used to extract the file type code.
+S_IFREG,File type constant for a regular file.
+S_IFDIR,File type constant for a directory.
+S_IFCHR,File type constant for a character-oriented device file.
+S_IFBLK,File type constant for a block-oriented device file.
+S_IFIFO,File type constant for a FIFO/pipe.
+S_IFLNK,File type constant for a symbolic link.
+S_IFSOCK,File type constant for a socket.
 
 
+File Mode Constants
+Constant,Description
+S_IRWXU,"File mode indicating readable, writable, and executable by owner."
+S_IRUSR,File mode indicating readable by owner.
+S_IWUSR,File mode indicating writable by owner.
+S_IXUSR,File mode indicating executable by owner.
+S_IRWXG,"File mode indicating readable, writable, and executable by group."
+S_IRGRP,File mode indicating readable by group.
+S_IWGRP,File mode indicating writable by group.
+S_IXGRP,File mode indicating executable by group.
+S_IRWXO,"File mode indicating readable, writable, and executable by others."
+S_IROTH,File mode indicating readable by others.
+S_IWOTH,File mode indicating writable by others.
+S_IXOTH,File mode indicating executable by others.
 
 
+        O
+N               D
+        E
+File System Flags 
+'a' - Open file for appending. The file is created if it does not exist.
 
+'ax' - Like 'a' but fails if the path exists.
+
+'a+' - Open file for reading and appending. The file is created if it does not exist.
+
+'ax+' - Like 'a+' but fails if the path exists.
+
+'as' - Open file for appending in synchronous mode. The file is created if it does not exist.
+
+'as+' - Open file for reading and appending in synchronous mode. The file is created if it does not exist.
+
+'r' - Open file for reading. An exception occurs if the file does not exist.
+
+'r+' - Open file for reading and writing. An exception occurs if the file does not exist.
+
+'rs+' - Open file for reading and writing in synchronous mode. 
+Instructs the operating system to bypass the local file system cache.
+
+This is primarily useful for opening files on NFS mounts as 
+it allows skipping the potentially stale local cache.
+ It has a very real impact on I/O performance so using this flag is not recommended unless it is needed.
+
+ if you want sync open us fs.openSync 
+
+'w' - Open file for writing. The file is created (if it does not exist) or truncated (if it exists).
+
+'wx' - Like 'w' but fails if the path exists.
+
+'w+' - Open file for reading and writing. The file is created (if it does not exist) or truncated (if it exists).
+
+'wx+' - Like 'w+' but fails if the path exists.
+
+
+flag can  be  a number also 
+On Windows constants are translated to their equivalents
+
+the exclusinve flage 'x' ensures new path creation.
+on POSIX the path exists even if its symlinked to non-existent file 
+it might or might not work ont network file systems 
+
+on linux positional writes do not work on append  mode it always writes to the end of the file 
+
+use r+ to modify a file use w to delete it 
 
 
         <OBJECT></OBJECT>
@@ -3398,3 +3535,5 @@ fd are important and there are fd functions for every function try to look for i
 
 
 need to learn about  streams and buffers mabye (try to avoid)   
+
+
