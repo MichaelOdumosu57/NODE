@@ -1,5 +1,6 @@
 https://nodejs.org/dist/latest-v10.x/docs/api/fs.html
 https://stackoverflow.com/questions/14031763/doing-a-cleanup-action-just-before-node-js-exits
+https://stackoverflow.com/questions/34082497/limit-node-js-memory-usage-to-less-than-300mb-per-process
 
 
         <OBJECT></OBJECT>
@@ -2252,6 +2253,7 @@ N                                                                               
 
                 and do this 
                 fs.copyFile('source.txt', 'destination.txt', COPYFILE_EXCL, callback);
+                file: FS/copyFile_flag.js
 
 
 
@@ -2731,32 +2733,231 @@ Functions based on fs.open() exhibit this behavior as well: fs.writeFile(), fs.r
 
 
 
+        O
+N               D
+        E
 
-fs.read(fd, buffer, offset, length, position, callback)
+                                                O
 
-fd <integer>
-buffer <Buffer> | <TypedArray> | <DataView>
-offset <integer>
-length <integer>
-position <integer>
+
+            What makes `Buffer.allocUnsafe()` and `Buffer.allocUnsafeSlow()` "unsafe"?#
+            When calling Buffer.allocUnsafe() and Buffer.allocUnsafeSlow(), the segment 
+            of allocated memory is uninitialized (it is not zeroed-out). While this
+             design makes the allocation of memory quite fast, the allocated segment 
+             of memory might contain old data that is potentially sensitive. Using a 
+             Buffer created by Buffer.allocUnsafe() without completely overwriting the 
+             memory can allow this old data to be leaked when the Buffer memory is read.
+N                                                                                                                       D
+
+            While there are clear performance advantages to using Buffer.allocUnsafe(), 
+            extra care must be taken in order to avoid introducing security vulnerabilities
+             into an application.
+
+
+                                                E
+
+
+
+                                                O
+
+
+                        Class Method: Buffer.alloc(size[, fill[, encoding]])[src]#
+                        History
+                        size <integer> The desired length of the new Buffer.
+                        fill <string> | <Buffer> | <integer> A value to pre-fill
+                        the new Buffer with. Default: 0.
+                        encoding <string> If fill is a string, 
+                        this is its encoding. Default: 'utf8'.
+
+
+                        need to write data to a buffer ?
+                        const buf = Buffer.alloc(5);
+
+                        need to fill a buffer 
+                        const buf = Buffer.alloc(5, 'a');
+N                       const buf = Buffer.alloc(5, 1);                                                      D
+                        const buf = Buffer.alloc(5, Buffer.from(data));         
+
+                        need to specify encoding 
+
+                        const buf = Buffer.alloc(5, 'a', 'utf8');  //default 
+
+
+                        Class Method: Buffer.allocUnsafe(size)
+                        if you need performance and got security in place 
+                        const buf = Buffer.allocUnsafe(10);
+
+                        console.log(buf);
+                        // Prints: (contents may vary): <Buffer a0 8b 28 3f 01 00 00 00 50 32>    
+                        refer to article at top of tutorial to learn how to keep node processes under 300 MB 
+                        to free mem alloc by a buf 
+                        buf = null
+                        all_references = null
+                        also use process.memoryUsage(). to identify if its works, if it doesnt grow you should be fine 
+
+
+                                                E                                   
+
+
+
+
+        O
+N               D
+        E
+
+
+                                        O
+
+            fs.read(fd, buffer, offset, length, position, callback)
+            fs.readSync(fd, buffer, offset, length, position)
+
+            fd <integer>
+            buffer <Buffer> | <TypedArray> | <DataView>
+            offset <integer>
+            length <integer>
+            position <integer>
+            callback <Function>
+
+                err <Error>
+                bytesRead <integer>
+                buffer <Buffer>
+
+
+            Read data from the file specified by fd.
+
+            buffer is the buffer that the data will be written to.
+
+            offset is the offset in the buffer to start writing at.
+N                                                                                             D
+            length is an integer specifying the number of bytes to read.
+
+            position is an argument specifying where to begin reading from in the file.
+             If position is null, data will be read from the current file position, 
+             and the file position will be updated. If position is an integer, 
+             the file position will remain unchanged. make sure position is there man 
+
+
+            The callback is given the three arguments, (err, bytesRead, buffer).
+
+            If this method is invoked as its util.promisify()ed version, 
+            it returns a Promise for an Object with bytesRead and buffer properties.
+            file: FS/read.js
+             
+
+                                                    E
+
+
+
+
+
+
+
+
+                                                    O
+
+                            fs.readdir(path[, options], callback)
+                            fs.readdirSync(path[, options])
+
+                            path <string> | <Buffer> | <URL>
+                            options <string> | <Object>
+
+                                encoding <string> Default: 'utf8'
+                                withFileTypes <boolean> Default: false
+                            callback <Function>
+N                                                                                                       D
+                                err <Error>
+                                files <string[]> | <Buffer[]> | <fs.Dirent[]>                                                    
+
+                            read dir contents, callback gets a files listung the files in the dir excluding . & ..
+                            if options is a string it specifies encoding, if encoding : buffer the files will be buffer objects  
+                            withFileTypes = true, files return fs.Dirent objects 
+
+                            file: FS/readdir.js
+
+                                                    E
+
+
+
+
+
+                                                    O
+
+                    fs.readFile(path[, options], callback)
+                    fs.readFileSync(path[, options])
+                    path <string> | <Buffer> | <URL> | <integer> filename or file descriptor
+                    options <Object> | <string>
+
+                        encoding <string> | <null> Default: null
+                        flag <string> See support of file system flags. Default: 'r'.
+                    callback <Function>
+
+                        err <Error>
+                        data <string> | <Buffer>
+
+N                                                                                                    D
+                    async file read
+                    callback err, data data is the content of the file
+                    if object is a string specifies encoding 
+                    make sure mode is read-friendly :)
+                    if the path is a directory on Linux Windows and 
+                    Mac its an error on FreeBSD it gives you something 
+
+                    the fs readfile buffers the whole files,
+                     try to use fs.createReadStream in production
+
+                    if you use a fd
+                    it has to support reading 
+                    its not closed automatically
+                    if there was an fs.read or fs.write it will begin at where those 
+                    function that are  pos friendly left off 
+
+                    file: FS/read_fd.js
+
+
+                                                    E
+
+
+
+                            O
+
+                fs.readlink(path[, options], callback)
+                fs.readlinkSync(path[, options])
+                path <string> | <Buffer> | <URL>
+                options <string> | <Object>
+
+                    encoding <string> 'utf8' || 'buffer'
+                callback <Function>
+N                                                           D
+                    err <Error>
+                    linkString <string> | <Buffer>
+
+                reads a symbolic link
+                file: FS/readlink.js 
+
+                            E
+
+
+
+fs.realpath(path[, options], callback) 
+path <string> | <Buffer> | <URL>
+options <string> | <Object>
+
+    encoding <string> Default: 'utf8'
 callback <Function>
 
     err <Error>
-    bytesRead <integer>
-    buffer <Buffer>
+    resolvedPath <string> | <Buffer>
 
- 
+Async computes the canonical absolute pathname of a file     
+it doesn't do case conversion
+max # of symbolic links is much high than native realpath 
 
+only UTF8-convertible paths are supported 
+May use process.cwd to resolve relative paths callback gets err, resolvedPath
 
+if path goes to a socket or pipe the function will return a system dependent name for it 
 
-
-
-
-
-
-
-
-
+file FS/real_path.js 
 
 
 
