@@ -1664,45 +1664,7 @@ this value is determined by the options.encoding passed to fs.readdir() or fs.re
 
 
 
-        O
-N               D
-        E
 
-
-
-
-Class: fs.FSWatcher
-an object that emits a change event when ever a file is modified 
-
-Event: 'change'
-eventType <string> The type of change event that has occurred
-filename <string> | <Buffer> The filename that changed (if relevant/available)
-
-depending on OS filename may not be provided ,  if encoding set to buffer fs.watch will print 
-the filename as a buffer 
-        O 
-N             it catches the first chage but not subsquent changes
-        D
-File: FS/fs_watch.js        
-
-
-
-Event: 'close'#
-Added in: v10.0.0
-Emitted when the watcher stops watching for changes.
- The closed fs.FSWatcher object is no longer usable in the event handler.
-
-
- Event: 'error'#
-Added in: v0.5.8
-error <Error>
-Emitted when an error occurs while watching the file. 
-The errored fs.FSWatcher object is no longer usable in the event handler.
-
-watcher.close()#
-Added in: v0.5.8
-Stop watching for changes on the given fs.FSWatcher. 
-Once stopped, the fs.FSWatcher object is no longer usable.
 
 
 
@@ -3146,14 +3108,145 @@ or is NaN, Infinity or -Infinity, an Error will be thrown.
 
 
 
+        O
+N               D
+        E
+
+
+fs.watch(filename[, options][, listener])
+
+filename <string> | <Buffer> | <URL>
+options <string> | <Object>
+
+    persistent <boolean> Indicates whether the process should continue to run as long as files are being watched. Default: true.
+    recursive <boolean> Indicates whether all subdirectories should be watched, 
+                        or only the current directory.
+                         This applies when a directory is specified,
+                          and  only supported on macOS and Windows..
+                           might need inotify to get it to work on 16.04 or 18.04 Default: false.
+    encoding <string> Specifies the character encoding to be used for the filename passed to the listener. Default: 'utf8'.
+listener <Function> | <undefined> Default: undefined
+
+    eventType <string>
+    filename <string> | <Buffer>
+
+returns a fs.Watcher object 
+
+watches for chanages on filename = file | dir 
+optios a string or object  
+eventType is 'rename' || 'change', rename might be differnt on linux 
+filename  = filename.trigger('watch') 
+The listener callback is attached to the 'change' event fired by fs.FSWatcher,
+ but it is not the same  as the 'change' value of eventType.
+
+
+                                            O
+
+         Availability#
+
+         you need for fs.watch to work 
+         On Linux systems, this uses inotify(7).
+        On BSD systems, this uses kqueue(2).
+N        On macOS, this uses kqueue(2) for files and FSEvents for directories.         D
+        On SunOS systems (including Solaris and SmartOS), this uses event ports.
+        On Windows systems, this feature depends on ReadDirectoryChangesW.
+        On Aix systems, this feature depends on AHAFS, which must be enabled.
+
+
+or use fs.watchFile (slower)
+                                        E
+
+
+
+
+
+                                        O
+Inodes
+
+        on Linux and MacOS, when files get deleted and recreated they get new inodes, fs.watch
+         watches the orginal inode still its supposed to be like this, close and recall fs.watch
+         to hopefully get the new inode 
+N                                                                                                    D
+        AIX system keep the inode no matter 
+        so you will start to get 2 notificatiosn for new content and truncation
+
+                                        E
+
+
+
+                                        O
+
+            Filename Argument
+
+N                                                                    D
+             Linux, macOS, Windows, and AIX, but fs.watch 
+             may always not get the file and thats it                                 
+
+                                        E
 
 
 
 
 
 
+                                                O
 
 
+            Class: fs.FSWatcher
+            an object that emits a change event when ever a file is modified 
+
+            Event: 'change'
+            eventType <string> The type of change event that has occurred
+            filename <string> | <Buffer> The filename that changed (if relevant/available)
+
+            depending on OS filename may not be provided , 
+             if encoding set to buffer fs.watch will print 
+            the filename as a buffer 
+                    O 
+            N             it catches the first chage but not subsquent changes
+                    D
+            File: FS/fs_watch.js        
+
+N                                                                                                       D
+
+            Event: 'close'#
+            Added in: v10.0.0
+            Emitted when the watcher stops watching for changes.
+             The closed fs.FSWatcher object is no longer usable in the event handler.
+
+
+             Event: 'error'#
+            Added in: v0.5.8
+            error <Error>
+            Emitted when an error occurs while watching the file. 
+            The errored fs.FSWatcher object is no longer usable in the event handler.
+
+            watcher.close()#
+            Added in: v0.5.8
+            Stop watching for changes on the given fs.FSWatcher. 
+            Once stopped, the fs.FSWatcher object is no longer usable.
+
+
+                                                    E
+
+
+
+fs.watchFile(filename[, options], listener)
+filename <string> | <Buffer> | <URL>
+options <Object>
+
+    persistent <boolean> Default: true
+    interval <integer> Default: 5007
+listener <Function>
+
+    current <fs.Stats>
+    previous <fs.Stats>
+
+options
+    interval, interval in ms on how many times filename is polled 
+
+if it results in an err.code = ENOENT , the curr and prev fs.Watchers should have 0's or EPOCH'S for their fields 
+if a file disappears and reapears the prev in the sencond will be the same as prev in the first         
 
 
 
