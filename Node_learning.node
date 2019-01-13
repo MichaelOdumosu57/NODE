@@ -3514,7 +3514,7 @@ N               be careful yoo might get slightly different things according to 
 
                                                 O
             
-        how Events work is that you have a eventEmitter class, it gets an action, emits an event and you 
+        how Events work is that you have a eventEmitter class, it gets an action and/or emits an event and you 
         have these function objects (listeneres) called everytime the event is emitted .
 
         all functions attached to a specific event are sync called. 
@@ -3523,7 +3523,7 @@ N                                                                               
         N        any values returned from listenerens are ignored and discarded
                 E
 
-        eventEmitter.on() is used to register listneners 
+        eventEmitter.on() is used to register listneners  can also use  emitter.addListener(eventName, listener)
         eventEmitter.emit() is used to trigger events just like jquery.trigger([event])   
 
         file EVENTS/basic_eventemitter.js      
@@ -3531,9 +3531,27 @@ N                                                                               
 
                                                 E
 
+emitter.on(eventName, listener)
+emitter.addListener(eventName, listener)
+emitter.prependListener(eventName, listener);
 
+Added in: v0.1.101
+eventName <string> | <symbol> The name of the event.
+listener <Function> The callback function
+Returns: <EventEmitter>
+    no check is made to see if the listener is added, yuo have function below to do that     
+    use prependListener to prepend a listener to the beginning of a stack                                         
+
+
+
+
+
+emitter.emit(eventName[, ...args])
+returns boolean if event had listeners 
+args provides args for all listeners idk how they work for multiple listneners
 
                                                 O
+
 
 
         if you want arguments for .emit you must provide arguments
@@ -3554,11 +3572,147 @@ to get listenenrs to be called async use
 
 
 
-to listen for an event once 
-.once 
+to listen for an event once  
+    emitter.once(eventName, listener)#
+    emitter.prependOnceListener(eventName, listener);
+    Added in: v0.3.0
+    eventName <string> | <symbol> The name of the event.
+    listener <Function> The callback function
+    Returns: <EventEmitter>
+        after it gets the event no more listener
+        use prependOnceListener to prepend to the beginning of the once stack  
+
 file: EVENTS/once.js
 
 if you wanted to handle errors use the error listener 
-file     EVENTS/errors.js    
+file:     EVENTS/errors.js
 
 
+
+
+        O
+N               D
+        E
+Class: EventEmitter
+new listener : emit 'newListener'
+remove listerer : removeListener
+
+                                            O
+
+        Event: 'newListener'
+
+        eventName <string> | <symbol> The name of the event being listened for
+        listener <Function> The event handler function
+
+N                                                                                                   D
+        so if you add an event listener with the same event name as one after the newListener
+        the one inside the newListener listener will be added before the one outside 
+
+        the listner returns the actual listnener function object 
+
+        FILE : FS/new_listener.js 
+
+
+                                                E
+
+
+
+
+                                                O
+                Event: 'removeListener'
+
+                eventName <string> | <symbol> The event name
+                listener <Function> The event handler function  
+N                                                                                   D
+                listenes for removed events          
+                FS/new_listener.js                                      
+
+
+                                                E
+
+
+
+                                                O
+
+                EventEmitter.defaultMaxListeners
+
+                tells you how many listeners can be registed for a single event 10
+                if you set this to 0 or negative a type error is thrown 
+
+                if you change this it affects the  EventEmitter instances before the change 
+                look at emitter.setMaxListeners() to bypass this problem 
+                but the  EventEmitter will send warnings to stderr for memory leaks 
+N                                                                                                   D
+
+                you can use --trace-warnings to get a stack trace for those warnings
+
+                you can also use process.on('warning') to get detailed information about ee 
+                causing the specific warnig  
+
+                file  EVETNS/ee_def_max.js
+
+
+                                                E
+
+
+
+                                                
+
+
+emitter.eventNames()
+returns array of all listneners registered with ee instance 
+
+emitter.getMaxListeners()
+return default EventEmitter.defaultMaxListeners
+returns max listeners allowed for ee instance 
+
+
+emitter.listenerCount(eventName)
+Added in: v3.2.0
+eventName <string> | <symbol> The name of the event being listened for
+Returns: <integer>
+
+    how many listeners on the event for the ee instance 
+
+
+emitter.listeners(eventName)
+eventName <string> | <symbol>
+Returns: <Function[]>
+
+unlike what newListener and removeListener it gives you only [ [Function] ]
+
+
+
+
+
+emitter.removeAllListeners([eventName])
+Added in: v0.1.26
+eventName <string> | <symbol>
+Returns: <EventEmitter>
+    Removes all listeners, or those of the specified eventName.
+
+try not to use with with common events, use it with very custom events or check all the modules or dont use it 
+
+
+
+emitter.removeListener(eventName, listener)
+emitter.off(eventName, listener)
+
+eventName <string> | <symbol>
+listener <Function>
+    Returns: <EventEmitter>
+
+if there are 7 listeners call this 7 times
+if an emit is in the middle of a listener stack nothing is
+     remove until emit is done with the stack     
+file: FS/remove_listener.js 
+
+      O
+N           if you need to turn your listeners on and off put the listener fuction object to a const as in FS/remove_listener.js 
+      E 
+
+
+if you use the once and on methods with the same listener and same event, it removes whichever came last 
+file: FS/remove_listener_diff_adds.js 
+
+      
