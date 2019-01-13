@@ -3637,7 +3637,7 @@ N                                                                               
                 EventEmitter.defaultMaxListeners
 
                 tells you how many listeners can be registed for a single event 10
-                if you set this to 0 or negative a type error is thrown 
+                if you set this to  negative a type error is thrown 
 
                 if you change this it affects the  EventEmitter instances before the change 
                 look at emitter.setMaxListeners() to bypass this problem 
@@ -3683,36 +3683,76 @@ unlike what newListener and removeListener it gives you only [ [Function] ]
 
 
 
+                                        O
+
+                emitter.removeAllListeners([eventName])
+                Added in: v0.1.26
+                eventName <string> | <symbol>
+ N              Returns: <EventEmitter>
+                    Removes all listeners, or those                D
+                    of the specified eventName.
+
+                try not to use with with common events, use it
+                 with very custom events or check all 
+                 the modules or dont use it 
+
+                                        E
 
 
-emitter.removeAllListeners([eventName])
-Added in: v0.1.26
+
+
+
+
+
+
+                                                            O
+
+            emitter.removeListener(eventName, listener)
+            emitter.off(eventName, listener)
+
+            eventName <string> | <symbol>
+            listener <Function>
+                Returns: <EventEmitter>
+N
+            if there are 7 listeners call this 7 times
+            if an emit is in the middle of a listener stack nothing is                         D
+                 remove until emit is done with the stack     
+            file: EVENTS/remove_listener.js 
+
+                  O
+            N           if you need to turn your listeners on and off put the listener 
+                        fuction object to a const as in FS/remove_listener.js 
+                  E 
+
+
+            if you use the once and on methods with the same listener and same event,
+             it removes whichever came last 
+            file: EVENTS/remove_listener_diff_adds.js 
+
+
+                                                E
+
+
+                                                O
+
+
+                emitter.setMaxListeners(n)
+                Added in: v0.3.5
+                n <integer>
+                Returns: <EventEmitter>      
+N                                                                                   D
+                allows the max listeners to be 
+                modifed for the specific ee instance 
+                set to 0 for infiintiy 
+
+                                        E
+
+
+
+emitter.rawListeners(eventName)
+Added in: v9.4.0
 eventName <string> | <symbol>
-Returns: <EventEmitter>
-    Removes all listeners, or those of the specified eventName.
-
-try not to use with with common events, use it with very custom events or check all the modules or dont use it 
-
-
-
-emitter.removeListener(eventName, listener)
-emitter.off(eventName, listener)
-
-eventName <string> | <symbol>
-listener <Function>
-    Returns: <EventEmitter>
-
-if there are 7 listeners call this 7 times
-if an emit is in the middle of a listener stack nothing is
-     remove until emit is done with the stack     
-file: FS/remove_listener.js 
-
-      O
-N           if you need to turn your listeners on and off put the listener fuction object to a const as in FS/remove_listener.js 
-      E 
-
-
-if you use the once and on methods with the same listener and same event, it removes whichever came last 
-file: FS/remove_listener_diff_adds.js 
-
-      
+Returns: <Function[]>
+what happens here is it holds on to your listener and can do really cool things
+refer to this file and comment and uncooment different commands to see potential 
+file: EVENTS/raw_listeners.js
