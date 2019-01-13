@@ -8,6 +8,7 @@ fs.realpath(symlink, (err,ressymlink) => {
 	if(err){
 
 		fs.symlink(target, symlink, (err) =>{
+				if (err) throw err
 				fs.unlink(symlink, (err) => {
 				  if (err) throw err;
 				  console.log('symlink err was deleted');

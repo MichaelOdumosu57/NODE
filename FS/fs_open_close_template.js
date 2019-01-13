@@ -16,9 +16,15 @@ fs.open(file, mode, (err, fd) => {
 
 
     fs.close(fd, (err) => {
+
+
         if (err){
+
+
             console.error(file,fd)
             console.log("close me ")
+
+            
         }
 
 

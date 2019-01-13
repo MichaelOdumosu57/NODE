@@ -97,7 +97,10 @@ fs.open(file, mode, (err, fd) => {
               // })                      
             fs.close(fd, (err) => {
                 if (err){
-                    throw err;
+
+
+                    console.log(file,fd)
+                    console.log("close me")
                 } 
 
                 else{

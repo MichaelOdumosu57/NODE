@@ -12,23 +12,60 @@ fs.open(file, mode, (err, fd) => {
         
         console.log(fd,"for append")
         if (err) {
+
+
             fs.close(fd, (err) => {
-                if (err) throw err;
+
+
+                if (err){
+
+
+                    console.error(file,fd)
+                    console.log("close me ")
+
+                    
+                }
+
+
                 else{
+
+
                         console.log("file closed with A",fd)
+
+
                 }
             });
+
+
         }
         
         
         else{
+
+
             fs.close(fd, (err) => {
-                if (err) throw new Error(fd);
-                else{
-                        console.log("file closed with C",fd)
+
+
+                if (err){
+
+
+                    console.error(file,fd)
+                    console.log("close me ")
+
+                    
                 }
-            });            
+
+
+                else{
+
+
+                        console.log("file closed with C",fd)
+
+                        
+                }
+            });          
             console.log('The "data to append" was appended to file!');
+            
             
         }
         

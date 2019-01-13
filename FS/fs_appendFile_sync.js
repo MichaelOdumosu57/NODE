@@ -13,7 +13,12 @@ catch (err) {
   /* Handle the error */
 } 
 finally {
-  if (fd !== undefined)
+  if (fd !== undefined){
+
+  	//TRY CATCH if closesync can't close you must close 
     fs.closeSync(fd);
     console.log("file closed")
+
+
+  }
 }
