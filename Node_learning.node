@@ -3523,13 +3523,27 @@ on linux positional writes do not work on append  mode it always writes to the e
 
 use r+ to modify a file use w to delete it 
 
+in linux and MacOS a+ open a dir with a+ is an Error
+    on Windows and FreeBSD its returns null or a FileHandle
+
+on Windows open hiddn files with the r+ flag 
+
+call fs.ftruncate()  to reset file contents     
+
 
         <OBJECT></OBJECT>
 N               D
         E
 What I take away from the fs api
 fd are important and there are fd functions for every function try to look for it
-    if the description says it ok its ok then        
+    if the description says it ok its ok then  
+to keep peace with  your system         
+    always make sure your files are closed
+    always make sure you do things in async in production 
+    free buffers and be careful with the mathemathics software w/ buffers 
+every callback should take at least an error you must check for 
+you are handling system files, make sure they are right and if not make sure you use ftruncate()
+    but if you run the program it may be too late    
 
 
 

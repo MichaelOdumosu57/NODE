@@ -72,7 +72,8 @@ fs.open(file, mode, (err, fd) => {
 
                       else{
 
-
+                          buf = null
+                          buff = null
                           console.log("file closed")
 
 
@@ -233,3 +234,4 @@ fs.open(string_file, mode, (err, fd) => {
 
 });
 
+console.log("mem usage",process.memoryUsage())
