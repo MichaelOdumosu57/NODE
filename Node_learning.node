@@ -3756,3 +3756,70 @@ Returns: <Function[]>
 what happens here is it holds on to your listener and can do really cool things
 refer to this file and comment and uncooment different commands to see potential 
 file: EVENTS/raw_listeners.js
+
+
+
+
+
+
+
+        O
+N               D
+        E
+
+Node Stream API 
+
+it helps out when you got to deal with streams 
+they are all instances of event emitter 
+the stream module is used for developers who want to create new streams 
+
+using streams first module
+making new streams 2nd module 
+Additional Notes  3rd section 
+
+
+        O
+N               D
+        E
+
+ four fundamental stream types     
+
+ Writable
+ Readable
+ Duplex  - read and write 
+ Transform - Duplex that can modify or transform data 
+
+these streams operate on  strings and Buffer (or Uint8Array) objects.
+streams are switched into object node when created, trying to switch an exisiting stream into object_nameode is not safe 
+
+
+
+both Writable and Readable store data in an internal buffer 
+use writable.writableBuffer or readable.readableBuffer to access 
+
+the amnt of data buffered depepnds on  the highWaterMark for normal streams this is total # of objects 
+for objectMOde streams this is a total # of objects 
+
+data is Buffered in readable streams when the instance calls stream.push(chunk). 
+If the consumer does not call stream.read() the data will sit in the buffer until its consumed 
+
+once the buffer reaches highWaterMark size the stream will stop reading data from the resources 
+it will stop calling its  readable._read()
+
+data is BUffered in  Writable writable.write(chunk) called several times 
+when the write buffer is below the highWaterMark it returns true 
+
+the goal here is to limit the buffered data 
+
+Duplex and Transform have their readable and writable buffer independent because the 
+read-write speeds can change all the time
+
+file STREAM/concept_stream.js
+      EXPRESS/route_handler_handler/do_i_need_third_party.js
+
+so whats basically happening here is that when nothing a triggering the readable and writable in streams 
+nothing happens but streams are waiting for data events, thats when they can get a listeners to do something that how they work 
+
+    write() and end() that are used to write data onto the stream.
+    Readable streams use eventEmitter API  to notify application API when data is available to read off the stream 
+    
