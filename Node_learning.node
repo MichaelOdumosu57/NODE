@@ -1500,7 +1500,8 @@ N                   fs.rename('/tmp/hello', '/tmp/world', (err) => {            
                     use async code in production, sync version will block 
                     till they complete
 
-                    always use callback for async fucntions, Idc if your code is one big chain it works, 
+                    always use callback for async fucntions, 
+                    Idc if your code is one big chain it works, 
 
 
                                         E
@@ -1890,7 +1891,8 @@ N               D
 
                                                                 O
     
-                    fs.access(path[, mode], callback)
+                    fs.access(path[, mode], callback)                    
+                    fs.accessSync(path[, mode])
                     
                     path <string> | <Buffer> | <URL>
                     mode <integer> Default: fs.constants.F_OK
@@ -1915,27 +1917,15 @@ N                                                                               
                     limit access to a file or directory. The fs.access() function,
                     bypasses that and gives you that file info
 
+                    sync version returns undefined
+                    if any accessibility checks fail error thrown
+
                     file: FS/fs_access.js
+                    file: FS/fs_access_sync.js
 
     
                                                                 E
 
-
-
-                                O
-
-
-
-            fs.accessSync(path[, mode])
-                                
- N          sync versiionn of fs.access
-            If any of the accessibility checks fail,           D
-            an Error will be thrown. Otherwise,
-            the method will return undefined.
-            file: FS/fs_access_sync.js
-
-
-                                E
 
 
         O
@@ -2222,6 +2212,7 @@ N           if you want  to import a property from an object in a module
                     start <integer>
                     end <integer> Default: Infinity
                     highWaterMark <integer> Default: 64 * 1024
+                    Returns: <fs.ReadSTream> 
 N                                                                                             D
                 USUAL highWaterMark of  readable streams = 16 kb  ,
                   this method  highWaterMark = 64 kb
@@ -2264,16 +2255,17 @@ N                                                                               
                 options <string> | <Object>
 
                     flags <string> See support of file system flags.
-                     Default: 'r'.
+                     Default: '2'.
                     encoding <string> Default: null
                     fd <integer> Default: null                                        
                     mode <integer> Default: 0o666
                     autoClose <boolean> Default: true
-                    start <integer>
-                    end <integer> Default: Infinity    
+                    start <integer>   
+                    Returns: <fs.WriteStream> 
 
 N                                                                                                       D
                 options     
+                you must provide a path eventhough providing the fd will ignore it
                 start and end can be int to read a range of bytes instead of the entire file 
                     they are both inclusive and start at 0 
                      The encoding can be any one of those accepted by Buffer.
@@ -2482,8 +2474,8 @@ N               D
 
 
 when you see l from chmod or chown this means it takes the path of the file but does not follow symbolic links 
-fs.lchmod(path, mode, callback)
 
+fs.lchmod(path, mode, callback)
 fs.lchmodSync(path, mode)
 Deprecated since: v0.4.7
 
@@ -2513,7 +2505,7 @@ Asynchronous lchown(2). only err for callback
 sync returns undefined
 
 
-fs.lstat(path[, options], callback)[src]#
+fs.lstat(path[, options], callback)
 fs.lstatSync(path[, options])
 History
 path <string> | <Buffer> | <URL>
@@ -2605,6 +2597,7 @@ The created folder path is passed as a string to the callback's second parameter
 N               when the tmpdir is created is dir mode is 700
         E
 
+FIle: FS/mkdir_temp.js
 
         O
 N               D
@@ -3014,6 +3007,7 @@ callback <Function>
     err <Error>
 
 Async removes a file or symbolic link use this to rm a file 
+does not delete file is symlink is removed 
 file : FS/unlink.js 
 
 
@@ -3606,7 +3600,7 @@ remove listerer : removeListener
 
 N                                                                                                   D
         so if you add an event listener with the same event name as one after the newListener
-        the one inside the newListener listener will be added before the one outside 
+        the one inside thes listener will be added before the one outside 
 
         the listner returns the actual listnener function object 
 
@@ -3759,6 +3753,12 @@ file: EVENTS/raw_listeners.js
 
 
 
+        <OBJECT></OBJECT>
+N               D
+        E
+what I take away from the emitter API 
+its the next level which allows you to do so much as a programmer         
+
 
 
 
@@ -3790,7 +3790,7 @@ N               D
  Transform - Duplex that can modify or transform data 
 
 these streams operate on  strings and Buffer (or Uint8Array) objects.
-streams are switched into object node when created, trying to switch an exisiting stream into object_nameode is not safe 
+streams are switched into object node when created, trying to switch an exisiting stream into objectMode is not safe 
 
 
 
@@ -3818,8 +3818,233 @@ file STREAM/concept_stream.js
       EXPRESS/route_handler_handler/do_i_need_third_party.js
 
 so whats basically happening here is that when nothing a triggering the readable and writable in streams 
-nothing happens but streams are waiting for data events, thats when they can get a listeners to do something that how they work 
+nothing happens but streams are waiting for data events, thats when they can get a listener to do something that how they work 
 
     write() and end() that are used to write data onto the stream.
     Readable streams use eventEmitter API  to notify application API when data is available to read off the stream 
-    
+
+
+
+Writable Streams
+
+uncommon examples 
+zlib streams
+crypto streams
+TCP sockets
+
+all writables streams use the  stream.Writable class  
+
+
+Writable  basics 
+
+const myStream = getWritableStreamSomehow();
+myStream.write('some data');
+myStream.write('some more data');
+myStream.end('done writing data');
+
+
+Class: stream.Writable
+
+Event: 'close'#
+Added in: v0.9.4
+
+when the streams and the underlying resources are closed, no more events 
+Not all Writable streams will emit the 'close' event.
+
+
+Event: 'drain'#
+Added in: v0.9.4
+If a call to stream.write(chunk) returns false this means the buffer is full
+when drain is emiitted, its okay to write again 
+file: STEAM/drain.js 
+
+
+Event: 'error'
+Added in: v0.9.4
+<Error>
+
+    its emitted when there is an error writing or piping data 
+    the listener callback  get an <Error> arg 
+
+    the stream is not closed when this happens 
+
+
+Event: 'finish'
+Added in: v0.9.4
+The 'finish' event is emitted after the stream.end() 
+and data is flushed to the underlying system 
+file: FS/event_finish.js
+
+
+        O
+N           a pipe is when one process (one way only ) sends info to another process
+        E
+
+Event: 'pipe'#
+Added in: v0.9.4
+src <stream.Readable> source stream that is piping to this writable
+The 'pipe' event is emitted when the stream.pipe()
+ method is called on a readable stream, adding this writable to its set of destinations.
+
+file: FS/event_pipe.js
+
+
+
+Event: 'unpipe'
+Added in: v0.9.4
+src <stream.Readable> The source stream that unpiped this writable
+The 'unpipe' event is emitted when the stream.unpipe()
+ method is called on a Readable stream, removing this Writable from its set of destinations.
+
+This is also emitted in case this Writable stream emits an error when a Readable stream pipes into it.
+
+file:FS/event_unpipe.js
+
+
+
+writable.cork()
+Added in: v0.11.2
+
+The writable.cork() method forces all written data to be buffered in memory.
+ the buffered data is flushed on stream.uncork or stream.end
+
+find write methods that use writable._writev()
+
+
+ this is written to avoid a situation where small chunks cause an internal buffer backup
+
+                                            O
+
+             writable.destroy([error])#
+            Added in: v8.0.0
+            error <Error>
+            Returns: <this>
+N                                                                                   D
+            Destroys the stream emits an 'error' & 'close' event 
+            any write() after results in err.code =ERR_STREAM_DESTROYED
+            dont override use  writable._destroy()
+
+                                                E
+
+
+
+                                                O
+
+
+                writable.end([chunk][, encoding][, callback])
+                chunk <string> | <Buffer> | <Uint8Array> | <any> 
+                Optional data to write. For streams not operating in object mode,
+                 chunk must be a string, Buffer or Uint8Array. For object mode streams, 
+                 chunk may be any JavaScript value other than null.
+N                                                                                                       D
+                encoding <string> The encoding if chunk is a string
+                callback <Function> Optional callback for when the stream is finished
+                Returns: <this>
+
+
+                Calling the writable.end() method signals that no more data will be written to the Writable. 
+                    you can write one more data chunk before the stream is closed
+                    the callback is a listene for the finsih event  
+                    file: STREAM/end.js 
+
+
+
+                                                E
+
+
+
+writable.setDefaultEncoding(encoding)
+The writable.setDefaultEncoding() method sets the default encoding for a Writable stream.
+
+
+
+
+writable.uncork()
+The writable.uncork() method flushes all data buffered 
+
+use 
+process.nextTick() to allow batching of the writable.write calls  
+
+        O
+N           batch is putting a list of commands into a file to be executed in that order 
+        E
+
+if writable.cork is called several times, writable.uncork() must be called the same amount of times 
+file: STREAM/uncork.js
+
+
+
+writable.writableHighWaterMark
+how many bytes in the queue ready to be written 
+this provides introspection data 
+
+
+        O
+N           introspection data is dynamic data at runtime  
+        E
+
+
+
+
+writable.write(chunk[, encoding][, callback])
+chunk <string> | <Buffer> | <Uint8Array> | <any> 
+Optional data to write. For streams not operating in object mode,
+ chunk must be a string, Buffer or Uint8Array. 
+For object mode streams, chunk may be any JavaScript value other than null.
+encoding <string> The encoding, if chunk is a string
+callback <Function> Callback for when this chunk of data is flushed
+Returns: <boolean> false if the stream need the caller to wait for the 'drain' 
+event otherwise, true 
+
+always add an 'error' listener here
+
+watch out for write() on streams where draining is not allowed
+    node allows it to fill to max mem usage
+        poor garbage collection and high RSS (the system doesnt get it back )
+
+
+        O
+N           RSS is residental set size, the amount of memory a process takes up in RAM 
+        E
+
+
+this aint good for Transform streams 
+
+
+A Writable stream in object mode will always ignore the encoding argument. it will write to the source with binary
+its up to the reader to decode us the .setDefaultEncoding METHOD to change the decoding 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <OBJECT></OBJECT>
+N               D
+        E
+
+What I take away from the Stream API
+all of Node is event-driven archtecture as claimed, 
+you can use what you know about ee their listeners and streams to make anything      
+fs.read & write are very very different from stream.read & write in purpose 
+stream objects should be decleared with const [const name]
+make sure proper procedures are in place before you work with streams or else you have memory leaks everywhere
+on the fs.WriteStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
