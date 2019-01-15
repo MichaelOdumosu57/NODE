@@ -15,10 +15,10 @@ console.log("logFnWrapper",logFnWrapper)
 
 
 // logs "log once" to the console and does not unbind the `once` event
-logFnWrapper.listener();
+// logFnWrapper.listener();
 
 // // logs "log once" to the console and removes the listener
-// logFnWrapper();
+logFnWrapper();
 emitter.emit('log');
 
 emitter.on('log', () => console.log('log persistently'));

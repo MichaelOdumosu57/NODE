@@ -1875,6 +1875,7 @@ Fires immediately after 'open'.
 writeStream.bytesWritten#
 Added in: v0.4.7
 The number of bytes written so far. Does not include data that is still queued for writing.
+bytesWritten only changes after the an async function call 
 
 writeStream.path#
 Added in: v0.1.93
@@ -3844,6 +3845,11 @@ myStream.end('done writing data');
 
 
 Class: stream.Writable
+if you do not understand look at STREAM/uncork.js and STREAM/drain.js
+every thing else is a part of what those two files do correctly
+use the cork mechanism and the drain event to optimize your writing 
+use the right balance of cork and drain so you dont buffer ofteren and het clogged buffers oftern
+
 
 Event: 'close'#
 Added in: v0.9.4
@@ -3975,7 +3981,7 @@ file: STREAM/uncork.js
 
 
 writable.writableHighWaterMark
-how many bytes in the queue ready to be written 
+the max nubmer of bytes for a queue
 this provides introspection data 
 
 
@@ -4007,7 +4013,9 @@ watch out for write() on streams where draining is not allowed
 N           RSS is residental set size, the amount of memory a process takes up in RAM 
         E
 
-
+        O
+N             make the close method a callback to write, it is very very quick with closing files 
+        E
 this aint good for Transform streams 
 
 
@@ -4048,3 +4056,4 @@ fs.read & write are very very different from stream.read & write in purpose
 stream objects should be decleared with const [const name]
 make sure proper procedures are in place before you work with streams or else you have memory leaks everywhere
 on the fs.WriteStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
+the setImmediate example I set in write_template.js stick with it you need your code to continue only after you setup your listenenrs 
