@@ -79,15 +79,14 @@ fs.open(file,mode, (err,fd) => {
               writer.write('don"t close yet')
               writer.cork();
               writer.write('lets see how we uncork')
-
-				process.nextTick(() => {
-				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)	
-				  	writer.uncork();
-				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)	
-				  	// The data will not be flushed until uncork() is called a second time.
-				  	writer.uncork();
-				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)
-				});
+      				process.nextTick(() => {
+      				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)	
+      				  	writer.uncork();
+      				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)	
+      				  	// The data will not be flushed until uncork() is called a second time.
+      				  	writer.uncork();
+      				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)
+      				});
 
 
 		      writer.write(`hello, #${data}!\n`,() =>{
