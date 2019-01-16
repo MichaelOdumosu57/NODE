@@ -4092,7 +4092,7 @@ N                                                                               
                     here readable.pipe, readable.resume() or attaching a data event
 
 
-                if you call readable.resume() without a data handler attached the data can get lost 
+                if you call readable.resume() without a data handler attached the data will get lost 
 
                 for .pause() unless all writables are unpiped, it may not work 
 
@@ -4176,6 +4176,7 @@ DESstroys the stream. after this readable releases any internal resources
 
  readable.isPaused()
  returns whether its paused or not 
+ STREAM/readable_pause.js
 
 
 
@@ -4238,10 +4239,16 @@ retunrs the highWaterMark value
 readable.readableLength
 proides amount of bytes queue to be read 
 
+
+
 readable.resume()
 makes a paused stream go back into flowing mode 
 can be used to fully consume the data, but have it un processed 
 does not work if there is a 'readable' listener
+STREAM/readable_pause.js
+
+
+
 
 readable.setEncoding(encoding)
 chages the encoding of the data chunks,
@@ -4303,6 +4310,12 @@ the 'close' event means the fd was closed not the stream
 use live fuctions instead of ES6 arrows to have more access to your API objects
 .close() emits the close event which automatically closes the fd, 
     this closes the stream and the fd it cant close one 
+you can use .pause()/.resume() with the data event handler 
+no need to .setEncoding its gives you utf8 most likely, check your eventEmitter it
+    could have given you ascii 
+when you pipe all data from readable goes into writable no need for a .write    
+    you can also use the data events to alse get data and the write pipe from the readable 
+
 
 WriteStream
 set autoClose to false, and close everyhting yourself
@@ -4324,3 +4337,8 @@ stream objects should be decleared with const [const name]
 make sure proper procedures are in place before you work with streams or else you have memory leaks everywhere
 on the fs.WriteStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
 the setImmediate example I set in write_template.js stick with it you need your code to continue only after you setup your listenenrs 
+
+
+
+
+learn about assertions, they can compare your files 

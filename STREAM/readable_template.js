@@ -88,7 +88,7 @@ fs.open(file,mode,(err,fd) =>{
 
 						if(!r_stream.readableFlowing){
 
-							console.log
+							console.log('flowing',r_stream.readableFlowing)
 							r_stream.resume()
 
 
@@ -108,6 +108,7 @@ fs.open(file,mode,(err,fd) =>{
 
 
 						r_stream.resume()
+						r_counter = 98
 
 
 					}
@@ -159,6 +160,7 @@ fs.open(file,mode,(err,fd) =>{
 				clearInterval(r_monitor)
 				console.log(r_response)
 				// r_stream.off('data',A)
+				// r_stream.close()
 				close_file(fd,r_stream)
 			})
 		})
