@@ -2,11 +2,12 @@ const fs = require('fs')
 const file = 'readable.txt'
 const mode = 'r'
 var r_response = '';
+var r_monitor
 
 const A =function(chunk){
-			setImmediate(() => {				
+			setImmediate(() => {
 				r_response += chunk
-				console.log(chunk,this.readableLength)
+				console.log(r_response,this.readableLength)
 			})	
 		}
 
@@ -14,7 +15,6 @@ const A =function(chunk){
 async function close_file(c_fd,r_s){
 
 		console.log(r_s)
-		clearInterval(r_monitor)
 		if(r_s != undefined){
 
 
@@ -75,18 +75,13 @@ fs.open(file,mode,(err,fd) =>{
 		})
 		// r_stream.setEncoding('utf8')
 
-		
-		
+
+
+
 		r_stream.on('data',A)
-		console.log("is r stream paused",r_stream.isPaused(),r_stream.readableFlowing)		
-		r_stream.pause()
-		console.log("is r stream paused",r_stream.isPaused(),r_stream.readableFlowing)
-		setTimeout(function(){
-			r_stream.resume()
-		},5000)
+
 		var r_counter  = 0
 		r_monitor =setInterval(function(){
-
 
 				if(r_stream.readableFlowing != undefined){
 
@@ -103,7 +98,7 @@ fs.open(file,mode,(err,fd) =>{
 				}
 
 
-				if(r_counter >= 5){
+				if(r_counter >= 100){
 
 
 					console.log('this is taking too long I"ll attempt to close the stream')
@@ -130,7 +125,7 @@ fs.open(file,mode,(err,fd) =>{
 				}
 
 
-				if(r_couter >= 7){
+				if(r_couter >= 110){
 
 
 					r_stream.push(null);
@@ -141,7 +136,7 @@ fs.open(file,mode,(err,fd) =>{
 				
 
 
-				if(r_counter >= 10){
+				if(r_counter >= 200){
 
 
 					console.log('were forced to destroy the stream, they should make a method for ending streams')
@@ -155,12 +150,13 @@ fs.open(file,mode,(err,fd) =>{
 
 
 
-		},20000)
+		},2000)
 
 
 		r_stream.on('end',()=>{
 			setImmediate(() => {
-				console.log('nothing more to read closing this stream')				
+				console.log('nothing more to read closing this stream')
+				clearInterval(r_monitor)
 				console.log(r_response)
 				// r_stream.off('data',A)
 				close_file(fd,r_stream)
@@ -169,6 +165,7 @@ fs.open(file,mode,(err,fd) =>{
 		r_stream.on('error',(err)=>{
 			setImmediate(() => {
 				console.log('an error occured attempting to close the stream',err)
+				clearInterval(r_monitor)
 				close_file(fd,r_stream)
 			})			
 		})
