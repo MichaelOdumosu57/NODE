@@ -5,3 +5,11 @@ writer.on('pipe', (src) => {
   assert.equal(src, reader);
 });
 reader.pipe(writer);
+
+
+
+const fs = require('fs');
+const readable = getReadableStreamSomehow();
+const writable = fs.createWriteStream('file.txt');
+// All the data from readable goes into 'file.txt'
+readable.pipe(writable);

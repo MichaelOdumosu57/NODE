@@ -341,6 +341,11 @@ N                                                                               
                  An attempt to bind a server (net, http, or https) to a local address 
                 failed due to another server on the local system already occupying that address.
 
+                EBADF (Bad file descriptor)
+                this means the file is closed  or
+                The fd has a wrong value, 
+
+
                 ECONNREFUSED (Connection refused): No connection could be made because
                  the target machine actively refused it. 
                 This usually results from trying to connect to a service that is inactive on the foreign host.
@@ -4066,39 +4071,242 @@ N                                                                               
             is switchwed to flow mode without a consumer data is lost 
             add a 'readable' listener to stop stream flow 
             remove 'readable' listener to start, but on if theres a 'data' event handler
+            file: STREAM/basic_readable.js
+                                            E
+
+
+
+
+                                            O
+
+                Three States
+
+
+                the readable stream is always in one of three states 
+
+                readable.readableFlowing === null
+                    here no data is generated and no mechanism for data consumption exists 
+                readable.readableFlowing === false
+                    here readable.unpipe(), readable.pause() or Bufffer backpressure is present 
+                readable.readableFlowing === true
+                    here readable.pipe, readable.resume() or attaching a data event
+
+
+                if you call readable.resume() without a data handler attached the data can get lost 
+
+                for .pause() unless all writables are unpiped, it may not work 
+
+                removing data handlers wont pause the stream somethines 
+
+N                                                                                                   D
+
+                Choose One API Style
+
+
+                dont combine the methods they deal with different project scale 
+                for simple task use .pipe     
+                for devs and API use 'readable'/.read(), or .pause(),resume()
+
 
                                             E
 
 
 
-Three States
+Class: stream.Readable
+
+Event: 'close'#
+Added in: v0.9.4
+The 'close' event is emitted when the stream and
+ any of its underlying resources (a file descriptor, for example) have been closed. 
+ The event indicates that no more events will be emitted,
+  and no further computation will occur.
+
+Not all Readable streams will emit the 'close' event.
 
 
-the readable stream is always in one of three states 
+                                                O
 
-readable.readableFlowing === null
-    here no data is generated and no mechanism for data consumption exists 
-readable.readableFlowing === false
-    here readable.unpipe(), readable.pause() or Bufffer backpressure is present 
-readable.readableFlowing === true
-    here readable.pipe, readable.resume() or attaching a data event
+                    Event: 'data'#
+                    Added in: v0.9.4
+                    chunk <Buffer> | <string> | <any> 
 
-
-Choose One API Style
-
-dont combine the methods they deal with different project scale 
-for simple task use .pipe     
-for devs and API use 'readable'/.read(), or .pause(),resume()
+                    in non object mode str or Buffer, in object 
+                    mode anything other than null 
+                    what happens is the readable gives ownership 
+                    of the chunk to a consumer default is buffer 
+                    it givrd the data chunk itself for the listener 
 
 
+                    Event: 'end'
+                    Added in: v0.9.4
+
+                    emitted when the data is completely consumed, 
+                    attach a consumer to fully consome the data 
+                    to emit this event 
+                    file STREAM/readable_end.js 
+
+N                                                                                        D                                                                              
+
+                    Event: 'error'#
+                    Added in: v0.9.4
+                    <Error>
+
+                    listeners gets the Error object 
+                    happens when there is an interenal failure or an invalid data chunk 
+
+
+                    Event: 'readable'
+                    emiited when data is ready to be ready from the stream, on coutnerpoint when 
+                    a listener for this event is added, the data gets sent to its internal buffer 
+
+                    it can also emit that the readable has read all data, emits before 'end'
+
+                    for reasons above don't ' use 'readable' and 'data' events together,
+                    'readable' takes precedence over 'data' 
+
+
+                                                E
+
+
+readable.destroy([error]) 
+DESstroys the stream. after this readable releases any internal resources 
+ Implementors should not override this method, but instead implement readable._destroy().
+
+
+
+ readable.isPaused()
+ returns whether its paused or not 
+
+
+
+ readable.pause()
+ turns flowing into paused, readable sensds data to intern buffer 
+ if there is a 'readable' listerner there is no effect 
+ file: STREAM/readable_pause.js
+
+
+
+                                    O
+
+        readable.pipe(destination[, options])
+        destination <stream.Writable> The destination for writing data
+        options <Object> Pipe options
+
+            end <boolean> End the writer when the reader ends. Default: true.
+        Returns: <stream.Writable> The destination, allowing for a 
+        chain of pipes if it is a Duplex or a Transform stream
+
+N         pipes its read data to a writable, the flow is                           D
+         managed so the writer is not owerwhelmed
+        file:STREAM/event_pipe.js
+
+        the method returns the destination so you can make a pipe chain 
+        file STREAM/pipe_chain.js
+
+        when the readable 'end' event is emitted, the writables end mthod are called 
+        look at the args above to disable this behavior
+
+        if the readable emits an error its up to the dev to close everything 
+
+                                    E
+
+
+
+readable.read([size])
+
+
+size <number> Optional argument to specify how much data to read.
+Returns: <string> | <Buffer> | <null> | <any>
+
+pull some data out of the internal buffer. to get strings use .setEncoding or 
+the readable = objectMode
+
+if size arg is omitted , null is returned until the stream has ended, 
+which will return the whole buffer 
+
+file STREAM/read.js 
+
+calling it in object mode always gives you one object, regardless of size 
+calling it after an 'end' event retunrs null and no errors 
+
+
+
+readable.readableHighWaterMark
+Added in: v9.3.0
+retunrs the highWaterMark value 
+
+readable.readableLength
+proides amount of bytes queue to be read 
+
+readable.resume()
+makes a paused stream go back into flowing mode 
+can be used to fully consume the data, but have it un processed 
+does not work if there is a 'readable' listener
+
+readable.setEncoding(encoding)
+chages the encoding of the data chunks,
+change this if you feel that the stream might have to deal with
+ compmlex chars not healthy for the buffer  
+
+
+                                    O
+
+             readable.unpipe([destination])
+             destination <stream.Writable> Optional 
+             specific stream to unpipe
+
+N            no dest                                            D
+                unpipes all Writables 
+            dest no pipe
+                does nothing 
+
+            file: STREAM/readable_unpipe.js 
+
+                                    E
+
+
+readable.unshift(chunk)
+chunk <Buffer> | <Uint8Array> | <string> | <any> 
+OBJECT mode anythings 
+non-OBJECT mode  <Buffer> | <Uint8Array> | <string> 
+useful when inserting into files 
+
+it pushes a chunk back into the internal queue, useful for dynamic writes to consumers
+cannot be called after the 'end' method or an error is thrown 
+
+if you use it often, use the Transform API instead 
+FILE:STREAM/readable_unshift.js 
+
+when stream.push(chunk) happens, there is order so the reading state is reset while a stream.read is happening
+so the buffer is updated properly  
+
+if you do  stream.unshift(chunk)  while a read operation is occuring, 
+the internal buffer does not get reset and bad things happen 
+
+
+
+readable.wrap(stream)
+Added in: v0.9.4
+
+a compatiblity option that makes a new Readable stream with the old data source where a stream.pause()
+method has been called on a legacy stream 
 
 
 
 
+ReadStream tips 
+write a montior that eventually destorys the stream if it does not close itself
+set autoClose to false, and close everyhting yourself
+make the end listneer do all your closing work in your project or codeblock 
+set the encoding to utf8 .setEncoding('utf8') if you dont want buffer 
+the 'close' event means the fd was closed not the stream 
+use live fuctions instead of ES6 arrows to have more access to your API objects
+.close() emits the close event which automatically closes the fd, 
+    this closes the stream and the fd it cant close one 
 
-
-
-
+WriteStream
+set autoClose to false, and close everyhting yourself
+set the encoding to utf8 to get string instread of beuffer, .setDefaultEncoding('utf8')
 
 
 
