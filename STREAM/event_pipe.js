@@ -1,6 +1,6 @@
 const fs = require('fs')
 // const assert = require('assert')
-const file = 'readable.txt'
+const file = 'r.txt'
 const mode = 'r'
 const w_file = "./w.txt"
 const w_mode = 'w'
@@ -8,11 +8,32 @@ var ww_fd;
 var rr_fd;
 var r_response = '';
 var r_monitor =null 
+var unpiped_stream;
+var piping = true
 
 const reading_file =function(chunk){
 			setImmediate(() => {
-				r_response += chunk
-				console.log(r_response,this.readableLength)
+				// r_response += chunk
+				if(this.bytesRead > 10  && this.bytesRead < 4500000 && piping){
+					this.unpipe(unpiped_stream)
+					console.log('unpiped for a bit did I pipe some info back or no, did the data event stop')
+					// this.pipe(unpiped_stream)
+					piping =false
+					// if you use setTimeout here, how fast this stream can go can beat ya 
+					
+				} 
+
+
+				else if(this.bytesRead > 48000000 && !piping){
+
+					piping = true
+					console.log('pipiing back')
+					this.pipe(unpiped_stream,{end:false})
+					// now you can see the difference in files 
+					//manipulate this code block to see the difference in readfile and write file sizes
+
+				}
+				console.log('length',this.bytesRead)
 			})	
 		}
 
@@ -130,7 +151,7 @@ fs.open(file,mode,(err,fd) =>{
 				ww_fd = w_fd
 				console.log('write file opened')
 		        const w_stream = fs.createWriteStream(w_file,{		              
-		              start:55,
+		              start:0,
 		              fd:ww_fd,
 		              autoClose:false		              
 		        })		
@@ -153,8 +174,8 @@ fs.open(file,mode,(err,fd) =>{
 				});		               
 		        console.log('writable stream intializaed')						
 				const r_stream = fs.createReadStream(file,{
-					start:126,
-					end:2237,
+					start:0,
+					// end:2237,
 					fd:fd,	
 					autoClose:false	
 				})
@@ -251,7 +272,7 @@ fs.open(file,mode,(err,fd) =>{
 				},40000)
 				console.log('readable stream intializaed')
 				setImmediate(() =>{
-					r_stream.pipe(w_stream,{end:false})					
+					unpiped_stream = r_stream.pipe(w_stream,{end:false})					
 				})
 
 

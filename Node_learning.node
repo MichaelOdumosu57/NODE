@@ -3765,10 +3765,10 @@ refer to this file and comment and uncooment different commands to see potential
 to see what function is in the array before you call it 
 if several listeners 
 
-    emitter._events.log[int].listener.toString()
+    emitter._events.['event name'][[int]].listener.toString()
 
 for one listener    
-    emitter._events.log.listener.toString())
+    emitter._events.['event name'].listener.toString())
 file: EVENTS/raw_listeners.js
 
 
@@ -4278,7 +4278,7 @@ N            no dest                                            D
                 unpipes all Writables 
             dest no pipe
                 does nothing 
-
+                if there is a data event , data still gets sent to be thrown away
             file: STREAM/readable_pipe.js 
 
                                     E
@@ -4343,7 +4343,9 @@ use the cork mechanism and the drain event to optimize your writing
 use the right balance of cork and drain so you dont buffer ofteren and get clogged buffers oftern
 functions have an arguments object that return an array of the parameter use this to your advantage
     arguments.length
-
+when using writable from an arguments object from a function, each index is a circular object, make sure you use
+    JSON.stringify(arguments[2],circular_replacer()) if you need to hold on to the data in those arguments 
+if you have problems make sure you are not calling end
 
 
         <OBJECT></OBJECT>
