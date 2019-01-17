@@ -2,6 +2,7 @@ const fs = require('fs')
 const file = 'readable.txt'
 const mode = 'r'
 var r_response = '';
+var r_monitor;
 
 const A =function(chunk){
 			setImmediate(() => {				
@@ -156,8 +157,6 @@ fs.open(file,mode,(err,fd) =>{
 
 
 		},20000)
-
-
 		r_stream.on('end',()=>{
 			setImmediate(() => {
 				console.log('nothing more to read closing this stream')				

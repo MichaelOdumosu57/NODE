@@ -1,2 +1,9 @@
 things I like to see in node
 making developer aware if their streams are properly closed and are not taking up memory and are not affecting the system in a significant way when not in use
+
+express doesn't want me to use process.on('uncaughtException') to shut things down is this an internal problem or a logic problem or else how do I handle async errors that have nothing to handler their erros with like
+ex.
+	
+	y = i+ 7// ERR i is undefined
+
+if we had an general ErrorHandler object in node  async code would be so much easier 	

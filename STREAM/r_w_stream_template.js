@@ -14,26 +14,25 @@ var r_monitor = null
 var r_interval = 40000
 var r_counter  = 0
 
-// r_e_r - readable_event_readable
+
+
+
+const reading_file = a_l(function(){
+				// r_response += chunk
+				console.log('arg amount below')
+				console.log(arguments.length)
+				console.log(arguments[0])
+				console.log(arguments[1].readableLength)		
+				console.log(arguments[1].readableBuffer)		
+})
+
 const r_e_r = a_l(function(){
 				  let r_e_r_chunk;
 				  var r_e_r_size = 1000
-				  // if no data event, it grabs everything and partials if the byte size does not divide well
-				  // if data event has a listener after this it wont get any data
-				  // same with after
 				  var readable = arguments[1]  
 				  while (null !== (chunk = readable.read(r_e_r_size))) {
 				    	console.log(`Received ${chunk.length} bytes of data.\n this is from the 'readable' event - read() implementation`);
 				  }
-})
-
-
-const reading_file = a_l(function(){				
-				console.log('if the readable event was off as the remaining data event you see me a lot or if it was on you see me little for the api')
-				console.log(arguments.length)
-				// console.log(arguments[0])
-				console.log(arguments[1].readableLength)
-				console.log(arguments[1].readableBuffer)				
 })
 
 
@@ -132,39 +131,84 @@ fs.open(r_file,r_mode,(r_err,r_fd) =>{
 
 	else{
 
-
 		rr_fd = r_fd;
-		console.log("read file opened")
-		const r_stream = fs.createReadStream(r_file,{
-			start:126,
-			end:2237,
-			fd:rr_fd,	
-			autoClose:false	
+		console.log('read file opened')
+		fs.open(w_file,w_mode,(w_err,w_fd) =>{
+
+
+			if(w_err){
+
+
+				close_file(rr_fd)				
+
+
+			}
+
+
+			else{
+
+
+				ww_fd = w_fd
+				console.log('write file opened')
+		        const w_stream = fs.createWriteStream(w_file,{		              
+		              start:55,
+		              fd:ww_fd,
+		              autoClose:false		              
+		        })		
+		        w_stream.setDefaultEncoding('utf8')
+				w_stream.on('error', B);				
+		        w_stream.on('finish',()=>{
+		          setImmediate(() => {
+		              console.log('All writes are now complete. writestream closed');
+		              close_file(ww_fd,'write_file',w_file)
+
+		          });
+		        })		 
+				w_stream.on('pipe', (src) => {
+				  console.error('something is piping into the writer');
+				  // assert.equal(src, r_stream);
+				});
+				w_stream.on('unpipe', (src) => {
+				  console.error('Something has stopped piping into the writer.');
+				  // assert.equal(src, r_stream);
+				});		               
+		        console.log('writable stream intializaed')					
+				const r_stream = fs.createReadStream(r_file,{
+					start:126,
+					end:2237,
+					fd:rr_fd,	
+					autoClose:false	
+				})
+				r_stream.on('data',reading_file)
+				r_stream.on('error', C);
+				r_stream.on('end',()=>{
+					setImmediate(() => {
+						console.log('nothing more to read closing  readstream')
+						// console.log(r_response)
+						w_stream.end()
+						close_file(rr_fd,'read_file',r_file)
+					})
+				})			
+				r_stream.on('close',()=>{
+					setImmediate(() =>{
+						console.log("looks like the fd was closed by the stream ")
+					})
+				})									
+				r_monitor = read_monitor(r_stream,r_counter,r_interval)
+				console.log('readable stream intializaed')
+				setImmediate(() =>{
+					r_stream.pipe(w_stream,{end:false})					
+				})
+
+
+
+							
+			}
+
+
 		})
-		r_stream.on('error', C);
-		// r_stream.on('readable', r_e_r ); 
-		// before the data event there  is also nothing to read	
-		r_stream.on('data',reading_file)
-		r_stream.on('end',()=>{
-			setImmediate(() => {
-				console.log('nothing more to read closing  readstream')
-				// console.log(r_response)
-				close_file(rr_fd,'read_file',r_file)
-			})
-		})			
-		r_stream.on('readable', r_e_r ); 
-		// after the data event it emits but there is nothing for it to read				
-		r_stream.on('close',()=>{
-			setImmediate(() =>{
-				console.log("looks like the fd was closed by the stream ")
-			})
-		})									
-		r_monitor = read_monitor(r_stream,r_counter,r_interval)
-		console.log('readable stream intializaed')
 
 
-					
 	}
-
 
 })

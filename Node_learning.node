@@ -2266,7 +2266,7 @@ N                                                                               
                 options <string> | <Object>
 
                     flags <string> See support of file system flags.
-                     Default: '2'.
+                     Default: 'w'.
                     encoding <string> Default: null
                     fd <integer> Default: null                                        
                     mode <integer> Default: 0o666
@@ -2398,7 +2398,7 @@ N               D
         options <Object>
 
         bigint <boolean> Whether the numeric values in the returned
-         fs.Stats object should be bigint. Default: false.
+        fs.Stats object should be bigint. Default: false.
         callback <Function>
 
         err <Error>
@@ -3552,7 +3552,9 @@ Returns: <EventEmitter>
 
 emitter.emit(eventName[, ...args])
 returns boolean if event had listeners 
-args provides args for all listeners idk how they work for multiple listneners
+args provides args for all listeners 
+for multiple listeners look below for the raw listeners functionality 
+
 
                                                 O
 
@@ -3697,7 +3699,7 @@ unlike what newListener and removeListener it gives you only [ [Function] ]
                     of the specified eventName.
 
                 try not to use with with common events, use it
-                 with very custom events or check all 
+                 with very custom events or  check all 
                  the modules or dont use it 
 
                                         E
@@ -3759,6 +3761,14 @@ eventName <string> | <symbol>
 Returns: <Function[]>
 what happens here is it holds on to your listener and can do really cool things
 refer to this file and comment and uncooment different commands to see potential 
+
+to see what function is in the array before you call it 
+if several listeners 
+
+    emitter._events.log[int].listener.toString()
+
+for one listener    
+    emitter._events.log.listener.toString())
 file: EVENTS/raw_listeners.js
 
 
@@ -3768,7 +3778,8 @@ N               D
         E
 what I take away from the emitter API 
 its the next level which allows you to do so much as a programmer  
-always write your listenenrs as constants as in remove_listener       
+always write your listenenrs as constants as in remove_listener   
+if you manipulate them, make your code very very modular to preseve memory    
 
 
 
@@ -3894,7 +3905,7 @@ Event: 'finish'
 Added in: v0.9.4
 The 'finish' event is emitted after the stream.end() 
 and data is flushed to the underlying system 
-file: FS/event_finish.js
+file: STREAM/event_finish.js
 
 
         O
@@ -3907,7 +3918,7 @@ src <stream.Readable> source stream that is piping to this writable
 The 'pipe' event is emitted when the stream.pipe()
  method is called on a readable stream, adding this writable to its set of destinations.
 
-file: FS/event_pipe.js
+file: STREAM/event_pipe.js
 
 
 
@@ -3918,8 +3929,8 @@ The 'unpipe' event is emitted when the stream.unpipe()
  method is called on a Readable stream, removing this Writable from its set of destinations.
 
 This is also emitted in case this Writable stream emits an error when a Readable stream pipes into it.
-
-file:FS/event_unpipe.js
+make sure you check for this 
+FILE: STREAM/event_pipe.js
 
 
 
@@ -3930,13 +3941,14 @@ The writable.cork() method forces all written data to be buffered in memory.
  the buffered data is flushed on stream.uncork or stream.end
 
 find write methods that use writable._writev()
+file: STREAM/uncork.js
 
 
  this is written to avoid a situation where small chunks cause an internal buffer backup
 
                                             O
 
-             writable.destroy([error])#
+            writable.destroy([error])#
             Added in: v8.0.0
             error <Error>
             Returns: <this>
@@ -4156,7 +4168,7 @@ N                                                                               
 
 
                     Event: 'readable'
-                    emiited when data is ready to be ready from the stream, on coutnerpoint when 
+                    emiited when data is ready to be emitted from the stream, on coutnerpoint when 
                     a listener for this event is added, the data gets sent to its internal buffer 
 
                     it can also emit that the readable has read all data, emits before 'end'
@@ -4267,7 +4279,7 @@ N            no dest                                            D
             dest no pipe
                 does nothing 
 
-            file: STREAM/readable_unpipe.js 
+            file: STREAM/readable_pipe.js 
 
                                     E
 
@@ -4305,23 +4317,32 @@ ReadStream tips
 write a montior that eventually destorys the stream if it does not close itself
 set autoClose to false, and close everyhting yourself
 make the end listneer do all your closing work in your project or codeblock 
-set the encoding to utf8 .setEncoding('utf8') if you dont want buffer 
+set the encoding to utf8 .setEncoding('buffer') if you dont want string 
 the 'close' event means the fd was closed not the stream 
-use live fuctions instead of ES6 arrows to have more access to your API objects
+use anonymous fuctions instead of ES6 arrows to have more access to your API objects
+    like [ this ] 
 .close() emits the close event which automatically closes the fd, 
     this closes the stream and the fd it cant close one 
 you can use .pause()/.resume() with the data event handler 
 no need to .setEncoding its gives you utf8 most likely, check your eventEmitter it
     could have given you ascii 
 when you pipe all data from readable goes into writable no need for a .write    
-    you can also use the data events to alse get data and the write pipe from the readable 
+    you can also use the data events along with  pipe to also 
+    get data and the write pipe from the readable in the same process!
 
 
 WriteStream
 set autoClose to false, and close everyhting yourself
-set the encoding to utf8 to get string instread of beuffer, .setDefaultEncoding('utf8')
-
-
+set the encoding to utf8 to get string instread of buffer, .setDefaultEncoding('utf8')
+use writable.writableBuffer or readable.readableBuffer to access the internal buffer 
+    writable.writableBuffer has buffer chunk even if you set encoding
+    they come as a linked list, with a chunk next property holding the next chunk 
+if you do not understand WriteStream itself look at STREAM/uncork.js and STREAM/drain.js
+    every thing else is a part of what those two files do correctly
+use the cork mechanism and the drain event to optimize your writing 
+use the right balance of cork and drain so you dont buffer ofteren and get clogged buffers oftern
+functions have an arguments object that return an array of the parameter use this to your advantage
+    arguments.length
 
 
 
@@ -4335,9 +4356,9 @@ you can use what you know about ee their listeners and streams to make anything
 fs.read & write are very very different from stream.read & write in purpose 
 stream objects should be decleared with const [const name]
 make sure proper procedures are in place before you work with streams or else you have memory leaks everywhere
-on the fs.WriteStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
+on the fs.WriteStream & fs.ReadStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
 the setImmediate example I set in write_template.js stick with it you need your code to continue only after you setup your listenenrs 
-
+refer to STREAM/event_pipe.js, an excellent source of how node applications should be modeled
 
 
 

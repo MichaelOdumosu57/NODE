@@ -73,12 +73,7 @@ fs.open(file,mode,(err,fd) =>{
 			autoClose:false	
 		})
 		// r_stream.setEncoding('utf8')
-
-
-
-
 		r_stream.on('data',A)
-
 		var r_counter  = 0
 		var r_monitor =setInterval(function(){
 
@@ -87,7 +82,7 @@ fs.open(file,mode,(err,fd) =>{
 
 						if(!r_stream.readableFlowing){
 
-							console.log
+							console.log("flowing?", r_stream.readableFlowing)
 							r_stream.resume()
 
 
@@ -100,7 +95,7 @@ fs.open(file,mode,(err,fd) =>{
 				if(r_counter >= 100){
 
 
-					console.log('this is taking too long I"ll attempt to close the stream')
+					console.log('this is taking too long I might attempt to close the stream')
 
 
 					if(r_stream.isPaused()){
@@ -150,13 +145,11 @@ fs.open(file,mode,(err,fd) =>{
 
 
 		},2000)
-
-
 		r_stream.on('end',()=>{
 			setImmediate(() => {
 				console.log('nothing more to read closing this stream')
 				clearInterval(r_monitor)
-				console.log(r_response)
+				// console.log(r_response)
 				r_stream.off('data',A)
 				// r_stream.close();
 				close_file(fd,r_stream)

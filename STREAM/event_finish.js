@@ -6,7 +6,7 @@ var f_fd;// file descriotopor for thes teram error to close the file
 const A = function(err){
             setImmediate(() => {
                
-                console.log('error thrown close this stream ',err) 
+                console.log('error thrown close this writestream ',err) 
                 this.end()
                 fs.close(f_fd, (err) => {
 
@@ -15,7 +15,7 @@ const A = function(err){
 
 
                         console.error(file,fd)
-                        console.log("close me ")
+                        console.log("close this write file me ")
 
                         
                     }
@@ -64,7 +64,7 @@ fs.open(file,mode, (err,fd) => {
         console.log('wriatbe stream created')
         writer.on('finish',()=>{
           setImmediate(() => {
-              console.log('All writes are now complete.');
+              console.log('All writes are now complete. closing writeStream');
           });
         })
 
@@ -76,6 +76,8 @@ fs.open(file,mode, (err,fd) => {
             for (let i = 0; i < 1; i++) {
                   writer.write(`hello, #${i}!\n`,() =>{
                       writer.end('This is the end\n');
+                      // reallly this close method should be a callaback to writer.end, 
+                      // which also is a listener to the finish event since .end triggers it 
                       fs.close(fd, (err) => {
 
 

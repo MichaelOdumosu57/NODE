@@ -4,6 +4,10 @@ class MyEmitter extends EventEmitter {}
 
 const emitter = new EventEmitter();
 emitter.once('log', () => console.log('log once'));
+// emitter.once('log', () => console.log('log twice'));
+// console.log(emitter._events.log[1].listener.toString())
+// to see the actual function you put there
+console.log(emitter._events.log.listener.toString())
 
 
 // Returns a new Array with a function `onceWrapper` which has a property
@@ -15,10 +19,11 @@ console.log("logFnWrapper",logFnWrapper)
 
 
 // logs "log once" to the console and does not unbind the `once` event
-// logFnWrapper.listener();
+// logFnWrapper != undefied ? logFnWrapper.listener() : listeners[0].listener()
 
 // // logs "log once" to the console and removes the listener
-logFnWrapper();
+logFnWrapper != undefined ? logFnWrapper(): listeners[0]()
+
 emitter.emit('log');
 
 emitter.on('log', () => console.log('log persistently'));

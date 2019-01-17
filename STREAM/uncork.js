@@ -66,13 +66,10 @@ fs.open(file,mode, (err,fd) => {
         console.log('wriatbe stream created')
         writer.on('finish',()=>{
           setImmediate(() => {
-              console.log('All writes are now complete.');
+              console.log('All writes are now complete. closing writeStream');
           });
         })
-
         writer.on('error', A);
-
-
         setImmediate(() => {
               console.log(writer.eventNames(),writer.encoding)
               writer.cork();
@@ -80,44 +77,43 @@ fs.open(file,mode, (err,fd) => {
               writer.cork();
               writer.write('lets see how we uncork')
       				process.nextTick(() => {
-      				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)	
+      				  	console.log(writer.writableHighWaterMark, writer.bytesWritten,writer.writableBuffer)	
       				  	writer.uncork();
-      				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)	
+      				  	console.log(writer.writableHighWaterMark, writer.bytesWritten,writer.writableBuffer)	
       				  	// The data will not be flushed until uncork() is called a second time.
       				  	writer.uncork();
       				  	console.log(writer.writableHighWaterMark, writer.bytesWritten)
       				});
 
 
-		      writer.write(`hello, #${data}!\n`,() =>{
-		      	  console.log(writer.writableHighWaterMark, writer.bytesWritten)	
-		          writer.end('This is the end\n');
-		          console.log(writer.writableHighWaterMark, writer.bytesWritten)
-		          fs.close(fd, (err) => {
+  		      writer.write(`hello, #${data}!\n`,() =>{
+  		      	  console.log(writer.writableHighWaterMark, writer.bytesWritten)	
+  		          writer.end('This is the end\n');
+  		          console.log(writer.writableHighWaterMark, writer.bytesWritten,writer.writableBuffer)
+  		          fs.close(fd, (err) => {
 
 
-		            if (err){
+    		            if (err){
 
 
-		                console.error(file,fd)
-		                console.log("close me ")
+    		                console.error(file,fd)
+    		                console.log("close me ")
 
-		                
-		            }
-
-
-		            else{
+    		                
+    		            }
 
 
-		                console.log("file closed")
-		                                 
+    		            else{
 
 
-		           }
+    		                console.log("file closed")
+    		                                 
+
+    		           }
 
 
-		          });                         
-		      });
+    		        });                         
+  		    });
 
             
         })
