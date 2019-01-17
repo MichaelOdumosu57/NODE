@@ -13,13 +13,14 @@ console.log(emitter._events.log.listener.toString())
 // Returns a new Array with a function `onceWrapper` which has a property
 // `listener` which contains the original listener bound above
 const listeners = emitter.rawListeners('log');
-const logFnWrapper = listeners[0];
+const logFnWrapper = listeners[0];  //comment and uncomment line below to see you dont event need to assign things
+// var logFnWrapper
 console.log("listeners",listeners)
-console.log("logFnWrapper",logFnWrapper)
+// console.log("logFnWrapper",logFnWrapper)
 
 
 // logs "log once" to the console and does not unbind the `once` event
-// logFnWrapper != undefied ? logFnWrapper.listener() : listeners[0].listener()
+// logFnWrapper != undefined ? logFnWrapper.listener() : listeners[0].listener()
 
 // // logs "log once" to the console and removes the listener
 logFnWrapper != undefined ? logFnWrapper(): listeners[0]()

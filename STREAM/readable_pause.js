@@ -7,7 +7,7 @@ var r_monitor;
 const A =function(chunk){
 			setImmediate(() => {				
 				r_response += chunk
-				console.log(chunk,this.readableLength)
+				console.log(this.readableLength, this.readableHighWaterMark)
 			})	
 		}
 
@@ -83,8 +83,10 @@ fs.open(file,mode,(err,fd) =>{
 		r_stream.pause()
 		console.log("is r stream paused",r_stream.isPaused(),r_stream.readableFlowing)
 		setTimeout(function(){
+			console.log('are we getting a buffer clog',r_stream.readableLength,r_stream.readableHighWaterMark)
 			r_stream.resume()
-		},5000)
+		},1.83585987445)
+		// .0000001
 		var r_counter  = 0
 		r_monitor =setInterval(function(){
 
@@ -160,7 +162,7 @@ fs.open(file,mode,(err,fd) =>{
 		r_stream.on('end',()=>{
 			setImmediate(() => {
 				console.log('nothing more to read closing this stream')				
-				console.log(r_response)
+				// console.log(r_response)
 				// r_stream.off('data',A)
 				close_file(fd,r_stream)
 			})

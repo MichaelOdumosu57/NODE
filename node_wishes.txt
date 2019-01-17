@@ -7,3 +7,7 @@ ex.
 	y = i+ 7// ERR i is undefined
 
 if we had an general ErrorHandler object in node  async code would be so much easier 	
+
+n linux 16.04.5 the a,c,m, and birth time(Ms)? are reported wrong notify the developer about this 
+
+also express.static uis not working

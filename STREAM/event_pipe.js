@@ -1,4 +1,6 @@
 const fs = require('fs')
+const async_listener = require('./async_listener.js')
+const a_l = async_listener()
 // const assert = require('assert')
 const file = 'r.txt'
 const mode = 'r'
@@ -11,12 +13,24 @@ var r_monitor =null
 var unpiped_stream;
 var piping = true
 
+
+
+
+
+const toss_data = a_l(function(){
+
+	console.log('tossing data')	
+
+})
+
 const reading_file =function(chunk){
 			setImmediate(() => {
 				// r_response += chunk
 				if(this.bytesRead > 10  && this.bytesRead < 4500000 && piping){
 					this.unpipe(unpiped_stream)
 					console.log('unpiped for a bit did I pipe some info back or no, did the data event stop')
+					this.pause()
+					console.log('do I lose data now that I have paused the stream')				
 					// this.pipe(unpiped_stream)
 					piping =false
 					// if you use setTimeout here, how fast this stream can go can beat ya 
@@ -179,7 +193,7 @@ fs.open(file,mode,(err,fd) =>{
 					fd:fd,	
 					autoClose:false	
 				})
-				r_stream.on('data',reading_file)
+				// r_stream.on('data',reading_file)
 				r_stream.on('error', C);
 				r_stream.on('end',()=>{
 					setImmediate(() => {
@@ -272,8 +286,28 @@ fs.open(file,mode,(err,fd) =>{
 				},40000)
 				console.log('readable stream intializaed')
 				setImmediate(() =>{
-					unpiped_stream = r_stream.pipe(w_stream,{end:false})					
+					unpiped_stream = r_stream.pipe(w_stream,{end:false})
+
 				})
+				setTimeout(() => {
+					if(r_stream.bytesRead > 100  && piping){
+						console.log(r_stream.bytesRead > 100  && piping,r_stream.bytesRead)
+						// r_stream.on('data',toss_data)
+						r_stream.unpipe(unpiped_stream)
+						r_stream.pause()
+						console.log("is the stream flowing",r_stream.readableFlowing)
+
+						console.log('I unpiped and paused the stream hopefully on resume I get my data back')
+						setTimeout(function(){
+							console.log('did the readstream stop with me',r_stream.bytesRead)
+							console.log('are we getting a buffer clog',r_stream.readableLength,r_stream.readableHighWaterMark)
+							// r_stream.off('data',toss_data)
+							r_stream.pipe(unpiped_stream,{end:false})
+							r_stream.resume()	
+						},20000)	
+						piping = false
+					}	
+				},3)					
 
 
 

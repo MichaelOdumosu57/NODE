@@ -1680,43 +1680,9 @@ this value is determined by the options.encoding passed to fs.readdir() or fs.re
 
 
 
-        O
-N               D
-        E
 
 
-Class: fs.ReadStream
 
-A successful call to fs.createReadStream() 
-will return a new fs.ReadStream object.
-
-All fs.ReadStream objects are Readable Streams.
-
-Event: 'close'#
-Added in: v0.1.93
-Emitted when the fs.ReadStream's underlying file descriptor has been closed.
-
-Event: 'open'#
-Added in: v0.1.93
-fd <integer> Integer file descriptor used by the ReadStream.
-Emitted when the fs.ReadStream's file descriptor has been opened.
-
-Event: 'ready'#
-Added in: v9.11.0
-Emitted when the fs.ReadStream is ready to be used.
-Fires immediately after 'open'.
-
-readStream.bytesRead#
-Added in: v6.4.0
-<number>
-The number of bytes that have been read so far.
-
-readStream.path#
-Added in: v0.1.93
-<string> | <Buffer>
-The path to the file the stream is reading from as specified in the first argument to fs.createReadStream(). 
-If path is passed as a string, then readStream.path will be a string. If path is passed as a Buffer, 
-then readStream.path will be a Buffer.
 
 
 
@@ -1860,38 +1826,6 @@ N                if you make a change to one time value on               D
                                     E
 
 
-        O
-N               D
-        E
-
-Class: fs.WriteStream#
-Added in: v0.1.93
-WriteStream is a Writable Stream.
-
-Event: 'close'#
-Added in: v0.1.93
-Emitted when the WriteStream's underlying file descriptor has been closed.
-
-Event: 'open'#
-Added in: v0.1.93
-fd <integer> Integer file descriptor used by the WriteStream.
-Emitted when the WriteStream's file is opened.
-
-Event: 'ready'#
-Added in: v9.11.0
-Emitted when the fs.WriteStream is ready to be used.
-Fires immediately after 'open'.
-
-writeStream.bytesWritten#
-Added in: v0.4.7
-The number of bytes written so far. Does not include data that is still queued for writing.
-bytesWritten only changes after the an async function call 
-
-writeStream.path#
-Added in: v0.1.93
-The path to the file the stream is writing to as specified in the first argument to 
-fs.createWriteStream(). If path is passed as a string, then writeStream.path will be a string.
- If path is passed as a Buffer, then writeStream.path will be a Buffer.
 
 
         O
@@ -1948,6 +1882,7 @@ N               D
                                 
 
                 fs.appendFile(path, data[, options], callback)
+                fs.appendFileSync(path, data[, options])
                 
                 path <string> | <Buffer> | <URL> | <number> filename or file descriptor
                 data <string> | <Buffer>
@@ -1987,35 +1922,6 @@ N               find files that are open with a file descriptor with the lsof co
 
 
 
-                                                   O
-
-
-
-
-                fs.appendFileSync(path, data[, options])
-
-                path <string> | <Buffer> | <URL> | <number> filename or file descriptor
-                data <string> | <Buffer>
-                options <Object> | <string>
-
-                    encoding <string> | <null> Default: 'utf8'
-                    mode <integer> Default: 0o666
-                    flag <string> See support of file system flags. Default: 'a'.
-N                                                                                                   D
-
-                sync version
-
-                The path may be specified as a numeric file descriptor 
-                that has been opened for appending (using fs.open() or fs.openSync()). 
-                The file descriptor will not be closed automatically.
-
-                file: FS/fs_appendFile_sync.js
-
-
-
-                                                E
-
-
 
 
         O
@@ -2027,6 +1933,7 @@ N               D
 
 
 fs.chmod(path, mode, callback)
+fs.chmodSync(path, mode)
 
 path <string> | <Buffer> | <URL>
 mode <integer>
@@ -2094,12 +2001,9 @@ on windows on write permission can be changed , and there is no usr grp oth dist
 +--------+------------------------+    
 
 
-fs.chmodSync(path, mode)
 
-path <string> | <Buffer> | <URL>
-mode <integer>
 
-sync version of fs.chmod
+
 
 
 
@@ -2168,7 +2072,7 @@ N               D
                 flags <number> modifiers for copy operation. Default: 0.
                     callback <Function>
 
-                async copy src -> dest, callback only takes error arg, if something foes wrong after opening  
+                async copy src -> dest, callback only takes error arg, if something goes wrong after opening  
                 the destination for writing Node.js will attempt to close the  file
 N                                                                                                                               D
                 flags in an interger telling the method how to copy
@@ -2247,6 +2151,38 @@ N                                                                               
                       mode sets file permission and sticky bits only if the file was created 
                       if options is a string it specifies encoding   
 
+Class: fs.ReadStream
+
+A successful call to fs.createReadStream() 
+will return a new fs.ReadStream object.
+
+All fs.ReadStream objects are Readable Streams.
+
+Event: 'close'#
+Added in: v0.1.93
+Emitted when the fs.ReadStream's underlying file descriptor has been closed.
+
+Event: 'open'#
+Added in: v0.1.93
+fd <integer> Integer file descriptor used by the ReadStream.
+Emitted when the fs.ReadStream's file descriptor has been opened.
+
+Event: 'ready'#
+Added in: v9.11.0
+Emitted when the fs.ReadStream is ready to be used.
+Fires immediately after 'open'.
+
+readStream.bytesRead#
+Added in: v6.4.0
+<number>
+The number of bytes that have been read so far.
+
+readStream.path#
+Added in: v0.1.93
+<string> | <Buffer>
+The path to the file the stream is reading from as specified in the first argument to fs.createReadStream(). 
+If path is passed as a string, then readStream.path will be a string. If path is passed as a Buffer, 
+then readStream.path will be a Buffer.
 
                                             E   
 
@@ -2293,6 +2229,39 @@ N                                                                               
                       mode sets file permission and sticky bits only if the file was created 
                       if options is a string it specifies encoding    
 
+        O
+N               D
+        E
+
+Class: fs.WriteStream#
+Added in: v0.1.93
+WriteStream is a Writable Stream.
+
+Event: 'close'#
+Added in: v0.1.93
+Emitted when the WriteStream's underlying file descriptor has been closed.
+
+Event: 'open'#
+Added in: v0.1.93
+fd <integer> Integer file descriptor used by the WriteStream.
+Emitted when the WriteStream's file is opened.
+
+Event: 'ready'#
+Added in: v9.11.0
+Emitted when the fs.WriteStream is ready to be used.
+Fires immediately after 'open'.
+
+writeStream.bytesWritten#
+Added in: v0.4.7
+The number of bytes written so far. Does not include data that is still queued for writing.
+bytesWritten only changes after the an async function call 
+
+writeStream.path#
+Added in: v0.1.93
+The path to the file the stream is writing to as specified in the first argument to 
+fs.createWriteStream(). If path is passed as a string, then writeStream.path will be a string.
+ If path is passed as a Buffer, then writeStream.path will be a Buffer.
+
                                              E                      
 
 
@@ -2311,6 +2280,7 @@ N               D
         E
 
 fchmod and fchown are just like chmod & chown but they take the file descriptor instead of the file 
+refer to chmod for details 
 fs.fchmod(fd, mode, callback)
 fs.fchmodSync(fd, mode)
 History
@@ -2349,9 +2319,14 @@ N               D
 
 
 
-                datasync is a method that flushes the file to permeant storage in case the system crashes or reboots 
-                however it keeps metadata needed for data recovery at system reboot such as the file size, and its tosses
-                unessary metadata for recovery such as a_time and c_time. sync keeps everything including metadata 
+                datasync is a method that flushes the file to permeant storage on  system crash or reboot 
+                however it keeps metadata needed for data recovery at system reboot ; 
+                    the file size,
+                    file name
+                 and its tosses unessary metadata 
+                     a_time  
+                     c_time.
+                  sync keeps everything including metadata 
 
                 fs.fdatasync(fd, callback)[src]#
                 fs.fdatasyncSync(fd)
@@ -3500,7 +3475,7 @@ avoid using promises, they are unstable
 
 
 
-need to learn about  streams and buffers mabye (try to avoid)  and fs.util 
+need to learn about   and buffers mabye (try to avoid)  and fs.util && debug
 
 
 
@@ -3686,6 +3661,7 @@ eventName <string> | <symbol>
 Returns: <Function[]>
 
 unlike what newListener and removeListener it gives you only [ [Function] ]
+to see whats inside refer to the rawListeners
 
 
 
@@ -4048,7 +4024,7 @@ this aint good for Transform streams
 
 A Writable stream in object mode will always ignore the encoding argument. it will write to the source with binary
 its up to the reader to decode us the .setDefaultEncoding METHOD to change the decoding 
-
+FILE; STREAM/drain.js
 
 
         O
@@ -4173,8 +4149,9 @@ N                                                                               
 
                     it can also emit that the readable has read all data, emits before 'end'
 
-                    for reasons above don't ' use 'readable' and 'data' events together,
+                    
                     'readable' takes precedence over 'data' 
+                    FILE: STREAM/read.js
 
 
                                                 E
@@ -4247,7 +4224,16 @@ calling it after an 'end' event retunrs null and no errors
 readable.readableHighWaterMark
 Added in: v9.3.0
 retunrs the highWaterMark value 
+arround 1.83585987445, linux calculate that the readableHighWaterMark is read from a file, as one chunk, 
+so to fine tune the stopping stream you more algorithm and info 
+    if you refer to the setTimeout event in STREAM/event_pipe.js you can see how the ReadStream is managing things 
+    when the developer needs it to stop piping data and how the outcome of the readstream and WriteStream files differ
 
+    when you remove a readable destination like to a var, to the 'data' event or a pipe, in the case of pipe you must 
+    add a desstination before you remove the orginal desitnation, the r_stream must always have a destination or it just 
+    doesn't work'
+
+    however a test pause  for 20 seconds shows that the data is preserved dont test the limits though
 readable.readableLength
 proides amount of bytes queue to be read 
 
@@ -4318,7 +4304,7 @@ write a montior that eventually destorys the stream if it does not close itself
 set autoClose to false, and close everyhting yourself
 make the end listneer do all your closing work in your project or codeblock 
 set the encoding to utf8 .setEncoding('buffer') if you dont want string 
-the 'close' event means the fd was closed not the stream 
+the 'close' event means the fd was closed not the stream with out the .close() method
 use anonymous fuctions instead of ES6 arrows to have more access to your API objects
     like [ this ] 
 .close() emits the close event which automatically closes the fd, 
@@ -4341,11 +4327,11 @@ if you do not understand WriteStream itself look at STREAM/uncork.js and STREAM/
     every thing else is a part of what those two files do correctly
 use the cork mechanism and the drain event to optimize your writing 
 use the right balance of cork and drain so you dont buffer ofteren and get clogged buffers oftern
-functions have an arguments object that return an array of the parameter use this to your advantage
+functions have an arguments object that return an array of the parameters given use this to your advantage
     arguments.length
 when using writable from an arguments object from a function, each index is a circular object, make sure you use
     JSON.stringify(arguments[2],circular_replacer()) if you need to hold on to the data in those arguments 
-if you have problems make sure you are not calling end
+if you have problems make sure you are not calling end too early and make sure variables and const are declared
 
 
         <OBJECT></OBJECT>
@@ -4360,8 +4346,9 @@ stream objects should be decleared with const [const name]
 make sure proper procedures are in place before you work with streams or else you have memory leaks everywhere
 on the fs.WriteStream & fs.ReadStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
 the setImmediate example I set in write_template.js stick with it you need your code to continue only after you setup your listenenrs 
-refer to STREAM/event_pipe.js, an excellent source of how node applications should be modeled
-
+refer to MINI_PROJECTS/PIPE_STREAM/read_and_write.js, an excellent source of how node applications should be modeled
+if you want a part of data to be written to a file and you dont have a ReadStream, use the WriteStream property, but then you must 
+    close the write stream and start a new one
 
 
 learn about assertions, they can compare your files 

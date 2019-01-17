@@ -19,10 +19,8 @@ var r_monitor = null
 var r_interval = 40000
 var r_counter  = 0
 
-// safe basic way of doing things no problems
-//implement expermenting with sucessful code to make it work nicely with system, the desired mode
-//  unknown new methods but unknown results
-// ,danger code that works but there are setbacks
+//implement use of sync and datasync to recover files
+//test the ready event for yourr listernrs
 // your modules are functions not async but i guess this is okay for now
 
 
@@ -241,3 +239,5 @@ fs.open(r_file,r_mode,(r_err,r_fd) =>{
 	}
 
 })
+
+console.log('mem usage',process.memoryUsage())
