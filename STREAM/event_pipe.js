@@ -292,19 +292,19 @@ fs.open(file,mode,(err,fd) =>{
 				setTimeout(() => {
 					if(r_stream.bytesRead > 100  && piping){
 						console.log(r_stream.bytesRead > 100  && piping,r_stream.bytesRead)
-						// r_stream.on('data',toss_data)
-						r_stream.unpipe(unpiped_stream)
-						r_stream.pause()
 						console.log("is the stream flowing",r_stream.readableFlowing)
+						r_stream.on('data',toss_data)
+						r_stream.unpipe(unpiped_stream)
+						// r_stream.pause()
 
 						console.log('I unpiped and paused the stream hopefully on resume I get my data back')
 						setTimeout(function(){
 							console.log('did the readstream stop with me',r_stream.bytesRead)
 							console.log('are we getting a buffer clog',r_stream.readableLength,r_stream.readableHighWaterMark)
-							// r_stream.off('data',toss_data)
+							r_stream.off('data',toss_data)
 							r_stream.pipe(unpiped_stream,{end:false})
-							r_stream.resume()	
-						},20000)	
+							// r_stream.resume()	
+						},2000)	
 						piping = false
 					}	
 				},3)					

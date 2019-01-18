@@ -4213,6 +4213,9 @@ the readable = objectMode
 
 if size arg is omitted , null is returned until the stream has ended, 
 which will return the whole buffer 
+        O 
+N              string methods like .indexOf() work with buffer
+        E
 
 file STREAM/read.js 
 
@@ -4332,6 +4335,10 @@ functions have an arguments object that return an array of the parameters given 
 when using writable from an arguments object from a function, each index is a circular object, make sure you use
     JSON.stringify(arguments[2],circular_replacer()) if you need to hold on to the data in those arguments 
 if you have problems make sure you are not calling end too early and make sure variables and const are declared
+      // If the user unpiped during `dest.write()`, it is possible
+      // to get stuck in a permanently paused state if that write
+      // also returned false.
+
 
 
         <OBJECT></OBJECT>

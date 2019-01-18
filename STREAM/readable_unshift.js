@@ -1,33 +1,48 @@
-// Pull off a header delimited by \n\n
-// use unshift() if we get too much
-// Call the callback with (error, header, stream)
-const { StringDecoder } = require('string_decoder');
-function parseHeader(stream, callback) {
-  stream.on('error', callback);
-  stream.on('readable', onReadable);
-  const decoder = new StringDecoder('utf8');
-  let header = '';
-  function onReadable() {
-    let chunk;
-    while (null !== (chunk = stream.read())) {
-      const str = decoder.write(chunk);
-      if (str.match(/\n\n/)) {
-        // found the header boundary
-        const split = str.split(/\n\n/);
-        header += split.shift();
-        const remaining = split.join('\n\n');
-        const buf = Buffer.from(remaining, 'utf8');
-        stream.removeListener('error', callback);
-        // remove the 'readable' listener before unshifting
-        stream.removeListener('readable', onReadable);
-        if (buf.length)
-          stream.unshift(buf);
-        // now the body of the message can be read from the stream.
-        callback(null, header, stream);
-      } else {
-        // still reading the header.
-        header += str;
-      }
-    }
-  }
+const path = require('path');
+const required_dir = path.join(process.env.HOME, 'location_string')
+const async_listener = require(required_dir +'/async_listener.js')
+const a_l = async_listener()
+
+
+module.exports = function(r_e_r_unpiped_stream){
+
+                          const r_e_r_unshift = a_l(function(){                                            
+                              let r_e_r_chunk;
+                              while (null !== (r_e_r_chunk = arguments[1].read())) {
+
+                                
+                                  if (r_e_r_chunk.indexOf('David Tallon') != -1) {
+                                    // console.log(r_e_r_chunk.toString())
+                                    var r_e_r_toss_talon = r_e_r_chunk.toString().split('David Tallon').join('Adam Lampls')          
+                                    const r_e_r_buf = Buffer.from(r_e_r_toss_talon, 'utf8');
+                                    // arguments[1].off('error', C);
+                                    // might throw an error on unshift?
+                                    // remove the 'readable' because your in a while loop calling the read operation 
+                                        // and I want to see if it actually unshifted by piping it to a writestream to a file
+                                    arguments[1].off('readable', r_e_r_unshift);
+                                    if (r_e_r_buf.length){
+                                      console.log(r_e_r_buf.length)
+                                      arguments[1].unshift(r_e_r_buf);          
+                                    // now the body of the message can be read from the stream.          
+                                    }
+                                    arguments[1].pipe(r_e_r_unpiped_stream)
+
+
+                                  }
+
+
+                                  else {
+
+                                    // still reading the header.
+                                    console.log('looking for that string to unshift')
+
+
+                                  }        
+
+
+                              }
+                            
+
+                          })
+                          return  r_e_r_unshift
 }
