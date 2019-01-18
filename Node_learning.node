@@ -4246,6 +4246,7 @@ readable.resume()
 makes a paused stream go back into flowing mode 
 can be used to fully consume the data, but have it un processed 
 does not work if there is a 'readable' listener
+can be used to drain a buffer if the readble gets an error 
 STREAM/readable_pause.js
 
 
@@ -4339,7 +4340,32 @@ if you have problems make sure you are not calling end too early and make sure v
       // to get stuck in a permanently paused state if that write
       // also returned false.
 
+        O
+N               D 
+        E
 
+
+
+
+Duplex and Transform Streams
+the difference,
+    Duplex is more usuable as its a mix of any Readable and WriteStream
+    Transform takes the Readable STREAM input does computation and send it to WriteStream 
+
+    transform.destroy([error])
+    emits error and low level _destroy emits close too 
+
+
+stream.finished(stream, callback)#
+Added in: v10.0.0
+stream <Stream> A readable and/or writable stream.
+callback <Function> A callback function that takes an optional error argument.
+    
+    tells dev stream isn't readable writable error or early close'        
+
+    useful when something happens to the stream but the 'end' or 'error' is not emitted 
+
+    file: STREAM/stream_finished.js 
 
         <OBJECT></OBJECT>
 N               D
