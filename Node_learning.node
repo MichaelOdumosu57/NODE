@@ -4365,7 +4365,15 @@ callback <Function> A callback function that takes an optional error argument.
 
     useful when something happens to the stream but the 'end' or 'error' is not emitted 
 
-    file: STREAM/stream_finished.js 
+    file: STREAM/stream_finished.js
+
+stream.pipeline(...streams[, callback])
+...streams <Stream> Two or more streams to pipe between.
+callback <Function> A callback function that takes an optional error argument.
+
+method to pipe errors through streams for proper callback
+
+    file: STREAM/pipeline.js     
 
         <OBJECT></OBJECT>
 N               D
