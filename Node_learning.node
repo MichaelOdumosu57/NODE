@@ -2213,8 +2213,9 @@ then readStream.path will be a Buffer.
 N                                                                                                       D
                 options     
                 you must provide a path eventhough providing the fd will ignore it
-                start and end can be int to read a range of bytes instead of the entire file 
-                    they are both inclusive and start at 0 
+                start  can be int to read a range of bytes instead of the entire file 
+                    they nclusive and start at 0 
+                        start != 0 >> encoding --> buffer (&& ||) .setEncoding('desired')
                      The encoding can be any one of those accepted by Buffer.
                      if fd is specified this  method will use it and ignore the path 
                      becuase the file is open 
@@ -2323,10 +2324,10 @@ N               D
                 however it keeps metadata needed for data recovery at system reboot ; 
                     the file size,
                     file name
-                 and its tosses unessary metadata 
+                and its tosses unessary metadata 
                      a_time  
                      c_time.
-                  sync keeps everything including metadata 
+                sync keeps everything including metadata 
 
                 fs.fdatasync(fd, callback)[src]#
                 fs.fdatasyncSync(fd)
@@ -3756,6 +3757,7 @@ what I take away from the emitter API
 its the next level which allows you to do so much as a programmer  
 always write your listenenrs as constants as in remove_listener   
 if you manipulate them, make your code very very modular to preseve memory    
+If you emit an evevnt for one listener, the others with the same event name wont fire their functions
 
 
 
@@ -3865,7 +3867,7 @@ Added in: v0.9.4
 If a call to stream.write(chunk) returns false this means the buffer is full
 when drain is emiitted, its okay to write again 
 file: STEAM/drain.js 
-
+      /MINI_PROJECTS/PIPE_STREAM/drain.js 
 
 Event: 'error'
 Added in: v0.9.4
@@ -3918,6 +3920,7 @@ The writable.cork() method forces all written data to be buffered in memory.
 
 find write methods that use writable._writev()
 file: STREAM/uncork.js
+      MINI_PROJECTS/PIPE_STREAM/cork_and_uncork.js
 
 
  this is written to avoid a situation where small chunks cause an internal buffer backup
@@ -3980,6 +3983,8 @@ N           batch is putting a list of commands into a file to be executed in th
 
 if writable.cork is called several times, writable.uncork() must be called the same amount of times 
 file: STREAM/uncork.js
+         MINI_PROJECTS/PIPE_STREAM/cork_and_uncork.js
+
 
 
 
@@ -4025,6 +4030,7 @@ this aint good for Transform streams
 A Writable stream in object mode will always ignore the encoding argument. it will write to the source with binary
 its up to the reader to decode us the .setDefaultEncoding METHOD to change the decoding 
 FILE; STREAM/drain.js
+        /MINI_PROJECTS/PIPE_STREAM/drain.js
 
 
         O
@@ -4060,6 +4066,7 @@ N                                                                               
             add a 'readable' listener to stop stream flow 
             remove 'readable' listener to start, but on if theres a 'data' event handler
             file: STREAM/basic_readable.js
+                  MINI_PROJECTS/PIPE_STREAM/read_and_write.js
                                             E
 
 
@@ -4132,6 +4139,7 @@ Not all Readable streams will emit the 'close' event.
                     attach a consumer to fully consome the data 
                     to emit this event 
                     file STREAM/readable_end.js 
+                         /MINI_PROJECTS/PIPE_STREAM/read_and_write.js
 
 N                                                                                        D                                                                              
 
@@ -4152,6 +4160,7 @@ N                                                                               
                     
                     'readable' takes precedence over 'data' 
                     FILE: STREAM/read.js
+                        /MINI_PROJECTS/STREAM/read_and_write.js
 
 
                                                 E
@@ -4173,6 +4182,7 @@ DESstroys the stream. after this readable releases any internal resources
  turns flowing into paused, readable sensds data to intern buffer 
  if there is a 'readable' listerner there is no effect 
  file: STREAM/readable_pause.js
+        MINI_PROJECTS/PIPE_STREAM/readable_pause.js
 
 
 
@@ -4189,9 +4199,11 @@ DESstroys the stream. after this readable releases any internal resources
 N         pipes its read data to a writable, the flow is                           D
          managed so the writer is not owerwhelmed
         file:STREAM/event_pipe.js
+                MINI_PROJECTS/PIPE_STREAM/read_and_write.js
+
 
         the method returns the destination so you can make a pipe chain 
-        file STREAM/pipe_chain.js
+        // file STREAM/pipe_chain.js
 
         when the readable 'end' event is emitted, the writables end mthod are called 
         look at the args above to disable this behavior
@@ -4248,6 +4260,8 @@ can be used to fully consume the data, but have it un processed
 does not work if there is a 'readable' listener
 can be used to drain a buffer if the readble gets an error 
 STREAM/readable_pause.js
+    MINI_PROJECTS/PIPE_STREAM/readable_pause.js
+
 
 
 
@@ -4366,14 +4380,18 @@ callback <Function> A callback function that takes an optional error argument.
     useful when something happens to the stream but the 'end' or 'error' is not emitted 
 
     file: STREAM/stream_finished.js
+            MINI_PROJECTS/PIPE_STREAM/stream_finished.js
 
 stream.pipeline(...streams[, callback])
 ...streams <Stream> Two or more streams to pipe between.
 callback <Function> A callback function that takes an optional error argument.
 
 method to pipe errors through streams for proper callback
+it actually does pipes the chunks from the readstream to the writestream for you as well and if you call it with 
+another flowing operation it copy and paste the file and executes the other write operations next
 
-    file: STREAM/pipeline.js     
+    file: STREAM/pipeline.js   
+            MINI_PROJECTS/PIPE_STREAM/pipeline.js     
 
         <OBJECT></OBJECT>
 N               D
@@ -4387,9 +4405,139 @@ stream objects should be decleared with const [const name]
 make sure proper procedures are in place before you work with streams or else you have memory leaks everywhere
 on the fs.WriteStream & fs.ReadStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
 the setImmediate example I set in write_template.js stick with it you need your code to continue only after you setup your listenenrs 
-refer to MINI_PROJECTS/PIPE_STREAM/read_and_write.js, an excellent source of how node applications should be modeled
+refer to MINI_PROJECTS/PIPE_STREAM/, an excellent source of how node applications should be modeled
 if you want a part of data to be written to a file and you dont have a ReadStream, use the WriteStream property, but then you must 
     close the write stream and start a new one
 
 
 learn about assertions, they can compare your files 
+
+
+        O
+N               D
+        E
+
+Node.js Debugger API
+
+a simple debugging tool along with chrome V8  developer tool 
+
+
+        O
+N               D
+        E
+
+
+Simple Debugger
+to launch 
+node inspect [script]
+
+https://nodejs.org/en/docs/guides/debugging-getting-started/#enabling-remote-debugging-scenarios
+
+inserting a debugger; statement triggers a breakpoint
+or console.log()
+file /DEBUG/debug_script.js
+
+
+next allows the debugger to take the next step in your code 
+repl, allows code to be evaluated remotely
+    for this your must call next enough to make your global vars exist in the debug repl 
+
+pressing enter without typing a command does the previous command 
+
+        O
+N               D
+        E
+
+
+Watchers
+
+at debuggers;
+watch([math operation ])
+unwatch([math operation])
+// idk how to use these
+
+
+        O
+N               D
+        E
+
+Command reference#
+Stepping#
+cont, c - Continue execution
+next, n - Step next
+step, s - Step in
+out, o - Step out
+pause - Pause running code (like pause button in Developer Tools)
+
+        O
+N               D
+        E
+
+Breakpoints#
+setBreakpoint(), sb() - Set breakpoint on current line
+setBreakpoint(line), sb(line) - Set breakpoint on specific line
+setBreakpoint('fn()'), sb(...) - Set breakpoint on a first statement in functions body
+setBreakpoint('script.js', 1), sb(...) - Set breakpoint on first line of script.js
+clearBreakpoint('script.js', 1), cb(...) - Clear breakpoint in script.js on line 1    
+
+you can set a breakpoint in unloaded code
+setBreakpoint('simple_module.js',25)
+file /DEBUG/simple_module.js
+
+
+        O
+N               D
+        E
+
+Information#
+backtrace, bt - Print stack of current execution frame
+list(5) - List scripts source code with 5 line context (5 lines before and after)
+watch(expr) - Add expression to watch list
+unwatch(expr) - Remove expression from watch list
+watchers - List all watchers and their values (automatically listed on each breakpoint)
+repl - Open debugger's repl for evaluation in debugging script's context
+exec expr - Execute an expression in debugging script's context
+
+        O
+N               D
+        E
+
+
+Execution control#
+run - Run script (automatically runs on debugger's start)
+restart - Restart script
+kill - Kill script
+.exit -leave debug repl
+
+
+        O
+N               D
+        E
+
+
+Various#
+scripts - List all loaded scripts
+version - Display V8's version
+
+        O
+N               D
+        E
+
+Advanced Usage
+V8 Inspector Integration for Node.js
+
+$ node --inspect index.js
+listen on certain port 
+ --inspect=[9222]
+
+ to break on first line of code --inspect-brk
+
+ If the Chrome browser is older than 66.0.3345.0, use inspector.html instead of js_app.html  URL.
+
+ ws://127.0.0.1:8080/42209e13-2d5e-4fc2-acb0-a2385d51cddd
+ 363b35e8-039d-4fff-9f55-055a8604a9c4
+
+ chrome-devtools://devtools/bundled/js_app.html?experiments=true&v8only=true&ws=127.0.0.1:9229/dc9010dd-f8b8-4ac5-a510-c1a114ec7d29
+
+ http://localhost:8080/json/list
+
