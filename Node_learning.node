@@ -58,6 +58,8 @@ Reporting Async API errors
     file: /Error/net_eventemitter_error.js
 
     for event-emitters you need a handler registed for the uncaught Exception or an error will be thrown
+    or you can make a listener for its 'error' event 
+    ee.on('event',function(){ /--handler--/ })
     process.on('uncaughtException', function (err) { 
             console.log("a");   
     })    
@@ -1394,7 +1396,7 @@ N               D
         E
 What I take away from error handling
 for async errors use a error handler which has an if else handling things
-for event emitters and streams use process.on('uncaughtException', () => { //handler})       
+for event emitters and streams use ee.on('error',function(){ code }) or  process.on('uncaughtException', () => { //handler})       
 for sync erros use try, catch throw 
 for every method you use research how it tells you to handle its errors  
 
@@ -2171,6 +2173,7 @@ Event: 'ready'#
 Added in: v9.11.0
 Emitted when the fs.ReadStream is ready to be used.
 Fires immediately after 'open'.
+does not work with fd
 
 readStream.bytesRead#
 Added in: v6.4.0
@@ -2215,7 +2218,7 @@ N                                                                               
                 you must provide a path eventhough providing the fd will ignore it
                 start  can be int to read a range of bytes instead of the entire file 
                     they nclusive and start at 0 
-                        start != 0 >> encoding --> buffer (&& ||) .setEncoding('desired')
+                        start != 0 >> encoding = buffer (&& ||) .setEncoding('desired')
                      The encoding can be any one of those accepted by Buffer.
                      if fd is specified this  method will use it and ignore the path 
                      becuase the file is open 
@@ -2251,6 +2254,7 @@ Event: 'ready'#
 Added in: v9.11.0
 Emitted when the fs.WriteStream is ready to be used.
 Fires immediately after 'open'.
+doesn't work with fd 
 
 writeStream.bytesWritten#
 Added in: v0.4.7
@@ -3897,6 +3901,8 @@ The 'pipe' event is emitted when the stream.pipe()
  method is called on a readable stream, adding this writable to its set of destinations.
 
 file: STREAM/event_pipe.js
+        /MINI_PROJECTS/PIPE_STREAM/read_and_write.js 
+
 
 
 
@@ -3909,7 +3915,8 @@ The 'unpipe' event is emitted when the stream.unpipe()
 This is also emitted in case this Writable stream emits an error when a Readable stream pipes into it.
 make sure you check for this 
 FILE: STREAM/event_pipe.js
-
+/MINI_PROJECTS/PIPE_STREAM/read_and_write.js 
+// simple pipe readme.md 
 
 
 writable.cork()
@@ -3921,6 +3928,7 @@ The writable.cork() method forces all written data to be buffered in memory.
 find write methods that use writable._writev()
 file: STREAM/uncork.js
       MINI_PROJECTS/PIPE_STREAM/cork_and_uncork.js
+
 
 
  this is written to avoid a situation where small chunks cause an internal buffer backup
@@ -4029,6 +4037,7 @@ this aint good for Transform streams
 
 A Writable stream in object mode will always ignore the encoding argument. it will write to the source with binary
 its up to the reader to decode us the .setDefaultEncoding METHOD to change the decoding 
+in some cases if fs.WriteStream object start is not set to zero it will ignore even this and write buffe 
 FILE; STREAM/drain.js
         /MINI_PROJECTS/PIPE_STREAM/drain.js
 
@@ -4091,7 +4100,8 @@ N                                                                               
 
                 for .pause() unless all writables are unpiped, it may not work 
 
-                removing data handlers wont pause the stream somethines 
+                removing data handlers wont pause the stream somethines if there are other destinations for the
+                readable 
 
 N                                                                                                   D
 
@@ -4099,7 +4109,7 @@ N                                                                               
 
 
                 dont combine the methods they deal with different project scale 
-                for simple task use .pipe     
+                for two or more streams  .pipe     / .unpipe 
                 for devs and API use 'readable'/.read(), or .pause(),resume()
 
 
@@ -4161,6 +4171,7 @@ N                                                                               
                     'readable' takes precedence over 'data' 
                     FILE: STREAM/read.js
                         /MINI_PROJECTS/STREAM/read_and_write.js
+                        //readme.md run to see the readable.read readable functionality
 
 
                                                 E
@@ -4228,8 +4239,9 @@ which will return the whole buffer
         O 
 N              string methods like .indexOf() work with buffer
         E
-
+can use .read() and .write for controlled writing  but readable listnener must be attach to use
 file STREAM/read.js 
+    /MINI_PROJECTS/STREAM/read_and_write.js
 
 calling it in object mode always gives you one object, regardless of size 
 calling it after an 'end' event retunrs null and no errors 
@@ -4299,6 +4311,7 @@ cannot be called after the 'end' method or an error is thrown
 
 if you use it often, use the Transform API instead 
 FILE:STREAM/readable_unshift.js 
+/MINI_PROJECTS/PIPE_STREAM/r_e_r_unshift.js
 
 when stream.push(chunk) happens, there is order so the reading state is reset while a stream.read is happening
 so the buffer is updated properly  
@@ -4406,7 +4419,7 @@ make sure proper procedures are in place before you work with streams or else yo
 on the fs.WriteStream & fs.ReadStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
 the setImmediate example I set in write_template.js stick with it you need your code to continue only after you setup your listenenrs 
 refer to MINI_PROJECTS/PIPE_STREAM/, an excellent source of how node applications should be modeled
-if you want a part of data to be written to a file and you dont have a ReadStream, use the WriteStream property, but then you must 
+if you want a part of data to be written to a file and you dont have a ReadStream, use the WriteStream.bytesWritten property, but then you must 
     close the write stream and start a new one
 
 
@@ -4454,7 +4467,7 @@ Watchers
 at debuggers;
 watch([math operation ])
 unwatch([math operation])
-// idk how to use these
+you literally make an operation and the watchers watch it for 
 
 
         O
@@ -4483,6 +4496,7 @@ clearBreakpoint('script.js', 1), cb(...) - Clear breakpoint in script.js on line
 you can set a breakpoint in unloaded code
 setBreakpoint('simple_module.js',25)
 file /DEBUG/simple_module.js
+// the breakpoint is not at a comment its at a file
 
 
         O
@@ -4539,5 +4553,54 @@ listen on certain port
 
  chrome-devtools://devtools/bundled/js_app.html?experiments=true&v8only=true&ws=127.0.0.1:9229/dc9010dd-f8b8-4ac5-a510-c1a114ec7d29
 
- http://localhost:8080/json/list
+ http://localhost:8080/json/list to access url for dev tools
 
+ https://nodejs.org/en/docs/guides/debugging-getting-started/#enabling-remote-debugging-scenarios
+
+when you run a node script with --inspect 
+    ws listesns at 127.0.0.1:9229
+    each process gets a UUID
+full url is 
+ws://127.0.0.1:9229/[UUID]
+    
+
+to see web socket metadata
+ http://[host:port]/json/list
+
+ webSocketDebuggerUrl to access the inspector 
+ use devtoolsFrontendUrl to access the devtool inspector as you see in chrome browsers
+
+ a node.js process ! --inspect can be started 
+    send a SIGUSR1 to it( on Linux and MacOS)         
+
+
+the debugger has full access to the execution environment
+try not to make the port public access is dangerous 
+local appilcations have full access to the inspector
+
+
+Inspector clients
+node-inspect
+Visual Studio Code 1.10+
+Visual Studio 2017
+JetBrains WebStorm 2017.1+ and other JetBrains IDEs
+chrome-remote-interface
+Gitpod
+
+Chrome DevTools 55+
+    get web socket metadata and 
+    paste devtoolsFrontendUrl into a chrome browser
+
+Enabling remote debugging scenarios
+to do this
+$ ssh -L 9221:localhost:9229 user@remote.example.com
+
+connect localhost:9221 to remote localhost:9229 and from there you can attach an inspector client 
+
+Legacy Debugger 
+deprecated as of node 7.7.0
+    to start it
+    --debug or --debug-brk
+
+
+https://chromedevtools.github.io/debugger-protocol-viewer/v8/
