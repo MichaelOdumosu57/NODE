@@ -4654,12 +4654,113 @@ Node Process
 
 
 
+                                            O
+
+        Event: 'beforeExit'#
+        Added in: v0.11.12
+N                                                                                           D
+        used right before the 'exit' event is emitted, and makes async calls
+        is not emitted on explicit termination
+        should not be used for 'exit' unless you need to schedule additional work
+        callback process.exitCode passed as the only argument.                
+        FILE: PROCESS/process_beforeExit.js
+                                            E
+
+        O 
+N               use the process_beforeExit template to create a dynamic template that handles all process events                                   
+        D                                            
 
 
-Event: 'beforeExit'#
-Added in: v0.11.12
+                                            O
+            Event: 'disconnect'#
+            Added in: v0.7.7
+N                                                                                                   D
+            if started with an IPC Channel, this is emitted when the channel is closed
+                    O
+            N              look at cluster and child process they might help 
+                            when it comes to several processes                               
+                    E
 
-used right before the 'exit' event is emitted, and makes async calls
-is not emitted on explicit termination
-should not be used for 'exit' unless you need to schedule additional work
-callback process.exitCode passed as the only argument.                
+                                            E
+
+
+                                            O
+
+                Event: 'exit'#
+                Added in: v0.1.7       
+                code <integer> result of process.exitCode
+N                                                                               D
+                emitted when 
+                    process.exit()
+                    nothing left for the process to do
+                there is no way to stop it
+                it must perform synchronous operations  or becuase when this
+                happens anything in the event loop is  abandoned
+
+                                            E
+
+                                                    O
+            Event: 'message'#
+            Added in: v0.5.10
+            message <Object> | <boolean> | <number> | <string> | <null> a parsed JSON object or a serializable primitive value.
+            sendHandle <net.Server> | <net.Socket> a net.Server or net.Socket object, or undefined.                                          
+N                                                                                                                               D
+
+            if started with IPC Channel its emitted whenever parent uses childprocess.send() to send a message to the child 
+            the message goes through serialization and parsing and might not be the same 
+
+                                                    E
+
+
+                                                    O
+            Event: 'multipleResolves'#
+            Added in: v10.12.0
+N           type <string> The error type. One of 'resolve' or 'reject'.                                                  D 
+            promise <Promise> The promise that resolved or rejected more than once.
+            value <any> The value with which the promise was either resolved or rejected after the original resolve.            
+
+            useful when using the Promise constructor 
+
+            happens when a Promise 
+                Resolved more than once.
+                Rejected more than once.
+                Rejected after resolve.
+                Resolved after reject.
+
+            you should end the process if this happens, 
+            FILE: PROCESS/process_multipleResolves.js                
+
+                                                    E 
+
+
+                                                    O
+
+            Event: 'rejectionHandled'#
+            Added in: v1.4.1
+            promise <Promise> The late handled promise.
+
+            emitted when a Promise has been rejected and a error handler was attached (promise.catch())
+            later than one turn of the Node.js event loop 
+
+            the Promise would have been emitted in a unhandledRejection event, but it gained a rejection handler 
+
+            because its fundamentally asynced Promise rejections can be handled much later than emit('unhandledRejection')
+N                                                                                                                            D
+            in synchronous code there is a growing list of unhandled exceptions with Promises the lists grows and shrinks 
+            and they emit 'uncaughtException'
+
+            in async 'unhandledRejection' is emitted when the list grows and 'rejectionHandled' when it shrinks 
+
+            its best to record these in an error log over long running apps or at process.exit for simple scripts
+                    O 
+            N           you have to understand Promise deeply to create this scenario 
+                    E
+            FILE:PROCESS/unhandledRejection.js 
+
+                                                    E
+
+Event: 'uncaughtException'#
+Added in: v0.1.18
+
+
+
