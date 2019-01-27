@@ -6,10 +6,10 @@ https://stackoverflow.com/questions/34082497/limit-node-js-memory-usage-to-less-
         <OBJECT></OBJECT>
 N               D
         E
-summary of what I learned about a Node module        
+summary of what I learned about a Node module
 
         O
-N               
+N
         E
 are tips
 
@@ -54,15 +54,15 @@ Reporting Async API errors
 
     look at each method to understand how their errors are handled
         
-    the event-emitter and stream-based API are handled with the error event mechanism described in 
+    the event-emitter and stream-based API are handled with the error event mechanism described in
     file: /Error/net_eventemitter_error.js
 
     for event-emitters you need a handler registed for the uncaught Exception or an error will be thrown
-    or you can make a listener for its 'error' event 
+    or you can make a listener for its 'error' event, whici is better
     ee.on('event',function(){ /--handler--/ })
-    process.on('uncaughtException', function (err) { 
-            console.log("a");   
-    })    
+    process.on('uncaughtException', function (err) {
+            console.log("a");
+    })
     file: /Error/event_emitter_handler.js
 
 
@@ -80,32 +80,32 @@ Error-first callbacks
 N        console.error('There was an error', err);     D
         return;
       }
-    }    
+    }
     file: /Error/first_error_callback.js
                     E
 
 
         O
-N           dont use try throw catch with async methods they do not work, register a handler with process.on('uncaughtException')
+N           dont use try throw catch with async methods they do not work, register a handler with ee.on('error',(err) =>{//handle}
             process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
-        E    
+        E
 
 
 
         O
 N               D
         E
-Class: Error    
+Class: Error
 
-doesn't tell you why an error happened ' it just tells you the stack trace 
-for crpyto, there is an additional stack called opensslErrorStack    
+doesn't tell you why an error happened ' it just tells you the stack trace
+for crpyto, there is an additional stack called opensslErrorStack
 
 
                                                 O
 
             new Error(message)
 N            makes a new Error object with a message, error.stack prorety contains a sync stack or        E
-             the number of frames given by the property Error.stackTraceLimit which is smaller 
+             the number of frames given by the property Error.stackTraceLimit which is smaller
 
                                                 D
 
@@ -116,13 +116,13 @@ N            makes a new Error object with a message, error.stack prorety contai
                                                 O
 
              Error.captureStackTrace(targetObject[, constructorOpt])
-            when you call this you add a .stack property to an object it 
+            when you call this you add a .stack property to an object it
             like what happens when js tells you where an error happened
  N           file: /Error/capture_stack_trace.js                                              D
 
-            use the The constructorOpt as fuction when 
-            you want to hide error details from an end user 
-            file: /Error/capture_stack_trace.js 
+            use the The constructorOpt as fuction when
+            you want to hide error details from an end user
+            file: /Error/capture_stack_trace.js
 
                                             E
 
@@ -131,12 +131,12 @@ N            makes a new Error object with a message, error.stack prorety contai
 
                                                 O
          Error.stackTraceLimit
-         Tells you how many steps back it took to get to the error,  
+         Tells you how many steps back it took to get to the error,
 N        if this is a neg or 0 the .stack property wont show anything                       D
          to change it   Error.stackTraceLimit = \d
-         you must set it before calling the  captureStackTrace on an object to see 
-         it take effect 
-         file: /Error/capture_stack_trace.js 
+         you must set it before calling the  captureStackTrace on an object to see
+         it take effect
+         file: /Error/capture_stack_trace.js
 
                                                 E
 
@@ -146,11 +146,11 @@ N        if this is a neg or 0 the .stack property wont show anything           
 
                                                 O
 
-                 error.code 
+                 error.code
 N                most stable way to understand an error,                                     D
                  they only change between major node distributuions
                  to understand them:https://nodejs.org/dist/latest-v10.x/docs/api/errors.html#nodejs-error-codes
-                     to access it it must be accessed through an error handler which catches the error object 
+                     to access it it must be accessed through an error handler which catches the error object
                      only then can you see the code
                  file: Error/first_error_callback.js
 
@@ -161,9 +161,9 @@ N                most stable way to understand an error,                        
 
                                                 O
          error.message
- N       the message you add when making a new error, however changing this property may not   
+ N       the message you add when making a new error, however changing this property may not
          change the first line of the stack trace. if you call err.stack before changing the message,             D
-         subsequent calls to err.stack will keep the orginal message                                                
+         subsequent calls to err.stack will keep the orginal message
         
                                                 E
 
@@ -175,10 +175,10 @@ N                most stable way to understand an error,                        
         <string>
         all calls from beginning of program execution to where the error happened are listed. V8 handles this
         V8 tries to figure out the function names but when it cant is substitutes for <anonymous>
-        Frames are only generated for JavaScript functions 
-        if you have other embedded programming languages they will not pop up on the trace 
+        Frames are only generated for JavaScript functions
+        if you have other embedded programming languages they will not pop up on the trace
         file : Error/embedded_C_plus_plus_err_stack.js
-N            location 
+N            location
             native, if the frame represents a call internal to V8 (as in [].forEach).                                                   D
             plain-filename.js:line:column, if the frame represents a call internal to Node.js.
             /absolute/path/to/file.js:line:column, if the frame represents a call in a user program, or its dependencies
@@ -192,21 +192,21 @@ N            location
 
 
 
-                                                O    
+                                                O
 
                 Class: AssertionError
                 https://nodejs.org/dist/latest-v10.x/docs/api/assert.html#assert_class_assert_assertionerror
 
-                an error subclass that indicates an assertion failure 
+                an error subclass that indicates an assertion failure
 
                 options <OBJECT></OBJECT>
                     message <string> a reg. error message
-                    actual <any> 
+                    actual <any>
                     expected <any>
-N                   operator <string> which operator was used for the assertion 
+N                   operator <string> which operator was used for the assertion
                     stackStartFn <Function> removes frames unrelated to the start function where the assertion starts           D
                     code <string> always ERR_ASSERTION
-                    generatedMessage <bool> if you cant see the message, this is helpful to 
+                    generatedMessage <bool> if you cant see the message, this is helpful to
                     debug why the assertion error message is notcomig up
                     file: Error/assertion_error.js
 
@@ -218,10 +218,10 @@ N                   operator <string> which operator was used for the assertion
 
 
 
-                                                O                                                
+                                                O
 
                     Class: RangeError
-                    when a node code gets a value outside the accetable ranges for its code 
+                    when a node code gets a value outside the accetable ranges for its code
                     Ex:
 N                        require('net').connect(-1);                                                D
                         //ranges are 1- 65536
@@ -235,7 +235,7 @@ N                        require('net').connect(-1);                            
                                                 O
 
                     Class: ReferenceError
-                    when you try to access an undefined variable 
+                    when you try to access an undefined variable
 N                    its a simple bug unless your are advanced and your software                    D
                     is generating and running code
 
@@ -248,7 +248,7 @@ N                    its a simple bug unless your are advanced and your software
                                                 O
         Class: SyntaxError
  N      when you have code that is not JavaScript and has no embedding support          D
-        file: Error/simple_syntax_error.js                    
+        file: Error/simple_syntax_error.js
 
                                                 E
 
@@ -259,7 +259,7 @@ N                    its a simple bug unless your are advanced and your software
 
                      Class: TypeError
 N                    when code gets an unwanted code type                 D
-                     file: Error/simple_type_error                                                
+                     file: Error/simple_type_error
 
 
                                         E
@@ -270,9 +270,9 @@ N                    when code gets an unwanted code type                 D
         O
 N               D
         E
-Exceptions vs. Errors      
-a js exception means that something went wrong. they dont have to be shown as Errors, the practical difference is 
-some erros are unrecoverable and will cause the process to crash, most can be handled  
+Exceptions vs. Errors
+a js exception means that something went wrong. they dont have to be shown as Errors, the practical difference is
+some erros are unrecoverable and will cause the process to crash, most can be handled
 
 
         O
@@ -281,7 +281,7 @@ N               D
                                                                 O
 
                     System Errors
-                    this happens when Node attempt to do things unallowed 
+                    this happens when Node attempt to do things unallowed
                     in the OS system environment its given
                     they are Error objects with more properties
 
@@ -299,7 +299,7 @@ N               D
 
 N                                                                                                                              D
                     error.errno <string> | <number>
-                    correspondes to error codes of the libuv library 
+                    correspondes to error codes of the libuv library
                     http://docs.libuv.org/en/v1.x/errors.html
 
                     error.info<Object>
@@ -309,7 +309,7 @@ N                                                                               
                     human readable message about the Error
 
                     error.path<string>
-                    info about an invalid path name 
+                    info about an invalid path name
                     file: Error/system_errors.js
 
                     error.port<number>
@@ -336,51 +336,52 @@ N                                                                               
                 Common System Errors
                 http://man7.org/linux/man-pages/man3/errno.3.html
 
-                EACCES (Permission denied): An attempt was made to access a 
+                EACCES (Permission denied): An attempt was made to access a
                 file in a way forbidden by its file access permissions.
 
                 EADDRINUSE (Address already in use):
-                 An attempt to bind a server (net, http, or https) to a local address 
+                 An attempt to bind a server (net, http, or https) to a local address
                 failed due to another server on the local system already occupying that address.
 
                 EBADF (Bad file descriptor)
                 this means the file is closed  or
-                The fd has a wrong value, 
+                The fd has a wrong value,
 
 
                 ECONNREFUSED (Connection refused): No connection could be made because
-                 the target machine actively refused it. 
+                 the target machine actively refused it.
                 This usually results from trying to connect to a service that is inactive on the foreign host.
 
                 ECONNRESET (Connection reset by peer):
-                 A connection was forcibly closed by a peer. This normally results 
-                from a loss of the connection on the remote socket due to a timeout or reboot. 
+                 A connection was forcibly closed by a peer. This normally results
+                from a loss of the connection on the remote socket due to a timeout or reboot.
                 Commonly encountered via the http and net modules.
 
-                EEXIST (File exists): An existing file was the target of an operation 
+                EEXIST (File exists): An existing file was the target of an operation
                 that required that the target does not exist.
 N
-                EISDIR (Is a directory): An operation expected a file, 
+                EISDIR (Is a directory): An operation expected a file,
                 but the given pathname was a directory.
                                                                                                                         D                                D
                 EMFILE (Too many open files in system): Maximum number of file
                  descriptors allowable on the system has been reached
-                it will continue to raise unless a file gets closed .To remedy a  
+                it will continue to raise  file  closed .
+                    remedy
                 run ulimit -n [number] in the same shell that will run the Node.js process.
 
-                ENOENT (No such file or directory): 
+                ENOENT (No such file or directory):
 
-                ENOTDIR (Not a directory): 
+                ENOTDIR (Not a directory):
 
-                ENOTEMPTY (Directory not empty): required ususally by fs.unlink
+                ENOTEMPTY (Directory not empty): required ususally by fs.rmdir
 
-                EPERM (Operation not permitted): 
+                EPERM (Operation not permitted):
 
-                EPIPE (Broken pipe): A write on a pipe, socket, or FIFO for which there is no process to read the data. 
-                Commonly encountered at the net and http layers, indicative that 
+                EPIPE (Broken pipe): A write on a pipe, socket, or FIFO for which there is no process to read the data.
+                Commonly encountered at the net and http layers, indicative that
                 the remote side of the stream being written to has been closed.
 
-                ETIMEDOUT (Operation timed out): A connect or send request failed because the connected party did not properly 
+                ETIMEDOUT (Operation timed out): A connect or send request failed because the connected party did not properly
                 respond after a period of time
                 Usually encountered by http or net — often a sign that a socket.end() was not properly called.
 
@@ -392,19 +393,19 @@ N
 N               D
         E
 
-{        
+{
         Node.js Error Codes
         refer for other codes
         
         ERR_ARG_NOT_ITERABLE
-        An iterable argument (i.e. a value that works with for...of loops) was required, 
+        An iterable argument (i.e. a value that works with for...of loops) was required,
         but not provided to a Node.js API.
                                  
         ERR_ASSERTION
         the assert error code
         
         ERR_ASYNC_CALLBACK
-        register something that is not an async hook callback 
+        register something that is not an async hook callback
         
         ERR_ASYNC_TYPE
         invalid asynced resources
@@ -413,11 +414,11 @@ N               D
         An operation outside the bounds of a Buffer was attempted
         
         ERR_BUFFER_TOO_LARGE
-        trying to create a Buffer larger than the limit 
+        trying to create a Buffer larger than the limit
         
         ERR_CANNOT_TRANSFER_OBJECT
-        The value passed to postMessage() 
-        contained an object that is not supported for transferring.   
+        The value passed to postMessage()
+        contained an object that is not supported for transferring.
         
         ERR_CANNOT_WATCH_SIGINT
         Node.js was unable to watch for the SIGINT signal.
@@ -430,14 +431,14 @@ N               D
         Used when a child process is being forked without specifying an IPC channel.
         
         ERR_CHILD_PROCESS_STDIO_MAXBUFFER
-        when main process is trying to read a child stderr/stdout but data length longer than maxBuffer option 
+        when main process is trying to read a child stderr/stdout but data length longer than maxBuffer option
         
         ERR_CLOSED_MESSAGE_PORT
         There was an attempt to use a MessagePort instance in a closed state, usually after .close() has been called.
         
         
         ERR_CONSOLE_WRITABLE_STREAM##
-        Console was instantiated without stdout stream, or Console has a non-writable stdout or stderr stream. 
+        Console was instantiated without stdout stream, or Console has a non-writable stdout or stderr stream.
         
         ERR_CONSTRUCT_CALL_REQUIRED
         A constructor for a class was called without new.
@@ -1386,8 +1387,8 @@ N               D
         instance.setEncoding('utf8');
         
         ERR_STRING_TOO_LARGE##
-        An attempt has been made to create a string larger than the maximum allowed size.        
-}        
+        An attempt has been made to create a string larger than the maximum allowed size.
+}
 
 
 
@@ -1396,9 +1397,10 @@ N               D
         E
 What I take away from error handling
 for async errors use a error handler which has an if else handling things
-for event emitters and streams use ee.on('error',function(){ code }) or  process.on('uncaughtException', () => { //handler})       
-for sync erros use try, catch throw 
-for every method you use research how it tells you to handle its errors  
+for event emitters and streams use ee.on('error',function(){ code })
+use  process.on('uncaughtException', () => { //handler}) to close files and strems
+for sync erros use try, catch throw
+for every method you use research how it tells you to handle its errors
 
 
 
@@ -1436,7 +1438,7 @@ All file system operations have synchronous and asynchronous forms.
 
                                                                                                                                                
 
-                The asynchronous form always takes a completion callback as its last argument, 
+                The asynchronous form always takes a completion callback as its last argument,
                 the exception is the 1st arg of the callback
 
                 if there is no exception the first arg is null
@@ -1447,7 +1449,7 @@ N                                                                               
                   if (err) throw err;
                   else{
                         console.log('successfully deleted /tmp/hello');
-                  } 
+                  }
                 });
                 file: FS/simple_async_fs.js
 
@@ -1461,13 +1463,13 @@ N                                                                               
                                             O
 
 
-                    sync exceptions are thrown immediately, 
+                    sync exceptions are thrown immediately,
                     use try catch throw finally here and they can bubble up
 
                     try {
 N                     fs.Syncfunction('/tmpasdasda/hello');                            D
                       console.log('successfully executed');
-                    } 
+                    }
 
                     catch (err) {
                       console.log(err.code)
@@ -1485,7 +1487,7 @@ N                     fs.Syncfunction('/tmpasdasda/hello');                     
 
         O
 N           to bubble up means any thing as the cause of code deep in your software will bubble to the parent (the surface)
-            if the code closer to the surface above it needs any data it sends 
+            if the code closer to the surface above it needs any data it sends
         E
 
 
@@ -1495,8 +1497,8 @@ N           to bubble up means any thing as the cause of code deep in your softw
                                         O
 
 
-                    if you want your async function done 
-                    in order use them with callback logic 
+                    if you want your async function done
+                    in order use them with callback logic
 
 
 
@@ -1509,11 +1511,11 @@ N                   fs.rename('/tmp/hello', '/tmp/world', (err) => {            
                     });
                     file: FS/async_by_callback.js
 
-                    use async code in production, sync version will block 
+                    use async code in production, sync version will block
                     till they complete
 
-                    always use callback for async fucntions, 
-                    Idc if your code is one big chain it works, 
+                    always use callback for async fucntions,
+                    Idc if your code is one big chain it works,
 
 
                                         E
@@ -1530,24 +1532,24 @@ N               D
                                                                 O
 
                     File Paths
-                    Most fs operations accept filepaths that may be specified 
-                    in the form of a string, a Buffer, or a URL object using the file: protocol.        
+                    Most fs operations accept filepaths that may be specified
+                    in the form of a string, a Buffer, or a URL object using the file: protocol.
 
-                    String form paths are interpreted as UTF-8 character sequences 
-                    identifying the absolute or relative filename. 
-                    Relative paths will be resolved relative to the current working 
+                    String form paths are interpreted as UTF-8 character sequences
+                    identifying the absolute or relative filename.
+                    Relative paths will be resolved relative to the current working
                     directory as specified by process.cwd().
                     file: /FS/abs_path.js    /FS/relative_path.js
 N                                                                                                                           D
     
-                    Paths specified using a Buffer are useful primarily on 
+                    Paths specified using a Buffer are useful primarily on
                     certain POSIX operating systems that treat file paths as opaque byte sequences
                     Buffer paths can also be relative or absolute
 
                     file: /FS/rel_and_abs_buffer_path.js
 
                     on Windows there is a per-drive working dir concept Node follows
-                     For example fs.readdirSync('c:\\') can potentially return 
+                     For example fs.readdirSync('c:\\') can potentially return
                      a different result than fs.readdirSync('c:')
 
 
@@ -1572,22 +1574,22 @@ N               D
                      file: FS/URL_basic_fs.js
 
 
-                    On Windows, file: URLs with a hostname convert to UNC paths, while file: 
+                    On Windows, file: URLs with a hostname convert to UNC paths, while file:
                     URLs with drive letters convert to local absolute paths
                     . file: URLs without a hostname nor a drive letter will result in a throw:
 N                                                                                                               D
 
                     file: URLs with a hostname are unsupported and will result in a throw:
-                    ex. 
+                    ex.
                             fs.readFileSync(new URL('file://hostname/p/a/t/h/file'));
 
                     A file: URL having encoded slash characters will result in a throw on all platforms:
-                    ex. 
+                    ex.
 
                             fs.readFileSync(new URL('file:///p/a/t/h/%2F'));
-                            fs.readFileSync(new URL('file:///p/a/t/h/%2f')); 
+                            fs.readFileSync(new URL('file:///p/a/t/h/%2f'));
 
-                                                E        
+                                                E
 
         O
 N               D
@@ -1597,20 +1599,20 @@ N               D
 
                                                         O
 
-                File Descriptors                                                                    
-                on POSIX for every process working with files there is a file descriptor for each file to help the 
-                system keep track of whats happening to files 
+                File Descriptors
+                on POSIX for every process working with files there is a file descriptor for each file to help the
+                system keep track of whats happening to files
 
-                Node.js makes it simple 
+                Node.js makes it simple
 N                                                                                                                          D
-                fs.open() is used to get a file descriptor, once node has given this to a file 
-                it can do anything to the file in permission bounds 
-                file: FS/open_basic.js 
+                fs.open() is used to get a file descriptor, once node has given this to a file
+                it can do anything to the file in permission bounds
+                file: FS/open_basic.js
 
-                many OS  limit the amount of open files at a given time, remember to close files 
+                many OS  limit the amount of open files at a given time, remember to close files
                 when you  are done with them and have a error  handler that closes any files if errors are  caught
 
-                                                        E                
+                                                        E
 
         O
 N               D
@@ -1618,10 +1620,10 @@ N               D
 
 Threadpool Usage
 
-All file system APIs except fs.FSWatcher() and those that are explicitly synchronous use 
+All file system APIs except fs.FSWatcher() and those that are explicitly synchronous use
 libuv's threadpool', which can have surprising and negative performance implications for some applications
 
-to mitigate make the size larger than 4 the make value for UV_THREADPOOL_SIZE=size is 128   
+to mitigate make the size larger than 4 the make value for UV_THREADPOOL_SIZE=size is 128
 
 
 
@@ -1632,8 +1634,8 @@ N               D
 
 Class: fs.Dirent#
 Added in: v10.10.0
-When fs.readdir() or fs.readdirSync() is called with the withFileTypes option set to true, 
-the resulting array is filled with fs.Dirent objects, rather than strings or Buffers.           
+When fs.readdir() or fs.readdirSync() is called with the withFileTypes option set to true,
+the resulting array is filled with fs.Dirent objects, rather than strings or Buffers.
 
 dirent.isBlockDevice()#
 Added in: v10.10.0
@@ -1673,8 +1675,8 @@ Returns true if the fs.Dirent object describes a symbolic link.
 dirent.name#
 Added in: v10.10.0
 <string> | <Buffer>
-The file name that this fs.Dirent object refers to. The type of 
-this value is determined by the options.encoding passed to fs.readdir() or fs.readdirSync().                                           
+The file name that this fs.Dirent object refers to. The type of
+this value is determined by the options.encoding passed to fs.readdir() or fs.readdirSync().
 
 
 
@@ -1694,9 +1696,9 @@ N               D
 
 
 Class: fs.Stats#
-an object that provides info about a file 
+an object that provides info about a file
 
-fs.stat(), fs.lstat , fs.fstat() and sync counterparts return that class 
+fs.stat(), fs.lstat , fs.fstat() and sync counterparts return that class
 
 stats.isBlockDevice()#
 Added in: v0.1.10
@@ -1823,7 +1825,7 @@ The timestamp indicating the creation time of this file.
                             Stat Time Values
 N                if you make a change to one time value on               D
                 a file it will not change the other
-                they are independent of each other 
+                they are independent of each other
 
                                     E
 
@@ -1838,7 +1840,7 @@ N               D
 
                                                                 O
     
-                    fs.access(path[, mode], callback)                    
+                    fs.access(path[, mode], callback)
                     fs.accessSync(path[, mode])
                     
                     path <string> | <Buffer> | <URL>
@@ -1862,7 +1864,7 @@ N                                                                               
                     
                     On Windows, access-control policies (ACLs) on a directory may
                     limit access to a file or directory. The fs.access() function,
-                    bypasses that and gives you that file info
+                    bypasses that
 
                     sync version returns undefined
                     if any accessibility checks fail error thrown
@@ -1947,7 +1949,7 @@ async file permission change the callback only takes an exception
 
 File modes
 
-a numneric bitmask argument created with a logical OR or this table 
+a numneric bitmask argument created with a logical OR or this table
 
 
 +----------------------+-------+--------------------------+
@@ -1977,10 +1979,10 @@ its better to do it like this , they will be applied like so
 
 0o765 means
 owner can read write and execute
-group can read and write 
-others can read and execute 
+group can read and write
+others can read and execute
 
-on windows on write permission can be changed , and there is no usr grp oth distinction 
+on windows on write permission can be changed , and there is no usr grp oth distinction
 
 +--------+------------------------+
 | Number | Description            |
@@ -2000,7 +2002,7 @@ on windows on write permission can be changed , and there is no usr grp oth dist
 | 1      | execute only           |
 +--------+------------------------+
 | 0      | no permission          |
-+--------+------------------------+    
++--------+------------------------+
 
 
 
@@ -2024,7 +2026,7 @@ callback <Function>
 
     err <Error>
 
-    changes the owner and group of a file 
+    changes the owner and group of a file
 
 
 
@@ -2044,9 +2046,9 @@ N               D
 
                     err <Error>
 
-N                                                                               D                                                    
-                async file close with fd as file descriptor 
-                and the error arg the only arg for a callback 
+N                                                                               D
+                async file close with fd as file descriptor
+                and the error arg the only arg for a callback
                 sync returns undefined
 
 
@@ -2074,27 +2076,27 @@ N               D
                 flags <number> modifiers for copy operation. Default: 0.
                     callback <Function>
 
-                async copy src -> dest, callback only takes error arg, if something goes wrong after opening  
+                async copy src -> dest, callback only takes error arg, if something goes wrong after opening
                 the destination for writing Node.js will attempt to close the  file
 N                                                                                                                               D
                 flags in an interger telling the method how to copy
 
-                fs.constants.COPYFILE_EXCL - The copy operation will fail if dest already exists. 
+                fs.constants.COPYFILE_EXCL - The copy operation will fail if dest already exists.
                                                 with no flags the dest is overwritten
                                                so if you want to overwrite your destination leave it out
                 fs.constants.COPYFILE_FICLONE - The copy operation will attempt to create a copy-on-write reflink.
                                                  If the platform does not support copy-on-write, then a
-                                                 fallback copy mechanism is used.                                 
-                fs.constants.COPYFILE_FICLONE_FORCE - The copy operation will attempt to create a 
+                                                 fallback copy mechanism is used.
+                fs.constants.COPYFILE_FICLONE_FORCE - The copy operation will attempt to create a
                                                         copy-on-write reflink. If the platform does not support
                                                          copy-on-write,
                                                          then the operation will fail.
-                file: FS/copyFile.js       
+                file: FS/copyFile.js
 
-                to use the flags get the flag 
+                to use the flags get the flag
                 const { COPYFILE_EXCL } = fs.constants;
 
-                and do this 
+                and do this
                 fs.copyFile('source.txt', 'destination.txt', COPYFILE_EXCL, callback);
                 file: FS/copyFile_flag.js
 
@@ -2104,10 +2106,10 @@ N                                                                               
 
 
 
-        O                                                
-N           if you want  to import a property from an object in a module  
+        O
+N           if you want  to import a property from an object in a module
             const { [property_name] } = [module_name].[object_name];
-        E                                                 
+        E
 
 
 
@@ -2123,39 +2125,39 @@ N           if you want  to import a property from an object in a module
                     flags <string> See support of file system flags.
                      Default: 'r'.
                     encoding <string> Default: null
-                    fd <integer> Default: null                                        
+                    fd <integer> Default: null
                     mode <integer> Default: 0o666
                     autoClose <boolean> Default: true
                     start <integer>
                     end <integer> Default: Infinity
                     highWaterMark <integer> Default: 64 * 1024
-                    Returns: <fs.ReadSTream> 
+                    Returns: <fs.ReadSTream>
 N                                                                                             D
                 USUAL highWaterMark of  readable streams = 16 kb  ,
                   this method  highWaterMark = 64 kb
 
-                options     
-                start and end can be int to read a range of bytes instead of the entire file 
-                    they are both inclusive and start at 0 
+                options
+                start and end can be int to read a range of bytes instead of the entire file
+                    they are both inclusive and start at 0
                      The encoding can be any one of those accepted by Buffer.
-                     if fd is specified this  method will use it and ignore the path 
-                     becuase the file is open 
+                     if fd is specified this  method will use it and ignore the path
+                     becuase the file is open
                      if fd point s to a character device that only supports blocking reads
                       (such as keyboard or sound card )
-                     read operations do not finish until data is available , 
+                     read operations do not finish until data is available ,
                      this can prevent the process from closing the stream
-                     and exiting naturally 
-                     file:FS/readStream.js 
+                     and exiting naturally
+                     file:FS/readStream.js
 
-                     if autoClose is false then the fd wont be closed even on 'error' 
+                     if autoClose is false then the fd wont be closed even on 'error'
                         the default is true and it will close on error or 'end '
 
-                      mode sets file permission and sticky bits only if the file was created 
-                      if options is a string it specifies encoding   
+                      mode sets file permission and sticky bits only if the file was created
+                      if options is a string it specifies encoding
 
 Class: fs.ReadStream
 
-A successful call to fs.createReadStream() 
+A successful call to fs.createReadStream()
 will return a new fs.ReadStream object.
 
 All fs.ReadStream objects are Readable Streams.
@@ -2168,6 +2170,7 @@ Event: 'open'#
 Added in: v0.1.93
 fd <integer> Integer file descriptor used by the ReadStream.
 Emitted when the fs.ReadStream's file descriptor has been opened.
+does not emit when given a fd
 
 Event: 'ready'#
 Added in: v9.11.0
@@ -2183,11 +2186,11 @@ The number of bytes that have been read so far.
 readStream.path#
 Added in: v0.1.93
 <string> | <Buffer>
-The path to the file the stream is reading from as specified in the first argument to fs.createReadStream(). 
-If path is passed as a string, then readStream.path will be a string. If path is passed as a Buffer, 
+The path to the file the stream is reading from as specified in the first argument to fs.createReadStream().
+If path is passed as a string, then readStream.path will be a string. If path is passed as a Buffer,
 then readStream.path will be a Buffer.
 
-                                            E   
+                                            E
 
 
 
@@ -2199,7 +2202,7 @@ then readStream.path will be a Buffer.
 
 
 
-                fs.createWriteStream(path[, options])  
+                fs.createWriteStream(path[, options])
 
                 path <string> | <Buffer> | <URL>
                 options <string> | <Object>
@@ -2207,31 +2210,31 @@ then readStream.path will be a Buffer.
                     flags <string> See support of file system flags.
                      Default: 'w'.
                     encoding <string> Default: null
-                    fd <integer> Default: null                                        
+                    fd <integer> Default: null
                     mode <integer> Default: 0o666
                     autoClose <boolean> Default: true
-                    start <integer>   
-                    Returns: <fs.WriteStream> 
+                    start <integer>
+                    Returns: <fs.WriteStream>
 
 N                                                                                                       D
-                options     
+                options
                 you must provide a path eventhough providing the fd will ignore it
-                start  can be int to read a range of bytes instead of the entire file 
-                    they nclusive and start at 0 
+                start  can be int to read a range of bytes instead of the entire file
+                    they nclusive and start at 0
                         start != 0 >> encoding = buffer (&& ||) .setEncoding('desired')
                      The encoding can be any one of those accepted by Buffer.
-                     if fd is specified this  method will use it and ignore the path 
-                     becuase the file is open 
-                     non-blocking fd will be sent to net.Socket 
-                     read operations do not finish until data is available , 
+                     if fd is specified this  method will use it and ignore the path
+                     becuase the file is open
+                     non-blocking fd will be sent to net.Socket
+                     read operations do not finish until data is available ,
                      this can prevent the process from closing the stream
-                     and exiting naturally                      
+                     and exiting naturally
 
-                     if autoClose is false then the fd wont be closed even on 'error' 
-                        the default is true and it will close on error or 'finish' 
+                     if autoClose is false then the fd wont be closed even on 'error'
+                        the default is true and it will close on error or 'finish'
 
-                      mode sets file permission and sticky bits only if the file was created 
-                      if options is a string it specifies encoding    
+                      mode sets file permission and sticky bits only if the file was created
+                      if options is a string it specifies encoding
 
         O
 N               D
@@ -2254,28 +2257,28 @@ Event: 'ready'#
 Added in: v9.11.0
 Emitted when the fs.WriteStream is ready to be used.
 Fires immediately after 'open'.
-doesn't work with fd 
+doesn't work with fd
 
 writeStream.bytesWritten#
 Added in: v0.4.7
 The number of bytes written so far. Does not include data that is still queued for writing.
-bytesWritten only changes after the an async function call 
+bytesWritten only changes after the an async function call
 
 writeStream.path#
 Added in: v0.1.93
-The path to the file the stream is writing to as specified in the first argument to 
+The path to the file the stream is writing to as specified in the first argument to
 fs.createWriteStream(). If path is passed as a string, then writeStream.path will be a string.
  If path is passed as a Buffer, then writeStream.path will be a Buffer.
 
-                                             E                      
+                                             E
 
 
 
         O
 N            fs.exists(path, callback)  Deprecated: Use fs.stat() or fs.access() instead.
-                fs.existsSync(path) IS NOT deprecated  
+                fs.existsSync(path) IS NOT deprecated
              Returns true if the path exists, false otherwise.
-        E                                                                                                       
+        E
 
 
 
@@ -2284,8 +2287,8 @@ N            fs.exists(path, callback)  Deprecated: Use fs.stat() or fs.access()
 N               D
         E
 
-fchmod and fchown are just like chmod & chown but they take the file descriptor instead of the file 
-refer to chmod for details 
+fchmod and fchown are just like chmod & chown but they take the file descriptor instead of the file
+refer to chmod for details
 fs.fchmod(fd, mode, callback)
 fs.fchmodSync(fd, mode)
 History
@@ -2309,7 +2312,7 @@ callback <Function>
 
     err <Error>
 Asynchronous fchown(2). ONLY error arg for completion callback.
-sync returns undefined 
+sync returns undefined
 
 
 
@@ -2324,14 +2327,14 @@ N               D
 
 
 
-                datasync is a method that flushes the file to permeant storage on  system crash or reboot 
-                however it keeps metadata needed for data recovery at system reboot ; 
+                datasync is a method that flushes the file to permeant storage on  system crash or reboot
+                however it keeps metadata needed for data recovery at system reboot ;
                     the file size,
                     file name
-                and its tosses unessary metadata 
-                     a_time  
+                and its tosses unessary metadata
+                     a_time
                      c_time.
-                sync keeps everything including metadata 
+                sync keeps everything including metadata
 
                 fs.fdatasync(fd, callback)[src]#
                 fs.fdatasyncSync(fd)
@@ -2383,9 +2386,9 @@ N               D
 
         err <Error>
         stats <fs.Stats>
-        Asynchronous fstat(2). The callback gets two arguments 
-        (err, stats) where stats is an fs.Stats object. 
-        fstat() is identical to stat(), except that the 
+        Asynchronous fstat(2). The callback gets two arguments
+        (err, stats) where stats is an fs.Stats object.
+        fstat() is identical to stat(), except that the
         file to be stat-ed is specified by the file descriptor fd.
         sync version retunrs  <fs.Stats>
 N                                                                            D
@@ -2420,12 +2423,12 @@ N               D
                 async ftruncate .
                 sync Returns undefined.
 
-                IF the file assoc  with fd is largen then len the first len bytes will be kept 
+                IF the file assoc  with fd is largen then len the first len bytes will be kept
                 file: FS/truncate_plus.js
  N              IF the fd file is shorter than len. its extended and  filled up with null bytes    D
                 ('\0'):
-                on ubuntu 16.04.5  you see ^@   
-                file: FS/truncate_minus.js 
+                on ubuntu 16.04.5  you see ^@
+                file: FS/truncate_minus.js
 
 
 
@@ -2447,8 +2450,8 @@ callback <Function>
 
     err <Error>
 
-refer to fs.utimes to  see what it does 
-ASYNC 
+refer to fs.utimes to  see what it does
+ASYNC
 This function does not work on AIX versions before 7.1,
  it will return the error UV_ENOSYS
 
@@ -2464,7 +2467,7 @@ N               D
         E
 
 
-when you see l from chmod or chown this means it takes the path of the file but does not follow symbolic links 
+when you see l from chmod or chown this means it takes the path of the file but does not follow symbolic links
 
 fs.lchmod(path, mode, callback)
 fs.lchmodSync(path, mode)
@@ -2508,9 +2511,9 @@ callback <Function>
     err <Error>
     stats <fs.Stats>
 Asynchronous lstat(2). The callback gets two arguments (err, stats) where stats is a
- fs.Stats object. lstat() is identical to stat(), except that if 
+ fs.Stats object. lstat() is identical to stat(), except that if
  path is a symbolic link, then the link itself is stat-ed, not the file that it refers to.
- sync reuturns <fs.Stats> 
+ sync reuturns <fs.Stats>
 
 
 
@@ -2520,7 +2523,7 @@ N               D
         E
 
 
-link makes a hard link between two paths 
+link makes a hard link between two paths
 
 fs.link(existingPath, newPath, callback)[src]#
 fs.linkSync(existingPath, newPath)
@@ -2530,7 +2533,7 @@ newPath <string> | <Buffer> | <URL>
 callback <Function>
 
     err <Error>
-Asynchronous link(2). No arguments other than a 
+Asynchronous link(2). No arguments other than a
 possible exception are given to the completion callback.
 sync reutns undefined
 
@@ -2555,14 +2558,14 @@ N               D
 
                     err <Error>
 N                                                                                        D
-                only error arg given to callback completion 
-                options can be an interger making dir permissions, 
+                only error arg given to callback completion
+                options can be an interger making dir permissions,
                 or an object containing mode with integers
-                if recursive is true directory is created even 
-                    if anything in the paths does  not exist, 
+                if recursive is true directory is created even
+                    if anything in the paths does  not exist,
                 if false directories are not created if parents do not exist
 
-                file FS/mkdir.js     
+                file FS/mkdir.js
 
 
                                                 E
@@ -2580,7 +2583,7 @@ callback <Function>
     err <Error>
     folder <string>
 
-creates a unique temp dir when six random chars are appeneded to a prefix to create a unique dir 
+creates a unique temp dir when six random chars are appeneded to a prefix to create a unique dir
 The created folder path is passed as a string to the callback's second parameter.
 
 
@@ -2598,16 +2601,16 @@ fs.open(path, flags[, mode], callback)
 fs.openSync(path, flags[, mode])
 
 path <string> | <Buffer> | <URL>
-flags <string> | <number> 
+flags <string> | <number>
 mode <integer> Default: 0o666 (readable and writable)
 callback <Function>
 
     err <Error>
     fd <integer>
 
-flags a,w,r,s,x,+ open the file for certain support 
-    mode: sets file permissions 
-Functions based on fs.open() exhibit this behavior as well: fs.writeFile(), fs.readFile(), 
+flags a,w,r,s,x,+ open the file for certain support
+    mode: sets file permissions
+Functions based on fs.open() exhibit this behavior as well: fs.writeFile(), fs.readFile(),
 
 
 
@@ -2619,15 +2622,15 @@ N               D
 
 
             What makes `Buffer.allocUnsafe()` and `Buffer.allocUnsafeSlow()` "unsafe"?#
-            When calling Buffer.allocUnsafe() and Buffer.allocUnsafeSlow(), the segment 
+            When calling Buffer.allocUnsafe() and Buffer.allocUnsafeSlow(), the segment
             of allocated memory is uninitialized (it is not zeroed-out). While this
-             design makes the allocation of memory quite fast, the allocated segment 
-             of memory might contain old data that is potentially sensitive. Using a 
-             Buffer created by Buffer.allocUnsafe() without completely overwriting the 
+             design makes the allocation of memory quite fast, the allocated segment
+             of memory might contain old data that is potentially sensitive. Using a
+             Buffer created by Buffer.allocUnsafe() without completely overwriting the
              memory can allow this old data to be leaked when the Buffer memory is read.
 N                                                                                                                       D
 
-            While there are clear performance advantages to using Buffer.allocUnsafe(), 
+            While there are clear performance advantages to using Buffer.allocUnsafe(),
             extra care must be taken in order to avoid introducing security vulnerabilities
              into an application.
 
@@ -2637,7 +2640,7 @@ N                                                                               
 
 
                                                 O
-                        need to read from a buffer 
+                        need to read from a buffer
 
 
                         const buf3 = Buffer.from(<Buffer 88 13 70 17>);
@@ -2653,38 +2656,38 @@ N                                                                               
                         size <integer> The desired length of the new Buffer.
                         fill <string> | <Buffer> | <integer> A value to pre-fill
                         the new Buffer with. Default: 0.
-                        encoding <string> If fill is a string, 
+                        encoding <string> If fill is a string,
                         this is its encoding. Default: 'utf8'.
 
 
                         need to write data to a buffer ?
                         const buf = Buffer.alloc(5);
 
-                        need to fill a buffer 
+                        need to fill a buffer
                         const buf = Buffer.alloc(5, 'a');
 N                       const buf = Buffer.alloc(5, 1);                                                      D
-                        const buf = Buffer.alloc(5, Buffer.from(data));         
+                        const buf = Buffer.alloc(5, Buffer.from(data));
 
-                        need to specify encoding 
+                        need to specify encoding
 
-                        const buf = Buffer.alloc(5, 'a', 'utf8');  //default 
+                        const buf = Buffer.alloc(5, 'a', 'utf8');  //default
 
 
                         Class Method: Buffer.allocUnsafe(size)
-                        if you need performance and got security in place 
+                        if you need performance and got security in place
                         const buf = Buffer.allocUnsafe(10);
 
                         console.log(buf);
-                        // Prints: (contents may vary): <Buffer a0 8b 28 3f 01 00 00 00 50 32>    
-                        refer to article at top of tutorial to learn how to keep node processes under 300 MB 
-                        to free mem alloc by a buf 
+                        // Prints: (contents may vary): <Buffer a0 8b 28 3f 01 00 00 00 50 32>
+                        refer to article at top of tutorial to learn how to keep node processes under 300 MB
+                        to free mem alloc by a buf
                         buf = null
                         all_references = null
-                        also use process.memoryUsage(). to identify if its works, 
-                        if it doesnt grow you should be fine 
+                        also use process.memoryUsage(). to identify if its works,
+                        if it doesnt grow you should be fine
 
 
-                                                E                                   
+                                                E
 
 
 
@@ -2720,20 +2723,20 @@ N                                                                               
             length is an integer specifying the number of bytes to read.
 
             position is an argument specifying where to begin reading from in the file.
-             If position is null, data will be read from the current file position, 
-             and the file position will be updated. If position is an integer, 
-             the file position will remain unchanged. make sure position is there man 
+             If position is null, data will be read from the current file position,
+             and the file position will be updated. If position is an integer,
+             the file position will remain unchanged. make sure position is there man
 
 
             The callback is given the three arguments, (err, bytesRead, buffer).
 
-            If this method is invoked as its util.promisify()ed version, 
+            If this method is invoked as its util.promisify()ed version,
             it returns a Promise for an Object with bytesRead and buffer properties.
             file: FS/read.js
 
-        O           
-N            If the file bytes amount is less than length it will still read the file no problem 
-        E     
+        O
+N            If the file bytes amount is less than length it will still read the file no problem
+        E
 
                                                     E
 
@@ -2757,11 +2760,11 @@ N            If the file bytes amount is less than length it will still read the
                             callback <Function>
 N                                                                                                       D
                                 err <Error>
-                                files <string[]> | <Buffer[]> | <fs.Dirent[]>                                                    
+                                files <string[]> | <Buffer[]> | <fs.Dirent[]>
 
                             read dir contents, callback gets a files listung the files in the dir excluding . & ..
-                            if options is a string it specifies encoding, if encoding : buffer the files will be buffer objects  
-                            withFileTypes = true, files return fs.Dirent objects 
+                            if options is a string it specifies encoding, if encoding : buffer the files will be buffer objects
+                            withFileTypes = true, files return fs.Dirent objects
 
                             file: FS/readdir.js
 
@@ -2788,19 +2791,19 @@ N                                                                               
 N                                                                                                    D
                     async file read
                     callback err, data data is the content of the file
-                    if object is a string specifies encoding 
+                    if object is a string specifies encoding
                     make sure mode is read-friendly :)
-                    if the path is a directory on Linux Windows and 
-                    Mac its an error on FreeBSD it gives you something 
+                    if the path is a directory on Linux Windows and
+                    Mac its an error on FreeBSD it gives you something
 
                     the fs readfile buffers the whole files,
                      try to use fs.createReadStream in production
 
                     if you use a fd
-                    it has to support reading 
+                    it has to support reading
                     its not closed automatically
-                    if there was an fs.read or fs.write it will begin at where those 
-                    function that are  pos friendly left off 
+                    if there was an fs.read or fs.write it will begin at where those
+                    function that are  pos friendly left off
 
                     file: FS/read_fd.js
 
@@ -2823,7 +2826,7 @@ N                                                           D
                     linkString <string> | <Buffer>
 
                 reads a symbolic link
-                file: FS/readlink.js 
+                file: FS/readlink.js
 
                             E
 
@@ -2836,7 +2839,7 @@ N               D
 
                                                 O
 
-                    fs.realpath(path[, options], callback) 
+                    fs.realpath(path[, options], callback)
                     fs.realpathSync(path[, options])
                     path <string> | <Buffer> | <URL>
                     options <string> | <Object>
@@ -2847,16 +2850,16 @@ N               D
                         err <Error>
                         resolvedPath <string> | <Buffer>
 N                                                                                           D
-                    Async computes the canonical absolute pathname of a file     
+                    Async computes the canonical absolute pathname of a file
                     it doesn't do case conversion
-                    max # of symbolic links is much high than native realpath 
+                    max # of symbolic links is much high than native realpath
 
-                    only UTF8-convertible paths are supported 
+                    only UTF8-convertible paths are supported
                     May use process.cwd to resolve relative paths callback gets err, resolvedPath
 
-                    if path goes to a socket or pipe the function will return a system dependent name for it 
+                    if path goes to a socket or pipe the function will return a system dependent name for it
 
-                    file FS/real_path.js 
+                    file FS/real_path.js
 
 
 
@@ -2877,13 +2880,13 @@ N                                                                               
                 callback <Function>
 N                                                                                     D
                     err <Error>
-                    resolvedPath <string> | <Buffer>                                               
+                    resolvedPath <string> | <Buffer>
 
 
 
 
-                On Linux, when Node.js is linked against musl libc, 
-                the procfs file system must be mounted on /proc in order 
+                On Linux, when Node.js is linked against musl libc,
+                the procfs file system must be mounted on /proc in order
                 for this function to work. Glibc does not have this restriction.
 
                                             E
@@ -2901,7 +2904,7 @@ callback <Function>
 
     err <Error>
 
-rename a file, if newPath exists it will be overwritten 
+rename a file, if newPath exists it will be overwritten
 
         O
 N               D
@@ -2915,10 +2918,10 @@ callback <Function>
 
     err <Error>
 
-rmdir 
-if rm a file with this 
+rmdir
+if rm a file with this
     Windows: error.code = ENOENT
-    POSIX: error.code = ENOTDIR 
+    POSIX: error.code = ENOTDIR
 
 
 
@@ -2940,11 +2943,11 @@ callback <Function>
     err <Error>
     stats <fs.Stats>
 
-info about a file 
-possible error codes, Common SystemError see above in errors 
-dont use to test for the existence of a a file before fs.open 
+info about a file
+possible error codes, Common SystemError see above in errors
+dont use to test for the existence of a a file before fs.open
 
-In linux 16.04.5 the a,c,m, and birth time(Ms)? are reported wrong notify the developer about this 
+In linux 16.04.5 the a,c,m, and birth time(Ms)? are reported wrong notify the developer about this
 file: FS/stat.js
 
         O
@@ -2961,9 +2964,9 @@ callback <Function>
 
     err <Error>
 
-make a symlink for the target in path 
+make a symlink for the target in path
 for type only  on Windows there is  dir file and junction, abs path are forced for junction
-file: FS/unlink.js  // yes its unlink.js trust me  
+file: FS/unlink.js  // yes its unlink.js trust me
 
 
 
@@ -2972,8 +2975,8 @@ file: FS/unlink.js  // yes its unlink.js trust me
 N               D
         E
 
-fs.truncate(path[, len], callback) 
-fs.truncateSync(path[, len])    
+fs.truncate(path[, len], callback)
+fs.truncateSync(path[, len])
 
 path <string> | <Buffer> | <URL>
 len <integer> Default: 0
@@ -2981,7 +2984,7 @@ callback <Function>
 
     err <Error>
 
-dont use fd here use ftruncate (see aboove)    
+dont use fd here use ftruncate (see aboove)
 (see above also for how truncate works)
 
 
@@ -2997,9 +3000,9 @@ path <string> | <Buffer> | <URL>
 callback <Function>
     err <Error>
 
-Async removes a file or symbolic link use this to rm a file 
-does not delete file is symlink is removed 
-file : FS/unlink.js 
+Async removes a file or symbolic link use this to rm a file
+does not delete file is symlink is removed
+file : FS/unlink.js
 
 
         O
@@ -3008,13 +3011,13 @@ N               D
 fs.unwatchFile(filename[, listener])
 
 filename <string> | <Buffer> | <URL>
-listener <Function> Optional, a listener previously attached using fs.watchFile()        
+listener <Function> Optional, a listener previously attached using fs.watchFile()
 
 if a file is not being watch theres a no-op
-using fs.watch is more efficient 
+using fs.watch is more efficient
 
         O
-N          no-op are when no operations are performed but it takes up small space don't do no-op they add up'      
+N          no-op are when no operations are performed but it takes up small space don't do no-op they add up'
         E
 
 
@@ -3036,9 +3039,9 @@ callback <Function>
 
 
 changing fs timestamps
-Values can be either numbers representing 
+Values can be either numbers representing
 Unix epoch time, Dates, or a numeric string like '123456789.0'.
-If the value can not be converted to a number, 
+If the value can not be converted to a number,
 or is NaN, Infinity or -Infinity, an Error will be thrown.
 
 
@@ -3056,7 +3059,7 @@ options <string> | <Object>
 
     persistent <boolean> Indicates whether the process should continue to
                          run as long as files are being watched. Default: true.
-    recursive <boolean> Indicates whether all subdirectories should be watched, 
+    recursive <boolean> Indicates whether all subdirectories should be watched,
                         or only the current directory.
                          This applies when a directory is specified,
                           and  only supported on macOS and Windows..
@@ -3067,12 +3070,12 @@ listener <Function> | <undefined> Default: undefined
     eventType <string>
     filename <string> | <Buffer>
 
-returns a fs.Watcher object 
+returns a fs.Watcher object
 
-watches for chanages on filename = file | dir 
-optios a string or object  
-eventType is 'rename' || 'change', rename might be differnt on linux 
-filename  = filename.trigger('watch') 
+watches for chanages on filename = file | dir
+optios a string or object
+eventType is 'rename' || 'change', rename might be differnt on linux
+filename  = filename.trigger('watch')
 The listener callback is attached to the 'change' event fired by fs.FSWatcher,
  but it is not the same  as the 'change' value of eventType.
 
@@ -3081,7 +3084,7 @@ The listener callback is attached to the 'change' event fired by fs.FSWatcher,
 
          Availability#
 
-         you need for fs.watch to work 
+         you need for fs.watch to work
          On Linux systems, this uses inotify(7).
         On BSD systems, this uses kqueue(2).
 N        On macOS, this uses kqueue(2) for files and FSEvents for directories.         D
@@ -3102,9 +3105,9 @@ Inodes
 
         on Linux and MacOS, when files get deleted and recreated they get new inodes, fs.watch
          watches the orginal inode still its supposed to be like this, close and recall fs.watch
-         to hopefully get the new inode 
+         to hopefully get the new inode
 N                                                                                                    D
-        AIX system keep the inode no matter 
+        AIX system keep the inode no matter
         so you will start to get 2 notificatiosn for new content and truncation
 
                                         E
@@ -3117,7 +3120,7 @@ N                                                                               
 
 N                                                                    D
              Linux, macOS, Windows, and AIX supported ,
-              but fs.watch  may always not get the file and thats it                                 
+              but fs.watch  may always not get the file and thats it
 
                                         E
 
@@ -3130,19 +3133,19 @@ N                                                                    D
 
 
             Class: fs.FSWatcher
-            an object that emits a change event when ever a file is modified 
+            an object that emits a change event when ever a file is modified
 
             Event: 'change'
             eventType <string> The type of change event that has occurred
             filename <string> | <Buffer> The filename that changed (if relevant/available)
 
-            depending on OS filename may not be provided , 
-             if encoding set to buffer fs.watch will print 
-            the filename as a buffer 
-                    O 
+            depending on OS filename may not be provided ,
+             if encoding set to buffer fs.watch will print
+            the filename as a buffer
+                    O
             N             it catches the first chage but not subsquent changes
                     D
-            File: FS/fs_watch.js        
+            File: FS/fs_watch.js
 
 N                                                                                                       D
 
@@ -3155,12 +3158,12 @@ N                                                                               
              Event: 'error'#
             Added in: v0.5.8
             error <Error>
-            Emitted when an error occurs while watching the file. 
+            Emitted when an error occurs while watching the file.
             The errored fs.FSWatcher object is no longer usable in the event handler.
 
             watcher.close()#
             Added in: v0.5.8
-            Stop watching for changes on the given fs.FSWatcher. 
+            Stop watching for changes on the given fs.FSWatcher.
             Once stopped, the fs.FSWatcher object is no longer usable.
 
 
@@ -3180,10 +3183,10 @@ listener <Function>
     previous <fs.Stats>
 
 options
-    interval, interval in ms on how many times filename is polled 
+    interval, interval in ms on how many times filename is polled
 
-if it results in an err.code = ENOENT , the curr and prev fs.Watchers should have 0's or EPOCH'S for their fields 
-if a file disappears and reapears the prev in the sencond will be the same as prev in the first         
+if it results in an err.code = ENOENT , the curr and prev fs.Watchers should have 0's or EPOCH'S for their fields
+if a file disappears and reapears the prev in the sencond will be the same as prev in the first
 
 
         O
@@ -3196,8 +3199,8 @@ N               D
 
             fs.write(fd, buffer[, offset[, length[, position]]], callback)
             fs.writeSync(fd, buffer[, offset[, length[, position]]])
-            fs.write(fd, string[, position[, encoding]], callback)  
-            fs.writeSync(fd, string[, position[, encoding]])      
+            fs.write(fd, string[, position[, encoding]], callback)
+            fs.writeSync(fd, string[, position[, encoding]])
 
 
             fd <integer>
@@ -3215,37 +3218,37 @@ N               D
 
             string <string>
             position <integer>
-            encoding <string> 'utf8' | 
+            encoding <string> 'utf8' |
             callback <Function>
 N                                                                               D
                 err <Error>
                 written <integer>
-                string <string>    
+                string <string>
 
 
 
-            in Linux on append mode, positional write do not work 
-            the kernel always appends data to the end of the file 
+            in Linux on append mode, positional write do not work
+            the kernel always appends data to the end of the file
 
-            always using a number for positioning 
+            always using a number for positioning
 
-            offset represents where to start writing from the buffer 
-            lenght how much should be written 
-            position is where in the file to start wrtitng 
-            encoding is how the string should end up, 
+            offset represents where to start writing from the buffer
+            lenght how much should be written
+            position is where in the file to start wrtitng
+            encoding is how the string should end up,
             callback
-                bytesWritten is not the same as writen 
+                bytesWritten is not the same as writen
                 bytesWritten is for bytes writen  is for chars
 
 
 
-                    O      
-            N         as you see when buffer is used you specify length, but when string 
-                        is used you must write all the data so if you want to be 
-                      nit picky its gunna take extra work with those buffers    
+                    O
+            N         as you see when buffer is used you specify length, but when string
+                        is used you must write all the data so if you want to be
+                      nit picky its gunna take extra work with those buffers
                     E
 
-            file: FS/write.js    
+            file: FS/write.js
 
                                                     E
 
@@ -3271,14 +3274,14 @@ N                                                                               
                     err <Error>
 
                 if data is a buffer encoding is ignored
-                use fs.createWriteStream() for multiple callbacks 
+                use fs.createWriteStream() for multiple callbacks
 
                 fd
 
-                it must suport writing not appending 
-                it will not be closed automattically 
-                the writing would being at the beginning, 
-                Ex 
+                it must suport writing not appending
+                it will not be closed automattically
+                the writing would being at the beginning,
+                Ex
                     file.content = 'Hello Word'
                     data = 'aloha '
                     file.content = 'aloha  Word'
@@ -3295,8 +3298,8 @@ N               D
 
 fs Promises API#
 Stability: 1 - Experimental
-The fs.promises API provides an alternative set of asynchronous file system methods that 
-return Promise objects rather than using callbacks. The API is accessible via require('fs').promises.    
+The fs.promises API provides an alternative set of asynchronous file system methods that
+return Promise objects rather than using callbacks. The API is accessible via require('fs').promises.
 
 i dont have time for Experimental in production
 
@@ -3308,7 +3311,7 @@ N               D
         E
 
 FS Constants
-not every constant is available on every OS 
+not every constant is available on every OS
 
 
 File Access Constant
@@ -3318,9 +3321,9 @@ fs.access().
 |----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Constant | Description                                                                                                                                                                                   |
 |----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| F_OK     | Flag indicating that the file is visible to the calling process. 
+| F_OK     | Flag indicating that the file is visible to the calling process.
             =This is useful for determining if a file exists but says nothing about rwx permissions
-            .= Default if no mode is specified." 
+            .= Default if no mode is specified."
 |----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | R_OK     | Flag indicating that the file can be read by the calling process.                                                                                                                             |
 |----------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -3332,7 +3335,7 @@ fs.access().
 
 
 
-File COpy constant 
+File COpy constant
 fs.copyFile().
 
 
@@ -3341,10 +3344,10 @@ fs.copyFile().
 |------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | COPYFILE_EXCL          | "If present the copy operation will fail with an error if the destination path already exists."                                                                                      |
 |------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| COPYFILE_FICLONE       | "If present the copy operation will attempt to create a copy-on-write reflink. 
+| COPYFILE_FICLONE       | "If present the copy operation will attempt to create a copy-on-write reflink.
                             If the underlying platform does not support copy-on-write then a fallback copy mechanism is used."    |
 |------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| COPYFILE_FICLONE_FORCE | "If presentthe copy operation will attempt to create a copy-on-write reflink. 
+| COPYFILE_FICLONE_FORCE | "If presentthe copy operation will attempt to create a copy-on-write reflink.
                             If the underlying platform does not support copy-on-write then the operation will fail with an error." |
 |------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
@@ -3355,17 +3358,17 @@ O_RDONLY,Flag indicating to open a file for read-only access.
 O_WRONLY,Flag indicating to open a file for write-only access.
 O_RDWR,Flag indicating to open a file for read-write access.
 O_CREAT,Flag indicating to create the file if it does not already exist.
-O_EXCL,Flag indicating that opening a file should fail if the O_CREAT 
+O_EXCL,Flag indicating that opening a file should fail if the O_CREAT
         flag is set and the file already exists.
-O_NOCTTY,"Flag indicating that if path identifies a terminal device, 
-        opening the path shall not cause that terminal to become the controlling terminal 
+O_NOCTTY,"Flag indicating that if path identifies a terminal device,
+        opening the path shall not cause that terminal to become the controlling terminal
         for the process (if the process does not already have one)."
-O_TRUNC,"Flag indicating that if the file exists and is a regular file, 
+O_TRUNC,"Flag indicating that if the file exists and is a regular file,
          and the file is opened successfully for write access, its length shall be truncated to zero."
 O_APPEND,Flag indicating that data will be appended to the end of the file.
 O_DIRECTORY,Flag indicating that the open should fail if the path is not a directory.
 O_NOATIME,Flag indicating reading accesses to the file system will no longer
-         result in an update to the atime information associated with the file. 
+         result in an update to the atime information associated with the file.
             This flag is available on Linux operating systems only.
 O_NOFOLLOW,Flag indicating that the open should fail if the path is a symbolic link.
 O_SYNC,Flag indicating that the file is opened for synchronized I/O with write operations waiting for file integrity.
@@ -3376,8 +3379,8 @@ O_NONBLOCK,Flag indicating to open the file in nonblocking mode when possible.
 
 
 
-File Type Constants 
-fs.stat object 
+File Type Constants
+fs.stat object
 Constant,Description
 S_IFMT,Bit mask used to extract the file type code.
 S_IFREG,File type constant for a regular file.
@@ -3408,7 +3411,7 @@ S_IXOTH,File mode indicating executable by others.
         O
 N               D
         E
-File System Flags 
+File System Flags
 'a' - Open file for appending. The file is created if it does not exist.
 
 'ax' - Like 'a' but fails if the path exists.
@@ -3425,16 +3428,16 @@ File System Flags
 
 'r+' - Open file for reading and writing. An exception occurs if the file does not exist.
 
-'rs+' - Open file for reading and writing in synchronous mode. 
+'rs+' - Open file for reading and writing in synchronous mode.
 Instructs the operating system to bypass the local file system cache.
 
-This is primarily useful for opening files on NFS mounts as 
+This is primarily useful for opening files on NFS mounts as
 it allows skipping the potentially stale local cache.
  It has a very real impact on I/O performance so using this flag is not recommended unless it is needed.
 
- if you want sync open us fs.openSync 
+ if you want sync open us fs.openSync
 
-'w' - Open file for writing. The file is created (if it does not exist) or truncated (if it exists).
+'w' - Open file for writing. The file is created (if it does not exist) or truncated(if it exists).
 
 'wx' - Like 'w' but fails if the path exists.
 
@@ -3443,23 +3446,23 @@ it allows skipping the potentially stale local cache.
 'wx+' - Like 'w+' but fails if the path exists.
 
 
-flag can  be  a number also 
+flag can  be  a number also
 On Windows constants are translated to their equivalents
 
 the exclusinve flage 'x' ensures new path creation.
-on POSIX the path exists even if its symlinked to non-existent file 
-it might or might not work ont network file systems 
+on POSIX the path exists even if its symlinked to non-existent file
+it might or might not work ont network file systems
 
-on linux positional writes do not work on append  mode it always writes to the end of the file 
+on linux positional writes do not work on append  mode it always writes to the end of the file
 
-use r+ to modify a file use w to delete it 
+use r+ to modify a file use w to delete it
 
 in linux and MacOS open a dir with a+ is an Error
     on Windows and FreeBSD its returns null or a FileHandle
 
-on Windows open hiddn files with the r+ flag 
+on Windows open hiddn files with the r+ flag
 
-call fs.ftruncate()  to reset file contents     
+call fs.ftruncate()  to reset file contents
 
 
         <OBJECT></OBJECT>
@@ -3467,20 +3470,20 @@ N               D
         E
 What I take away from the fs api
 fd are important and there are fd functions for every function try to look for it
-    if the description says it ok its ok then  
-to keep peace with  your system         
+    if the description says it ok its ok then
+to keep peace with  your system
     always make sure your files are closed
-    always make sure you do things in async in production 
-    free buffers and be careful with the mathemathics software w/ buffers 
-every callback should take at least an error you must check for 
+    always make sure you do things in async in production
+    free buffers and be careful with the mathemathics software w/ buffers
+every callback should take at least an error you must check for
 you are handling system files, make sure they are right and if not make sure you use ftruncate()
-    but if you run the program it may be too late 
-avoid using promises, they are unstable        
+    but if you run the program it may be too late
+avoid using promises, they are unstable
 
 
 
 
-need to learn about   and buffers mabye (try to avoid)  and fs.util && debug
+need to learn about   buffers mabye (try to avoid)  and fs.util && node process
 
 
 
@@ -3488,7 +3491,7 @@ need to learn about   and buffers mabye (try to avoid)  and fs.util && debug
         O
 N               D
         E
-Node Events API 
+Node Events API
 
         O
 N               be careful yoo might get slightly different things according to yor OS
@@ -3498,19 +3501,19 @@ N               be careful yoo might get slightly different things according to 
 
                                                 O
             
-        how Events work is that you have a eventEmitter class, it gets an action and/or emits an event and you 
+        how Events work is that you have a eventEmitter class, it gets an action and/or emits an event and you
         have these function objects (listeneres) called everytime the event is emitted .
 
-        all functions attached to a specific event are sync called. 
+        all functions attached to a specific event are sync called.
 N                                                                                                           D
                 O
         N        any values returned from listenerens are ignored and discarded
                 E
 
         eventEmitter.on() is used to register listneners  can also use  emitter.addListener(eventName, listener)
-        eventEmitter.emit() is used to trigger events just like jquery.trigger([event])   
+        eventEmitter.emit() is used to trigger events just like jquery.trigger([event])
 
-        file EVENTS/basic_eventemitter.js      
+        file EVENTS/basic_eventemitter.js
 
 
                                                 E
@@ -3523,17 +3526,17 @@ Added in: v0.1.101
 eventName <string> | <symbol> The name of the event.
 listener <Function> The callback function
 Returns: <EventEmitter>
-    no check is made to see if the listener is added, yuo have function below to do that     
-    use prependListener to prepend a listener to the beginning of a stack                                         
+    no check is made to see if the listener is added, yuo have function below to do that
+    use prependListener to prepend a listener to the beginning of a stack
 
 
 
 
 
 emitter.emit(eventName[, ...args])
-returns boolean if event had listeners 
-args provides args for all listeners 
-for multiple listeners look below for the raw listeners functionality 
+returns boolean if event had listeners
+args provides args for all listeners
+for multiple listeners look below for the raw listeners functionality
 
 
                                                 O
@@ -3542,23 +3545,23 @@ for multiple listeners look below for the raw listeners functionality
 
         if you want arguments for .emit you must provide arguments
          in the callback for . on (if theres is one callback)
-         the this argument, comes free (no need to declare) and 
+         the this argument, comes free (no need to declare) and
 N         refers to your eventEmitter object                                                D
-         if you use the ES6 arrow instance you will not will not get this at all 
-        so just use the name of your ee object    
-        file: EVENTS/eemiter_args.js 
+         if you use the ES6 arrow instance you will not will not get this at all
+        so just use the name of your ee object
+        file: EVENTS/eemiter_args.js
 
 
                                             E
 
 
-to get listenenrs to be called async use 
-    setImmediate() or process.nextTick()  
-    file: EVENTS/async_listener_call.js 
+to get listenenrs to be called async use
+    setImmediate() or process.nextTick()
+    file: EVENTS/async_listener_call.js
 
 
 
-to listen for an event once  
+to listen for an event once
     emitter.once(eventName, listener)#
     emitter.prependOnceListener(eventName, listener);
     Added in: v0.3.0
@@ -3566,11 +3569,11 @@ to listen for an event once
     listener <Function> The callback function
     Returns: <EventEmitter>
         after it gets the event no more listener
-        use prependOnceListener to prepend to the beginning of the once stack  
+        use prependOnceListener to prepend to the beginning of the once stack
 
 file: EVENTS/once.js
 
-if you wanted to handle errors use the error listener 
+if you wanted to handle errors use the error listener
 file:     EVENTS/errors.js
 
 
@@ -3592,11 +3595,11 @@ remove listerer : removeListener
 
 N                                                                                                   D
         so if you add an event listener with the same event name as one after the newListener
-        the one inside thes listener will be added before the one outside 
+        the one inside thes listener will be added before the one outside
 
-        the listner returns the actual listnener function object 
+        the listner returns the actual listnener function object
 
-        FILE : FS/new_listener.js 
+        FILE : FS/new_listener.js
 
 
                                                 E
@@ -3608,10 +3611,10 @@ N                                                                               
                 Event: 'removeListener'
 
                 eventName <string> | <symbol> The event name
-                listener <Function> The event handler function  
+                listener <Function> The event handler function
 N                                                                                   D
-                listenes for removed events          
-                FS/new_listener.js                                      
+                listenes for removed events
+                FS/new_listener.js
 
 
                                                 E
@@ -3623,17 +3626,17 @@ N                                                                               
                 EventEmitter.defaultMaxListeners
 
                 tells you how many listeners can be registed for a single event 10
-                if you set this to  negative a type error is thrown 
+                if you set this to  negative a type error is thrown
 
-                if you change this it affects the  EventEmitter instances before the change 
-                look at emitter.setMaxListeners() to bypass this problem 
-                but the  EventEmitter will send warnings to stderr for memory leaks 
+                if you change this it affects the  EventEmitter instances before the change
+                look at emitter.setMaxListeners() to bypass this problem
+                but the  EventEmitter will send warnings to stderr for memory leaks
 N                                                                                                   D
 
                 you can use --trace-warnings to get a stack trace for those warnings
 
-                you can also use process.on('warning') to get detailed information about ee 
-                causing the specific warnig  
+                you can also use process.on('warning') to get detailed information about ee
+                causing the specific warnig
 
                 file  EVETNS/ee_def_max.js
 
@@ -3646,11 +3649,11 @@ N                                                                               
 
 
 emitter.eventNames()
-returns array of all listneners registered with ee instance 
+returns array of all listneners registered with ee instance
 
 emitter.getMaxListeners()
 return default EventEmitter.defaultMaxListeners
-returns max listeners allowed for ee instance 
+returns max listeners allowed for ee instance
 
 
 emitter.listenerCount(eventName)
@@ -3658,7 +3661,7 @@ Added in: v3.2.0
 eventName <string> | <symbol> The name of the event being listened for
 Returns: <integer>
 
-    how many listeners on the event for the ee instance 
+    how many listeners on the event for the ee instance
 
 
 emitter.listeners(eventName)
@@ -3680,8 +3683,8 @@ to see whats inside refer to the rawListeners
                     of the specified eventName.
 
                 try not to use with with common events, use it
-                 with very custom events or  check all 
-                 the modules or dont use it 
+                 with very custom events or  check all
+                 the modules or dont use it
 
                                         E
 
@@ -3703,18 +3706,18 @@ to see whats inside refer to the rawListeners
 N
             if there are 7 listeners call this 7 times
             if an emit is in the middle of a listener stack nothing is                         D
-                 remove until emit is done with the stack     
-            file: EVENTS/remove_listener.js 
+                 remove until emit is done with the stack
+            file: EVENTS/remove_listener.js
 
                   O
-            N           if you need to turn your listeners on and off put the listener 
-                        fuction object to a const as in FS/remove_listener.js 
-                  E 
+            N           if you need to turn your listeners on and off put the listener
+                        fuction object to a const as in FS/remove_listener.js
+                  E
 
 
             if you use the once and on methods with the same listener and same event,
-             it removes whichever came last 
-            file: EVENTS/remove_listener_diff_adds.js 
+             it removes whichever came last
+            file: EVENTS/remove_listener_diff_adds.js
 
 
                                                 E
@@ -3726,11 +3729,11 @@ N
                 emitter.setMaxListeners(n)
                 Added in: v0.3.5
                 n <integer>
-                Returns: <EventEmitter>      
+                Returns: <EventEmitter>
 N                                                                                   D
-                allows the max listeners to be 
-                modifed for the specific ee instance 
-                set to 0 for infiintiy 
+                allows the max listeners to be
+                modifed for the specific ee instance
+                set to 0 for infiintiy
 
                                         E
 
@@ -3741,14 +3744,14 @@ Added in: v9.4.0
 eventName <string> | <symbol>
 Returns: <Function[]>
 what happens here is it holds on to your listener and can do really cool things
-refer to this file and comment and uncooment different commands to see potential 
+refer to this file and comment and uncooment different commands to see potential
 
-to see what function is in the array before you call it 
-if several listeners 
+to see what function is in the array before you call it
+if several listeners
 
     emitter._events.['event name'][[int]].listener.toString()
 
-for one listener    
+for one listener
     emitter._events.['event name'].listener.toString())
 file: EVENTS/raw_listeners.js
 
@@ -3757,10 +3760,10 @@ file: EVENTS/raw_listeners.js
         <OBJECT></OBJECT>
 N               D
         E
-what I take away from the emitter API 
-its the next level which allows you to do so much as a programmer  
-always write your listenenrs as constants as in remove_listener   
-if you manipulate them, make your code very very modular to preseve memory    
+what I take away from the emitter API
+its the next level which allows you to do so much as a programmer
+always write your listenenrs as constants as in remove_listener
+if you manipulate them, make your code very very modular to preseve memory
 If you emit an evevnt for one listener, the others with the same event name wont fire their functions
 
 
@@ -3771,61 +3774,61 @@ If you emit an evevnt for one listener, the others with the same event name wont
 N               D
         E
 
-Node Stream API 
+Node Stream API
 
-it helps out when you got to deal with streams 
-they are all instances of event emitter 
-the stream module is used for developers who want to create new streams 
+it helps out when you got to deal with streams
+they are all instances of event emitter
+the stream module is used for developers who want to create new streams
 
 using streams first module
-making new streams 2nd module 
-Additional Notes  3rd section 
+making new streams 2nd module
+Additional Notes  3rd section
 
 
         O
 N               D
         E
 
- four fundamental stream types     
+ four fundamental stream types
 
  Writable
  Readable
- Duplex  - read and write 
- Transform - Duplex that can modify or transform data 
+ Duplex  - read and write
+ Transform - Duplex that can modify or transform data
 
 these streams operate on  strings and Buffer (or Uint8Array) objects.
-streams are switched into object node when created, trying to switch an exisiting stream into objectMode is not safe 
+streams are switched into object node when created, trying to switch an exisiting stream into objectMode is not safe
 
 
 
-both Writable and Readable store data in an internal buffer 
-use writable.writableBuffer or readable.readableBuffer to access 
+both Writable and Readable store data in an internal buffer
+use writable.writableBuffer or readable.readableBuffer to access
 
-the amnt of data buffered depepnds on  the highWaterMark for normal streams this is total # of objects 
-for objectMOde streams this is a total # of objects 
+the amnt of data buffered depepnds on  the highWaterMark for normal streams this is total # of objects
+for objectMOde streams this is a total # of objects
 
-data is Buffered in readable streams when the instance calls stream.push(chunk). 
-If the consumer does not call stream.read() the data will sit in the buffer until its consumed 
+data is Buffered in readable streams when the instance calls stream.push(chunk).
+If the consumer does not call stream.read() the data will sit in the buffer until its consumed
 
-once the buffer reaches highWaterMark size the stream will stop reading data from the resources 
+once the buffer reaches highWaterMark size the stream will stop reading data from the resources
 it will stop calling its  readable._read()
 
-data is BUffered in  Writable writable.write(chunk) called several times 
-when the write buffer is below the highWaterMark it returns true 
+data is BUffered in  Writable writable.write(chunk) called several times
+when the write buffer is below the highWaterMark it returns true
 
-the goal here is to limit the buffered data 
+the goal here is to limit the buffered data
 
-Duplex and Transform have their readable and writable buffer independent because the 
+Duplex and Transform have their readable and writable buffer independent because the
 read-write speeds can change all the time
 
 file STREAM/concept_stream.js
       EXPRESS/route_handler_handler/do_i_need_third_party.js
 
-so whats basically happening here is that when nothing a triggering the readable and writable in streams 
-nothing happens but streams are waiting for data events, thats when they can get a listener to do something that how they work 
+so whats basically happening here is that when nothing a triggering the readable and writable in streams
+nothing happens but streams are waiting for data events, thats when they can get a listener to do something that how they work
 
     write() and end() that are used to write data onto the stream.
-    Readable streams use eventEmitter API  to notify application API when data is available to read off the stream 
+    Readable streams use eventEmitter API  to notify application API when data is available to read off the stream
 
 
         O
@@ -3836,15 +3839,15 @@ N               D
 
 Writable Streams
 
-uncommon examples 
+uncommon examples
 zlib streams
 crypto streams
 TCP sockets
 
-all writables streams use the  stream.Writable class  
+all writables streams use the  stream.Writable class
 
 
-Writable  basics 
+Writable  basics
 
 const myStream = getWritableStreamSomehow();
 myStream.write('some data');
@@ -3855,38 +3858,40 @@ myStream.end('done writing data');
 Class: stream.Writable
 if you do not understand look at STREAM/uncork.js and STREAM/drain.js
 every thing else is a part of what those two files do correctly
-use the cork mechanism and the drain event to optimize your writing 
+use the cork mechanism and the drain event to optimize your writing
 use the right balance of cork and drain so you dont buffer ofteren and het clogged buffers oftern
 
 
 Event: 'close'#
 Added in: v0.9.4
 
-when the streams and the underlying resources are closed, no more events 
+when the streams and the underlying resources are closed, no more events
 Not all Writable streams will emit the 'close' event.
 
 
 Event: 'drain'#
 Added in: v0.9.4
 If a call to stream.write(chunk) returns false this means the buffer is full
-when drain is emiitted, its okay to write again 
-file: STEAM/drain.js 
-      /MINI_PROJECTS/PIPE_STREAM/drain.js 
+    some times you get true
+when drain is emiitted, its okay to write again
+
+file: STEAM/drain.js
+      /MINI_PROJECTS/PIPE_STREAM/drain.js
 
 Event: 'error'
 Added in: v0.9.4
 <Error>
 
-    its emitted when there is an error writing or piping data 
-    the listener callback  get an <Error> arg 
+    its emitted when there is an error writing or piping data
+    the listener callback  get an <Error> arg
 
-    the stream is not closed when this happens 
+    the stream is not closed when this happens
 
 
 Event: 'finish'
 Added in: v0.9.4
-The 'finish' event is emitted after the stream.end() 
-and data is flushed to the underlying system 
+The 'finish' event is emitted after the stream.end()
+and data is flushed to the underlying system
 file: STREAM/event_finish.js
 
 
@@ -3901,7 +3906,7 @@ The 'pipe' event is emitted when the stream.pipe()
  method is called on a readable stream, adding this writable to its set of destinations.
 
 file: STREAM/event_pipe.js
-        /MINI_PROJECTS/PIPE_STREAM/read_and_write.js 
+        /MINI_PROJECTS/PIPE_STREAM/read_and_write.js
 
 
 
@@ -3913,10 +3918,10 @@ The 'unpipe' event is emitted when the stream.unpipe()
  method is called on a Readable stream, removing this Writable from its set of destinations.
 
 This is also emitted in case this Writable stream emits an error when a Readable stream pipes into it.
-make sure you check for this 
+make sure you check for this
 FILE: STREAM/event_pipe.js
-/MINI_PROJECTS/PIPE_STREAM/read_and_write.js 
-// simple pipe readme.md 
+/MINI_PROJECTS/PIPE_STREAM/read_and_write.js
+// simple pipe readme.md
 
 
 writable.cork()
@@ -3940,7 +3945,7 @@ file: STREAM/uncork.js
             error <Error>
             Returns: <this>
 N                                                                                   D
-            Destroys the stream emits an 'error' & 'close' event 
+            Destroys the stream emits an 'error' & 'close' event
             any write() after results in err.code =ERR_STREAM_DESTROYED
             dont override use  writable._destroy()
 
@@ -3952,9 +3957,9 @@ N                                                                               
 
 
                 writable.end([chunk][, encoding][, callback])
-                chunk <string> | <Buffer> | <Uint8Array> | <any> 
+                chunk <string> | <Buffer> | <Uint8Array> | <any>
                 Optional data to write. For streams not operating in object mode,
-                 chunk must be a string, Buffer or Uint8Array. For object mode streams, 
+                 chunk must be a string, Buffer or Uint8Array. For object mode streams,
                  chunk may be any JavaScript value other than null.
 N                                                                                                       D
                 encoding <string> The encoding if chunk is a string
@@ -3962,10 +3967,10 @@ N                                                                               
                 Returns: <this>
 
 
-                Calling the writable.end() method signals that no more data will be written to the Writable. 
+                Calling the writable.end() method signals that no more data will be written to the Writable.
                     you can write one more data chunk before the stream is closed
-                    the callback is a listene for the finsih event  
-                    file: STREAM/end.js 
+                    the callback is a listene for the finsih event
+                    file: STREAM/end.js
 
 
 
@@ -3980,16 +3985,16 @@ The writable.setDefaultEncoding() method sets the default encoding for a Writabl
 
 
 writable.uncork()
-The writable.uncork() method flushes all data buffered 
+The writable.uncork() method flushes all data buffered
 
-use 
-process.nextTick() to allow batching of the writable.write calls  
+use
+process.nextTick() to allow batching of the writable.write calls
 
         O
-N           batch is putting a list of commands into a file to be executed in that order 
+N           batch is putting a list of commands into a file to be executed in that order
         E
 
-if writable.cork is called several times, writable.uncork() must be called the same amount of times 
+if writable.cork is called several times, writable.uncork() must be called the same amount of times
 file: STREAM/uncork.js
          MINI_PROJECTS/PIPE_STREAM/cork_and_uncork.js
 
@@ -3998,25 +4003,25 @@ file: STREAM/uncork.js
 
 writable.writableHighWaterMark
 the max nubmer of bytes for a queue
-this provides introspection data 
+this provides introspection data
 
 
         O
-N           introspection data is dynamic data at runtime  
+N           introspection data is dynamic data at runtime
         E
 
 
 
 
 writable.write(chunk[, encoding][, callback])
-chunk <string> | <Buffer> | <Uint8Array> | <any> 
+chunk <string> | <Buffer> | <Uint8Array> | <any>
 Optional data to write. For streams not operating in object mode,
- chunk must be a string, Buffer or Uint8Array. 
+ chunk must be a string, Buffer or Uint8Array.
 For object mode streams, chunk may be any JavaScript value other than null.
 encoding <string> The encoding, if chunk is a string
 callback <Function> Callback for when this chunk of data is flushed
-Returns: <boolean> false if the stream need the caller to wait for the 'drain' 
-event otherwise, true 
+Returns: <boolean> false if the stream need the caller to wait for the 'drain'
+event otherwise, true
 
 always add an 'error' listener here
 
@@ -4026,18 +4031,18 @@ watch out for write() on streams where draining is not allowed
 
 
         O
-N           RSS is residental set size, the amount of memory a process takes up in RAM 
+N           RSS is residental set size, the amount of memory a process takes up in RAM
         E
 
         O
-N             make the close method a callback to write, it is very very quick with closing files 
+N             make the close method a callback to write, it is very very quick with closing files
         E
-this aint good for Transform streams 
+this aint good for Transform streams
 
 
 A Writable stream in object mode will always ignore the encoding argument. it will write to the source with binary
-its up to the reader to decode us the .setDefaultEncoding METHOD to change the decoding 
-in some cases if fs.WriteStream object start is not set to zero it will ignore even this and write buffe 
+its up to the reader to decode us the .setDefaultEncoding METHOD to change the decoding
+depending on your editor you may gets strings or a buffer 
 FILE; STREAM/drain.js
         /MINI_PROJECTS/PIPE_STREAM/drain.js
 
@@ -4051,28 +4056,28 @@ Readable Stream
 
                                             O
 
-        they have two modes flowing and paused 
+        they have two modes flowing and paused
 
-        in flow mode data is proiveded asap as events fire thier listeners 
+        in flow mode data is proiveded asap as events fire thier listeners
         in paused mode stream.read() must be called
 
-        they begim in paused mode 
+        they begim in paused mode
 
-        to convert to flow mode 
+        to convert to flow mode
             add a 'data' listener
-            call stream.resume() 
+            call stream.resume()
             call stream.pipe()
 N                                                                                       D
         to switch back
             if no pipe destinations
                 stream.pause()
             else
-                stream.unpipe() removes all dest. 
+                stream.unpipe() removes all dest.
 
         whts important
             Readable generates data it needs something to consume it or ignore it
-            is switchwed to flow mode without a consumer data is lost 
-            add a 'readable' listener to stop stream flow 
+            is switchwed to flow mode without a consumer data is lost
+            add a 'readable' listener to stop stream flow
             remove 'readable' listener to start, but on if theres a 'data' event handler
             file: STREAM/basic_readable.js
                   MINI_PROJECTS/PIPE_STREAM/read_and_write.js
@@ -4086,30 +4091,30 @@ N                                                                               
                 Three States
 
 
-                the readable stream is always in one of three states 
+                the readable stream is always in one of three states
 
                 readable.readableFlowing === null
-                    here no data is generated and no mechanism for data consumption exists 
+                    here no data is generated and no mechanism for data consumption exists
                 readable.readableFlowing === false
-                    here readable.unpipe(), readable.pause() or Bufffer backpressure is present 
+                    here readable.unpipe(), readable.pause() or Bufffer backpressure is present
                 readable.readableFlowing === true
                     here readable.pipe, readable.resume() or attaching a data event
 
 
-                if you call readable.resume() without a data handler attached the data will get lost 
+                if you call readable.resume() without a data handler attached the data will get lost
 
-                for .pause() unless all writables are unpiped, it may not work 
+                for .pause() unless all writables are unpiped, it may not work
 
                 removing data handlers wont pause the stream somethines if there are other destinations for the
-                readable 
+                readable
 
 N                                                                                                   D
 
                 Choose One API Style
 
 
-                dont combine the methods they deal with different project scale 
-                for two or more streams  .pipe     / .unpipe 
+                dont combine the methods they deal with different project scale
+                for two or more streams  .pipe     / .unpipe
                 for devs and API use 'readable'/.read(), or .pause(),resume()
 
 
@@ -4122,7 +4127,7 @@ Class: stream.Readable
 Event: 'close'#
 Added in: v0.9.4
 The 'close' event is emitted when the stream and
- any of its underlying resources (a file descriptor, for example) have been closed. 
+ any of its underlying resources (a file descriptor, for example) have been closed.
  The event indicates that no more events will be emitted,
   and no further computation will occur.
 
@@ -4133,42 +4138,42 @@ Not all Readable streams will emit the 'close' event.
 
                     Event: 'data'#
                     Added in: v0.9.4
-                    chunk <Buffer> | <string> | <any> 
+                    chunk <Buffer> | <string> | <any>
 
-                    in non object mode str or Buffer, in object 
-                    mode anything other than null 
-                    what happens is the readable gives ownership 
-                    of the chunk to a consumer default is buffer 
-                    it givrd the data chunk itself for the listener 
+                    in non object mode str or Buffer, in object
+                    mode anything other than null
+                    what happens is the readable gives ownership
+                    of the chunk to a consumer default is buffer
+                    it givrd the data chunk itself for the listener
 
 
                     Event: 'end'
                     Added in: v0.9.4
 
-                    emitted when the data is completely consumed, 
-                    attach a consumer to fully consome the data 
-                    to emit this event 
-                    file STREAM/readable_end.js 
+                    emitted when the data is completely consumed,
+                    attach a consumer to fully consome the data
+                    to emit this event
+                    file STREAM/readable_end.js
                          /MINI_PROJECTS/PIPE_STREAM/read_and_write.js
 
-N                                                                                        D                                                                              
+N                                                                                        D
 
                     Event: 'error'#
                     Added in: v0.9.4
                     <Error>
 
-                    listeners gets the Error object 
-                    happens when there is an interenal failure or an invalid data chunk 
+                    listeners gets the Error object
+                    happens when there is an interenal failure or an invalid data chunk
 
 
                     Event: 'readable'
-                    emiited when data is ready to be emitted from the stream, on coutnerpoint when 
-                    a listener for this event is added, the data gets sent to its internal buffer 
+                    emiited when data is ready to be emitted from the stream, on coutnerpoint when
+                    a listener for this event is added, the data gets sent to its internal buffer
 
                     it can also emit that the readable has read all data, emits before 'end'
 
                     
-                    'readable' takes precedence over 'data' 
+                    'readable' takes precedence over 'data'
                     FILE: STREAM/read.js
                         /MINI_PROJECTS/STREAM/read_and_write.js
                         //readme.md run to see the readable.read readable functionality
@@ -4177,21 +4182,21 @@ N                                                                               
                                                 E
 
 
-readable.destroy([error]) 
-DESstroys the stream. after this readable releases any internal resources 
+readable.destroy([error])
+DESstroys the stream. after this readable releases any internal resources
  Implementors should not override this method, but instead implement readable._destroy().
 
 
 
  readable.isPaused()
- returns whether its paused or not 
+ returns whether its paused or not
  STREAM/readable_pause.js
 
 
 
  readable.pause()
- turns flowing into paused, readable sensds data to intern buffer 
- if there is a 'readable' listerner there is no effect 
+ turns flowing into paused, readable sensds data to intern buffer
+ if there is a 'readable' listerner there is no effect
  file: STREAM/readable_pause.js
         MINI_PROJECTS/PIPE_STREAM/readable_pause.js
 
@@ -4204,7 +4209,7 @@ DESstroys the stream. after this readable releases any internal resources
         options <Object> Pipe options
 
             end <boolean> End the writer when the reader ends. Default: true.
-        Returns: <stream.Writable> The destination, allowing for a 
+        Returns: <stream.Writable> The destination, allowing for a
         chain of pipes if it is a Duplex or a Transform stream
 
 N         pipes its read data to a writable, the flow is                           D
@@ -4213,13 +4218,13 @@ N         pipes its read data to a writable, the flow is                        
                 MINI_PROJECTS/PIPE_STREAM/read_and_write.js
 
 
-        the method returns the destination so you can make a pipe chain 
+        the method returns the destination so you can make a pipe chain
         // file STREAM/pipe_chain.js
 
-        when the readable 'end' event is emitted, the writables end mthod are called 
+        when the readable 'end' event is emitted, the writables end mthod are called
         look at the args above to disable this behavior
 
-        if the readable emits an error its up to the dev to close everything 
+        if the readable emits an error its up to the dev to close everything
 
                                     E
 
@@ -4231,46 +4236,46 @@ readable.read([size])
 size <number> Optional argument to specify how much data to read.
 Returns: <string> | <Buffer> | <null> | <any>
 
-pull some data out of the internal buffer. to get strings use .setEncoding or 
+pull some data out of the internal buffer. to get strings use .setEncoding or
 the readable = objectMode
 
-if size arg is omitted , null is returned until the stream has ended, 
-which will return the whole buffer 
-        O 
+if size arg is omitted , null is returned until the stream has ended,
+which will return the whole buffer
+        O
 N              string methods like .indexOf() work with buffer
         E
 can use .read() and .write for controlled writing  but readable listnener must be attach to use
-file STREAM/read.js 
+file STREAM/read.js
     /MINI_PROJECTS/STREAM/read_and_write.js
 
-calling it in object mode always gives you one object, regardless of size 
-calling it after an 'end' event retunrs null and no errors 
+calling it in object mode always gives you one object, regardless of size
+calling it after an 'end' event retunrs null and no errors
 
 
 
 readable.readableHighWaterMark
 Added in: v9.3.0
-retunrs the highWaterMark value 
-arround 1.83585987445, linux calculate that the readableHighWaterMark is read from a file, as one chunk, 
-so to fine tune the stopping stream you more algorithm and info 
-    if you refer to the setTimeout event in STREAM/event_pipe.js you can see how the ReadStream is managing things 
+retunrs the highWaterMark value
+arround 1.83585987445, linux calculate that the readableHighWaterMark is read from a file, as one chunk,
+so to fine tune the stopping stream you more algorithm and info
+    if you refer to the setTimeout event in STREAM/event_pipe.js you can see how the ReadStream is managing things
     when the developer needs it to stop piping data and how the outcome of the readstream and WriteStream files differ
 
-    when you remove a readable destination like to a var, to the 'data' event or a pipe, in the case of pipe you must 
-    add a desstination before you remove the orginal desitnation, the r_stream must always have a destination or it just 
+    when you remove a readable destination like to a var, to the 'data' event or a pipe, in the case of pipe you must
+    add a desstination before you remove the orginal desitnation, the r_stream must always have a destination or it just
     doesn't work'
 
     however a test pause  for 20 seconds shows that the data is preserved dont test the limits though
 readable.readableLength
-proides amount of bytes queue to be read 
+proides amount of bytes queue to be read
 
 
 
 readable.resume()
-makes a paused stream go back into flowing mode 
-can be used to fully consume the data, but have it un processed 
+makes a paused stream go back into flowing mode
+can be used to fully consume the data, but have it un processed
 does not work if there is a 'readable' listener
-can be used to drain a buffer if the readble gets an error 
+can be used to drain a buffer if the readble gets an error
 STREAM/readable_pause.js
     MINI_PROJECTS/PIPE_STREAM/readable_pause.js
 
@@ -4281,43 +4286,45 @@ STREAM/readable_pause.js
 readable.setEncoding(encoding)
 chages the encoding of the data chunks,
 change this if you feel that the stream might have to deal with
- compmlex chars not healthy for the buffer  
+ compmlex chars not healthy for the buffer
 
 
                                     O
 
              readable.unpipe([destination])
-             destination <stream.Writable> Optional 
+             destination <stream.Writable> Optional
              specific stream to unpipe
 
 N            no dest                                            D
-                unpipes all Writables 
+                unpipes all Writables
             dest no pipe
-                does nothing 
+                does nothing
                 if there is a data event , data still gets sent to be thrown away
-            file: STREAM/readable_pipe.js 
+            file: STREAM/readable_pipe.js
 
                                     E
 
 
 readable.unshift(chunk)
-chunk <Buffer> | <Uint8Array> | <string> | <any> 
-OBJECT mode anythings 
-non-OBJECT mode  <Buffer> | <Uint8Array> | <string> 
-useful when inserting into files 
+chunk <Buffer> | <Uint8Array> | <string> | <any>
+OBJECT mode anythings
+non-OBJECT mode  <Buffer> | <Uint8Array> | <string>
+useful when inserting into files
 
 it pushes a chunk back into the internal queue, useful for dynamic writes to consumers
-cannot be called after the 'end' method or an error is thrown 
+cannot be called after the 'end' method or an error is thrown
 
-if you use it often, use the Transform API instead 
-FILE:STREAM/readable_unshift.js 
+if you use it often, use the Transform API instead
+FILE:STREAM/readable_unshift.js
 /MINI_PROJECTS/PIPE_STREAM/r_e_r_unshift.js
 
 when stream.push(chunk) happens, there is order so the reading state is reset while a stream.read is happening
-so the buffer is updated properly  
+so the buffer is updated properly
 
-if you do  stream.unshift(chunk)  while a read operation is occuring, 
-the internal buffer does not get reset and bad things happen 
+if you do  stream.unshift(chunk)  while a read operation is occuring,
+the internal buffer does not get reset and bad things happen
+if you are using 'data' with unshift, use pause or 'readable' to pasue the stream 
+make sure for wrtiestreams that the buffer is drained!!
 
 
 
@@ -4325,50 +4332,51 @@ readable.wrap(stream)
 Added in: v0.9.4
 
 a compatiblity option that makes a new Readable stream with the old data source where a stream.pause()
-method has been called on a legacy stream 
+method has been called on a legacy stream
 
 
 
 
-ReadStream tips 
+ReadStream tips
 write a montior that eventually destorys the stream if it does not close itself
 set autoClose to false, and close everyhting yourself
-make the end listneer do all your closing work in your project or codeblock 
-set the encoding to utf8 .setEncoding('buffer') if you dont want string 
+make the end listneer do all your closing work in your project or codeblock
+set the encoding to utf8 .setEncoding('buffer') if you dont want string
 the 'close' event means the fd was closed not the stream with out the .close() method
 use anonymous fuctions instead of ES6 arrows to have more access to your API objects
-    like [ this ] 
-.close() emits the close event which automatically closes the fd, 
-    this closes the stream and the fd it cant close one 
-you can use .pause()/.resume() with the data event handler 
+    like [ this ]
+.close() emits the close event which automatically closes the fd,
+    this closes the stream and the fd it cant close one
+you can use .pause()/.resume() with the data event handler
 no need to .setEncoding its gives you utf8 most likely, check your eventEmitter it
-    could have given you ascii 
-when you pipe all data from readable goes into writable no need for a .write    
-    you can also use the data events along with  pipe to also 
+    could have given you ascii
+when you pipe all data from readable goes into writable no need for a .write
+    you can also use the data events along with  pipe to also
     get data and the write pipe from the readable in the same process!
 
 
 WriteStream
 set autoClose to false, and close everyhting yourself
 set the encoding to utf8 to get string instread of buffer, .setDefaultEncoding('utf8')
-use writable.writableBuffer or readable.readableBuffer to access the internal buffer 
+use writable.writableBuffer or readable.readableBuffer to access the internal buffer
     writable.writableBuffer has buffer chunk even if you set encoding
-    they come as a linked list, with a chunk next property holding the next chunk 
+    they come as a linked list, with a chunk next property holding the next chunk
 if you do not understand WriteStream itself look at STREAM/uncork.js and STREAM/drain.js
     every thing else is a part of what those two files do correctly
-use the cork mechanism and the drain event to optimize your writing 
+use the cork mechanism and the drain event to optimize your writing
 use the right balance of cork and drain so you dont buffer ofteren and get clogged buffers oftern
 functions have an arguments object that return an array of the parameters given use this to your advantage
     arguments.length
 when using writable from an arguments object from a function, each index is a circular object, make sure you use
-    JSON.stringify(arguments[2],circular_replacer()) if you need to hold on to the data in those arguments 
+    JSON.stringify(arguments[2],circular_replacer()) if you need to hold on to the data in those arguments
 if you have problems make sure you are not calling end too early and make sure variables and const are declared
       // If the user unpiped during `dest.write()`, it is possible
       // to get stuck in a permanently paused state if that write
       // also returned false.
+if the writestream does not start on 0 you will get buffer if there is not enough data  
 
         O
-N               D 
+N               D
         E
 
 
@@ -4377,10 +4385,10 @@ N               D
 Duplex and Transform Streams
 the difference,
     Duplex is more usuable as its a mix of any Readable and WriteStream
-    Transform takes the Readable STREAM input does computation and send it to WriteStream 
+    Transform takes the Readable STREAM input does computation and send it to WriteStream
 
     transform.destroy([error])
-    emits error and low level _destroy emits close too 
+    emits error and low level _destroy emits close too
 
 
 stream.finished(stream, callback)#
@@ -4388,9 +4396,9 @@ Added in: v10.0.0
 stream <Stream> A readable and/or writable stream.
 callback <Function> A callback function that takes an optional error argument.
     
-    tells dev stream isn't readable writable error or early close'        
+    tells dev stream isn't readable writable error or early close'
 
-    useful when something happens to the stream but the 'end' or 'error' is not emitted 
+    useful when something happens to the stream but the 'end' or 'error' is not emitted
 
     file: STREAM/stream_finished.js
             MINI_PROJECTS/PIPE_STREAM/stream_finished.js
@@ -4400,30 +4408,30 @@ stream.pipeline(...streams[, callback])
 callback <Function> A callback function that takes an optional error argument.
 
 method to pipe errors through streams for proper callback
-it actually does pipes the chunks from the readstream to the writestream for you as well and if you call it with 
+it actually does pipes the chunks from the readstream to the writestream for you as well and if you call it with
 another flowing operation it copy and paste the file and executes the other write operations next
 
-    file: STREAM/pipeline.js   
-            MINI_PROJECTS/PIPE_STREAM/pipeline.js     
+    file: STREAM/pipeline.js
+            MINI_PROJECTS/PIPE_STREAM/pipeline.js
 
         <OBJECT></OBJECT>
 N               D
         E
 
 What I take away from the Stream API
-all of Node is event-driven archtecture as claimed, 
-you can use what you know about ee their listeners and streams to make anything      
-fs.read & write are very very different from stream.read & write in purpose 
+all of Node is event-driven archtecture as claimed,
+you can use what you know about ee their listeners and streams to make anything
+fs.read & write are very very different from stream.read & write in purpose
 stream objects should be decleared with const [const name]
 make sure proper procedures are in place before you work with streams or else you have memory leaks everywhere
 on the fs.WriteStream & fs.ReadStream objects set autoClose to false, you never know if the underlying functionality is doing it for you
-the setImmediate example I set in write_template.js stick with it you need your code to continue only after you setup your listenenrs 
+the setImmediate example I set in write_template.js stick with it you need your code to continue only after you setup your listenenrs
 refer to MINI_PROJECTS/PIPE_STREAM/, an excellent source of how node applications should be modeled
-if you want a part of data to be written to a file and you dont have a ReadStream, use the WriteStream.bytesWritten property, but then you must 
+if you want a part of data to be written to a file and you dont have a ReadStream, use the WriteStream.bytesWritten property, but then you must
     close the write stream and start a new one
 
 
-learn about assertions, they can compare your files 
+learn about assertions, they can compare your files
 
 
         O
@@ -4432,7 +4440,7 @@ N               D
 
 Node.js Debugger API
 
-a simple debugging tool along with chrome V8  developer tool 
+a simple debugging tool along with chrome V8  developer tool
 
 
         O
@@ -4441,21 +4449,20 @@ N               D
 
 
 Simple Debugger
-to launch 
+to launch
 node inspect [script]
 
 https://nodejs.org/en/docs/guides/debugging-getting-started/#enabling-remote-debugging-scenarios
 
 inserting a debugger; statement triggers a breakpoint
-or console.log()
 file /DEBUG/debug_script.js
 
 
-next allows the debugger to take the next step in your code 
+next allows the debugger to take the next step in your code
 repl, allows code to be evaluated remotely
-    for this your must call next enough to make your global vars exist in the debug repl 
+    for this your must call next enough to make your global vars exist in the debug repl
 
-pressing enter without typing a command does the previous command 
+pressing enter without typing a command does the previous command
 
         O
 N               D
@@ -4467,7 +4474,7 @@ Watchers
 at debuggers;
 watch([math operation ])
 unwatch([math operation])
-you literally make an operation and the watchers watch it for 
+you literally make an operation and the watchers watch it for
 
 
         O
@@ -4491,7 +4498,7 @@ setBreakpoint(), sb() - Set breakpoint on current line
 setBreakpoint(line), sb(line) - Set breakpoint on specific line
 setBreakpoint('fn()'), sb(...) - Set breakpoint on a first statement in functions body
 setBreakpoint('script.js', 1), sb(...) - Set breakpoint on first line of script.js
-clearBreakpoint('script.js', 1), cb(...) - Clear breakpoint in script.js on line 1    
+clearBreakpoint('script.js', 1), cb(...) - Clear breakpoint in script.js on line 1
 
 you can set a breakpoint in unloaded code
 setBreakpoint('simple_module.js',25)
@@ -4541,7 +4548,7 @@ Advanced Usage
 V8 Inspector Integration for Node.js
 
 $ node --inspect index.js
-listen on certain port 
+listen on certain port
  --inspect=[9222]
 
  to break on first line of code --inspect-brk
@@ -4557,27 +4564,30 @@ listen on certain port
 
  https://nodejs.org/en/docs/guides/debugging-getting-started/#enabling-remote-debugging-scenarios
 
-when you run a node script with --inspect 
+when you run a node script with --inspect
     ws listesns at 127.0.0.1:9229
     each process gets a UUID
-full url is 
+full url is
 ws://127.0.0.1:9229/[UUID]
     
 
 to see web socket metadata
  http://[host:port]/json/list
 
- webSocketDebuggerUrl to access the inspector 
+ webSocketDebuggerUrl to access the inspector
  use devtoolsFrontendUrl to access the devtool inspector as you see in chrome browsers
 
- a node.js process ! --inspect can be started 
-    send a SIGUSR1 to it( on Linux and MacOS)         
+ a node.js process ! --inspect can be started
+    send a SIGUSR1 to it( on Linux and MacOS)
 
 
 the debugger has full access to the execution environment
-try not to make the port public access is dangerous 
+try not to make the port public access is dangerous
 local appilcations have full access to the inspector
 
+        O
+N               D
+        E
 
 Inspector clients
 node-inspect
@@ -4588,19 +4598,68 @@ chrome-remote-interface
 Gitpod
 
 Chrome DevTools 55+
-    get web socket metadata and 
+    get web socket metadata and
     paste devtoolsFrontendUrl into a chrome browser
 
 Enabling remote debugging scenarios
 to do this
 $ ssh -L 9221:localhost:9229 user@remote.example.com
 
-connect localhost:9221 to remote localhost:9229 and from there you can attach an inspector client 
+connect localhost:9221 to remote localhost:9229 and from there you can attach an inspector client
 
-Legacy Debugger 
+Legacy Debugger
 deprecated as of node 7.7.0
     to start it
     --debug or --debug-brk
 
 
 https://chromedevtools.github.io/debugger-protocol-viewer/v8/
+
+        O
+N               D
+        E
+
+Chrome Debugging Protocol Viewer
+its allows any tool to connect to node and debug it
+
+another way to access
+node --inspect-brk [script]
+
+chromium browser >> about:inspect >> click the node main app
+when you kill and restart the node app it automattically reconnects
+    the UUID in the url is reproduced
+
+works like a regular debugging tool really the docs are to explain how the client is made
+
+
+
+        <OBJECT></OBJECT>
+N               D
+        E
+
+what I take away from the debugger API
+its a simple tool that only uses breakpoints and allows you to pause and evaluate code values
+you can use only one for each process
+they come up in the browser devtools say if your are using express
+
+
+
+        O
+N               D
+        E
+Node Process
+
+    its a global object contatining everything relating to the process the node app is running on
+    its a eventEmitter
+
+
+
+
+
+Event: 'beforeExit'#
+Added in: v0.11.12
+
+used right before the 'exit' event is emitted, and makes async calls
+is not emitted on explicit termination
+should not be used for 'exit' unless you need to schedule additional work
+callback process.exitCode passed as the only argument.                

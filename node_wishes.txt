@@ -11,3 +11,7 @@ if we had an general ErrorHandler object in node  async code would be so much ea
 n linux 16.04.5 the a,c,m, and birth time(Ms)? are reported wrong notify the developer about this 
 
 also express.static uis not working
+
+which I can see what my terminal see with some express objects in the v8 debugger
+
+writeStream.drain should returns false or true why are they different for the same stream
