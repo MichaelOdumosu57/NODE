@@ -4644,6 +4644,8 @@ they come up in the browser devtools say if your are using express
 
 
 
+
+
         O
 N               D
         E
@@ -4755,12 +4757,271 @@ N                                                                               
                     O 
             N           you have to understand Promise deeply to create this scenario 
                     E
+
+            Event: 'unhandledRejection'#
+            History
+            reason <Error> | <any> The object with which the promise was rejected (typically an Error object).
+            p the Promise that was rejected.
+
+            emitted when a Promise is rejected and there is no error handler during the event loop
+            rejected Promises = errors 
+            useful for keeping track of rejections that have not been handled yet 
+
             FILE:PROCESS/unhandledRejection.js 
 
                                                     E
 
-Event: 'uncaughtException'#
-Added in: v0.1.18
+                                                    O
+                Event: 'uncaughtException'#
+                Added in: v0.1.18
+                happens when there is a JavaScript exeception, in this case process.exitCode == 0 
+                when this is thrown its paramount to properly shutdown all open objects 
+                    with synchronous operations  and exit
+                    because the app is in an undefined state                                                     D 
+N                   and have something fix and restart the process   
+                exceptions inside the  handler will not be caught to avoid infiinte recursion
+
+
+                FILE:PROCESS/process_uncaughtException.js
+
+                                                        E
 
 
 
+
+
+
+                                                    O
+                Event: 'warning'#
+                Added in: v6.0.0
+
+                warning <Error> Key properties of the warning are:
+
+                    name <string> The name of the warning. Default: 'Warning'.
+                    message <string> A system-provided description of the warning.
+                    stack <string> A stack trace to the location in the code where the warning was issued.
+N                                                                                                              D
+                you must provide a parameter here or you will get a completely different arguments object 
+
+                emitted on JavaScript warnings 
+                node prints these to stderr  use command options --no-warnings disable   
+                use --trace-warnings when you want detailed warning info 
+                use --trace-deprecation if you want to see deprecated practices
+                use --no-deprecation to supress custom deprecation
+                the *-deprecation flags only affect name = 'DeprecationWarning'
+
+                FILE:PROCESS/process_warning.js
+
+                                                    E
+
+        O
+N               D
+        E
+Signal Events
+emitted when the process receives a signal from the OS 
+Windows does not support sending signals, you can use process.kill or subprocess.kill
+Sending SIGINT, SIGTERM, and SIGKILL causes unconditional termination of process
+
+'SIGUSR1' is reserved by Node.js to start the debugger.
+you can install a listener but it might bother  the debugger.
+
+'SIGPIPE' is ignored by default. It can have a listener installed.
+
+'SIGHUP' is generated on Windows when the console window is closed, 
+and on other platforms under various similar conditions, see signal(7).
+ It can have a listener installed, however Node.js will be unconditionally terminated by Windows about 10 seconds later. 
+On non-Windows platforms, the default behavior of SIGHUP is to terminate Node.js, 
+but once a listener has been installed its default behavior will be removed.
+
+'SIGTERM' and 'SIGINT' have default handlers on non-Windows platforms that reset 
+the terminal mode before exiting with code 128 + signal number. 
+If one of these signals has a listener installed,  (Node.js will no longer exit).
+
+'SIGTERM' is not supported on Windows, it can be listened on.
+
+'SIGINT' from the terminal is supported on all platforms, and can usually be generated with <Ctrl>+C 
+(though this may be configurable). It is not generated when terminal raw mode is enabled.
+
+'SIGBREAK' is delivered on Windows when <Ctrl>+<Break> is pressed, 
+on non-Windows platforms it can be listened on, but there is no way to send or generate it.
+
+'SIGWINCH' is delivered when the console has been resized. 
+On Windows, this will only happen on write to the console when the cursor is being moved, 
+or when a readable tty is used in raw mode.
+
+'SIGKILL' cannot have a listener installed, it will unconditionally terminate Node.js on all platforms.
+
+'SIGSTOP' cannot have a listener installed.
+
+'SIGBUS', 'SIGFPE', 'SIGSEGV' and 'SIGILL', when not raised artificially using kill(2),
+inherently leave the process in a state from which it is not safe to attempt to call JS listeners. 
+Doing so might lead to the process hanging in an endless loop, 
+since listeners attached using process.on() are called asynchronously and therefore unable to correct the underlying problem.
+
+FILE:PROCESS/process_signals.js
+
+
+process.abort()#
+Added in: v0.7.0
+
+causes Node.js to exit immediately and generate a core file 
+not available in Worker threads 
+
+                                                        O
+        
+            process.allowedNodeEnvironmentFlags#
+            Added in: v10.10.0
+            <Set>
+
+            The process.allowedNodeEnvironmentFlags 
+            property is a special, read-only Set saying what command line options you can use 
+N                                                                                                                       D
+            process.allowedNodeEnvironmentFlags extends Set, 
+            but overrides Set.prototype.has to recognize several different possible flag representations. 
+
+            The methods add(), clear(), and delete() of process.allowedNodeEnvironmentFlags do nothing, and will fail silently.
+
+            for has() method for flags, just use the exact name of the flag 
+
+                for compatiblity to return true (for those wild developers) 
+                    can omit leading - or -- 
+                    can repace - with _ from flags passed through V8
+                    contains only = but must be provided for in the flag definition
+                    & allowable within NODE_OPTIONS 
+
+            Flags passed through to V8 will contain underscores instead of non-leading dashes:
+
+            If Node.js was compiled without NODE_OPTIONS support (shown in process.config), 
+            process.allowedNodeEnvironmentFlags will contain what would have been allowable.
+
+                                                        E 
+
+
+process.arch#
+Added in: v0.5.0
+<string>
+
+architecture with which nodejs was compiled 
+values
+'arm', 'arm64', 'ia32', 'mips', 'mipsel', 'ppc', 'ppc64', 's390', 's390x', 'x32', and 'x64'.
+
+process.argv#
+Added in: v0.1.27
+<string[]>
+
+gives all command line args at process start
+
+process.argv0#
+Added in: v6.4.0
+<string>
+
+    the orginal value of argv[0]
+
+process.channel#
+Added in: v7.1.0
+<Object>
+
+    if the process was spawnned with an IPC Channel the reference to it is here else undefined
+
+
+process.config#
+Added in: v0.7.7
+<Object>
+
+The process.config property returns an Object containing the
+ JavaScript representation of the configure options used to compile the current Node.js executable
+
+there are modules that can chage it assuring the developer that they are not stuck with the complied nodejs
+
+process.connected#
+Added in: v0.7.2
+<boolean>
+
+    if started with IPC channel its true, if process.disconnect() false , if this is false cant use process.send()
+    to send messages over the IPC channel   
+
+
+process.cwd()#
+Added in: v0.1.8
+Returns: <string>
+
+    returns cwd of process    
+
+process.debugPort#
+Added in: v0.7.2
+<number>
+The port used by Node.js's debugger when enabled.
+
+' 
+
+
+    Till here 
+        FILE:PROCESS/info_process.js
+                                                    O
+
+                process.cpuUsage([previousValue])#
+                Added in: v6.1.0
+                previousValue <Object> A previous return value from calling process.cpuUsage()
+                Returns: <Object>
+
+                user <integer>
+                system <integer>
+N                                                                                                   D
+                    desceibes how long in ms the process has been doing user and system work, 
+                    might be long than actual elapsed time 
+                    if multiple cores are doing work here 
+
+                    the result of a prev call can be passed to get a diff reading 
+
+                FILE: PROCESS/cpuUsage_process.js        
+
+                                                    E
+
+                                                O
+                
+            process.chdir(directory)#
+            Added in: v0.1.17
+            directory <string>
+N                                                                                                D
+                changes the directory 
+                not available in worker threads 
+                does not move the terminal session or the file to a new terminal 
+
+            FILE:PROCESS/chdir_process.js        
+
+                                                E
+
+
+                                                O
+        process.disconnect()#
+        Added in: v0.7.2
+N                                                                                         D
+        will exit a child process if there are no other connections keeping it alive 
+        same as calling  ChildProcess.disconnect() from the parent
+
+                                                E
+
+
+                                                O
+
+        process.dlopen(module, filename[, flags])#
+        History
+        module <Object>
+        filename <string>
+        flags <os.constants.dlopen> Default: os.constants.dlopen.RTLD_LAZY
+N                                                                                   D
+            dynamic load shared objects prefer require() over this 
+            flags is an int specify dlopen behavior look at os.constants.dlopen
+            must pass the module instance 
+        FILE: process/process_dlopen.js    
+
+                                                E
+process.emitWarning(warning[, options])#
+Added in: v8.0.0
+warning <string> | <Error> The warning to emit.
+options <Object>
+
+type <string> When warning is a String, type is the name to use for the type of warning being emitted. Default: 'Warning'.
+code <string> A unique identifier for the warning instance being emitted.
+ctor <Function> When warning is a String, ctor is an optional function used to limit the generated stack trace. Default: process.emitWarning.
+detail <string> Additional text to include with the error.

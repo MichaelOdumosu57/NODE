@@ -11,6 +11,7 @@ const n_API = require(process.env.HOME+ "/Required/node_API_header.js").n_API_in
 {
   location_dir:__dirname
 });
+//same functionality as process_uncaughtException however it can be used to scheule additional work 
 const circular_replacer       =  n_API.API_n_c.circular_replacer
 var process_beforeExit = {}
 process_beforeExit.last = []
