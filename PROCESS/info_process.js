@@ -17,6 +17,12 @@ console.log(`Effective gid: \n ${process.getegid()} \n`);
 console.log(`Current gid: \n ${process.getgid()} \n`);
 console.log(`Groups \n ${process.getgroups()} \n`)
 console.log(`process.hasUncaughtExceptionCaptureCallback() \n ${process.hasUncaughtExceptionCaptureCallback()} \n`)
+console.log('mem usage\n' +  JSON.stringify(   process.memoryUsage(),null,2   ) +'\n')
+console.log(`if flag --no-deprecation is set on the process \n ${process.noDeprecation} \n `)
+console.log(`process pid \n ${process.pid} \n`)
+console.log(`The parent process pid \n ${process.ppid} \n `);
+console.log(`This platform is \n ${process.platform} \n`);
+console.log('process.release \n ' + JSON.stringify(   process.release,null,2   ) + ' \n')
 
 
 console.log(`The  number representation of how the process ended  \n ${process.exitCode} \n`)

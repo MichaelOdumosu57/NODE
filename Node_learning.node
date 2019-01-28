@@ -5043,10 +5043,133 @@ N                                      D
 
                     E
 
+                                            O
+
+                    process.setegid(id)#
+                    Added in: v2.0.0
+                    id <string> | <number> A group name or ID
+
+                    process.seteuid(id)#
+                    Added in: v2.0.0
+                    id <string> | <number> A user name or ID
+
+                    process.setgid(id)#
+                    Added in: v0.1.31
+                    id <string> | <number> The group name or ID
+N                                                                                        D
+                    process.setuid(id)#
+                    Added in: v0.1.28
+                    id <integer> | <string>
+
+                    process.setgroups(groups)#
+                    Added in: v0.9.4
+                    groups <integer[]>
+
+                    look at their get counterparts for what they do 
+                    This function is only available on POSIX platforms 
+                    (i.e. not Windows or Android).                                                                       
+
+                                                E                    
+
 process.hasUncaughtExceptionCaptureCallback()#
 Added in: v9.3.0
 
 Indicates callback set using  process.setUncaughtExceptionCaptureCallback().
+
+
+                                                        O
+            process.memoryUsage()#
+            History
+            Returns: <Object>
+
+                rss <integer>
+                heapTotal <integer>
+                heapUsed <integer>
+                external <integer>
+
+            retuns an object descrbing basic mem useage of the process
+N                                                                                                           D
+            heapTotal and heapUsed refer to V8 memory usage
+            external refers to the memory usage of C++ objects bound to JavaScript objects managed by V8. 
+            rss, Resident Set Size - amount of space occupied in allocation of main memory includes heap, code segment and stack 
+
+                The heap is where objects, strings, and closures are stored. 
+                Variables are in the  stack and the  JavaScript is in the code segment.
+
+                with Worker threads rss is for the process, the rest is for the current thread 
+
+                                                E
+
+                                    O
+        process.noDeprecation#
+        Added in: v0.8.0
+        <boolean>     
+N                                                                    D
+            if flag --no-deprecation is set on the process    
+            so far it returns undefined 
+
+                                    E
+
+                                O
+                process.pid#
+                Added in: v0.1.15
+                <integer>
+N                                                             D
+                    returns process PID
+
+                                E
+
+                                O
+
+                process.platform#
+                Added in: v0.1.16
+                <string> 
+N                                                  D
+                    return OS platform
+                    possible values 
+                'aix'
+                'darwin'
+                'freebsd'
+                'linux'
+                'openbsd'
+                'sunos'
+                'win32'
+
+                'android' coming soon 
+                                E
+
+
+                                O
+            process.ppid#
+            Added in: v9.2.0
+N            <integer>                                    D
+                retunrns the parent process  
+
+                                E
+                
+                                        O
+
+    process.release
+        name <string> A value that will always be 'node' for Node.js. For legacy io.js releases, this will be 'io.js'.
+        sourceUrl <string> an absolute URL pointing to a .tar.gz file containing the source code of the current release.
+        headersUrl<string> an absolute URL pointing to a .tar.gz file containing only the source header 
+            files for the current release. This file is significantly smaller than the full source file 
+            and can be used for compiling Node.js native add-ons.
+        libUrl <string> an absolute URL pointing to a node.lib file matching the architecture and 
+            version of the current release. This file is used for compiling Node.js native add-ons. 
+            This property is only present on Windows builds of Node.js and will be missing on all other platforms.                     
+        lts <string> a string label identifying the LTS label for this release. This property only 
+            exists for LTS releases and is undefined for all other release types, including Current
+             releases. Currently the valid values are:
+N                                                                                                                          E
+        'Argon' for the 4.x LTS line beginning with 4.2.0.                          
+        'Boron' for the 6.x LTS line beginning with 6.9.0.
+        'Carbon' for the 8.x LTS line beginning with 8.9.1.
+        'Dubnium' for the 10.x LTS
+        in custom builds only the name property exists
+
+                                                                D
+
 
 
     Till here 
@@ -5165,7 +5288,108 @@ N       returns the cuurent high-resolution time as a bigint          D
 
                             E
 
-process.initgroups(user, extraGroup)#
-Added in: v0.9.4
-user <string> | <number> The user name or numeric identifier.
-extraGroup <string> | <number> A group name or numeric identifier.
+
+                                O
+
+            process.initgroups(user, extraGroup)#
+            Added in: v0.9.4
+            user <string> | <number> The user name or numeric identifier.
+            extraGroup <string> | <number> A group name or numeric identifier.
+N                                                                                        D
+            /etc/group file and initializes the group access list, using 
+            all groups of which the user is a member
+            the process must have root access or the CAP_SETGID capablity 
+            do with caution 
+
+            only available on POSIX and not for Worker threads 
+            FILE:PROCESS/initgroups_process.js
+
+                                E
+
+
+                                        O
+        process.kill(pid[, signal])#
+        Added in: v0.0.6
+        pid <number> A process ID
+        signal <string> | <number> The signal to send, 
+        either as a string or number. Default: 'SIGTERM'.
+N                                                                                 D
+        sends a signal to the given pid 
+        throws an error if the pid does not exist 
+        send a singal of 0 to see if it exists 
+        Windows throws an error if you try to kill a process group 
+        starts the debugger when a nodejs process gets SIGUSR1
+        FILE: PROCESS/kill_process.js 
+
+                                        E
+
+
+process.mainModule#
+Added in: v0.1.17
+<Object>
+
+The process.mainModule property provides an alternative way of retrieving require.main. 
+The difference is that if the main module changes at runtime, 
+require.main may still refer to the original main module in modules that were 
+required before the change occurred. Generally, it's safe to assume that the two refer to the same module.
+
+As with require.main, process.mainModule will be undefined if there is no entry script.'
+
+
+                                                    O
+
+                process.nextTick(callback[, ...args])#
+                History
+                callback <Function>
+                ...args <any> Additional arguments to pass when invoking the callback
+
+                The process.nextTick() method adds the callback to the "next tick queue". 
+                Once the current turn of the event loop turn runs to completion, 
+                all callbacks currently in the next tick queue will be called.
+N                                                                                                                               D
+                this is important because it allows things to exist before code is executed for them, but order is important 
+                because it drains at the end of the event loop 
+
+                an event loop continues up to an async callback as far as I can see
+
+                apply this when making custom callback function when working with async code, really try to follow the stack 
+
+                The next tick queue is completely drained on each pass of the event loop before additional I/O is processed
+                thats how it works
+                FILE: PROCESS/nextTick_process.js
+
+                                                    E
+
+
+
+                                                    O
+
+        process.send(message[, sendHandle[, options]][, callback])
+        Added in: v0.5.9
+        message <Object>
+        sendHandle <net.Server> | <net.Socket>
+        options <Object>
+        callback <Function>
+        Returns: <boolean>
+N                                                                                                   D
+        if the process was spawned with an IPC  channel its used to send messages to the parent 
+            it comes in the listnener for the parents process.message event
+            the message goes through serialization and parsing
+            else its undefined
+
+                                                    E
+
+
+
+process.setUncaughtExceptionCaptureCallback(fn)#
+Added in: v9.3.0
+fn <Function> | <null>
+
+works just like process.om('uncaughtException',fn)
+difference
+    the 'uncaughtException' event will not be emitted 
+    the --abort-on-uncaught-exception or if set through  v8.setFlagsFromString(), will not abort 
+
+to disable
+    process.setUncaughtExceptionCaptureCallback(null)
+    if you dont use null an error is thrown, its not sure what will be happen to your system so be careful 
