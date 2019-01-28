@@ -4953,6 +4953,100 @@ Added in: v0.7.2
 The port used by Node.js's debugger when enabled.
 
 ' 
+                                                        O
+            process.env#
+            History
+            <Object>
+            The process.env property returns an 
+            object containing the user environment. See environ(7).
+
+            this doesn't work '
+            node -e 'process.env.foo = "bar"' && echo $foo
+            any process.env property must be modified inside the process
+N                                                                                                       D
+            change its properties should lead to stirngs, other behavior is deprecated 
+            to delete a property
+            delete process.env.[property name];
+            on windows properties are case-insensitive 
+
+            read-only in Worker threads 
+
+                                                    E
+
+
+
+                                            O
+            process.execArgv#
+            returns
+            --harmony
+N            in                                                                      D                                            
+            $ node --harmony script.js --version
+            These options are useful in order to spawn child 
+            processes with the same execution environment as the parent.
+
+                                            E
+
+
+
+
+
+                            O
+
+            process.execPath#
+            Added in: v0.1.100
+N            <string>                               D 
+
+                retuns the file that started the process
+
+
+                            E
+
+
+                            O
+
+                process.exitCode#
+                Added in: v0.11.8
+                <integer>  
+N                                                                          D
+                    A number representation of how the process ended 
+                    to change 
+                        process.exit(code)
+                    so far it returns undefined 
+
+                            E
+
+
+                    O
+
+        process.getegid()#
+        Added in: v2.0.0
+        returns the effective group number   
+
+        process.getgid()#
+        Added in: v0.1.31
+        Returns: <Object>
+        returns the group #
+N                                      D
+        process.getgroups()#
+        Added in: v0.9.4
+         returns an array with the supplementary group IDs. 
+         POSIX leaves it unspecified if the effective group ID
+          is included but Node.js ensures it always is.
+
+        process.geteuid()#
+        Added in: v2.0.0
+        Returns: <Object>
+
+        returns the effective user # of the process
+        This function is only available on POSIX platforms 
+        (i.e. not Windows or Android).
+
+                    E
+
+process.hasUncaughtExceptionCaptureCallback()#
+Added in: v9.3.0
+
+Indicates callback set using  process.setUncaughtExceptionCaptureCallback().
 
 
     Till here 
@@ -5016,12 +5110,62 @@ N                                                                               
         FILE: process/process_dlopen.js    
 
                                                 E
-process.emitWarning(warning[, options])#
-Added in: v8.0.0
-warning <string> | <Error> The warning to emit.
-options <Object>
 
-type <string> When warning is a String, type is the name to use for the type of warning being emitted. Default: 'Warning'.
-code <string> A unique identifier for the warning instance being emitted.
-ctor <Function> When warning is a String, ctor is an optional function used to limit the generated stack trace. Default: process.emitWarning.
-detail <string> Additional text to include with the error.
+
+                                            O
+        process.emitWarning(warning[, options])#
+        process.emitWarning(warning[, type[, code]][, ctor])
+        Added in: v8.0.0
+        warning <string> | <Error> The warning to emit.
+        options <Object>
+N                                                                                              D                   
+            type <string> When warning is a String, type is the name to use for 
+                the type of warning being emitted. Default: 'Warning'.
+            code <string> A unique identifier for the warning instance being emitted.
+            ctor <Function> When warning is a String, ctor is 
+                an optional function used to limit the generated stack trace.  
+                        Default: process.emitWarning.
+            detail <string> Additional text to include with the error.
+
+        can be used to emit custom or application specific warnings 
+        if warning is an Error options are ignored
+        FILE: PROCESS/emitWarning_process.js 
+
+                                            E
+
+
+                                            O
+            process.exit([code])#
+            Added in: v0.1.13
+            code <integer> The exit code. Default: 0.
+            it will not terminate until all 'exit' event listeners are called, it terminates the process synchronously
+
+            this forces the process to exit even if async operations have not completed 
+N                                                                                                   D
+            // How to properly set the exit code while letting
+            // the process exit gracefully.
+            if (someConditionNotMet()) {
+              printUsageToStdout();
+              process.exitCode = 1;
+            } 
+
+            if an error condition its better not to use process.exit()
+
+            in worker threads this just stops the thread 
+
+                                        E
+
+                                O
+        process.hrtime.bigint()#
+        Added in: v10.7.0
+        Returns: <bigint>
+N       returns the cuurent high-resolution time as a bigint          D
+        FILE: PROCESS/hrtime_bigint_process.js
+
+
+                            E
+
+process.initgroups(user, extraGroup)#
+Added in: v0.9.4
+user <string> | <number> The user name or numeric identifier.
+extraGroup <string> | <number> A group name or numeric identifier.

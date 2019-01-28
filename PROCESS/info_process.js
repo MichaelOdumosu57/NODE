@@ -8,3 +8,15 @@ console.log('The options use to compile the current Node.js executable \n' +  JS
 console.log(`connected to an ipc channel \n ${process.connected} \n`)
 console.log(`Current directory: \n ${process.cwd()} \n`);
 console.log(`The port the process debugger is listening \n ${process.debugPort} \n`)
+console.log('Where the process is working in  \n ' + JSON.stringify(   process.env,null,2   ) + ' \n')
+console.log(`process.execArgv \n ${process.execArgv} \n`)
+console.log(`the item that started this process \n ${process.execPath} \n`)
+console.log(`Effective uid: \n ${process.geteuid()} \n`);
+console.log(`Current uid: \n ${process.getuid()} \n`);
+console.log(`Effective gid: \n ${process.getegid()} \n`);
+console.log(`Current gid: \n ${process.getgid()} \n`);
+console.log(`Groups \n ${process.getgroups()} \n`)
+console.log(`process.hasUncaughtExceptionCaptureCallback() \n ${process.hasUncaughtExceptionCaptureCallback()} \n`)
+
+
+console.log(`The  number representation of how the process ended  \n ${process.exitCode} \n`)

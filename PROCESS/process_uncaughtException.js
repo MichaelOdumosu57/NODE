@@ -36,7 +36,8 @@ const circular_replacer       =  n_API.API_n_c.circular_replacer
 var process_uncaughtException = {}
 process_uncaughtException.message = ''
 process_uncaughtException.open_items = []
-process_uncaughtException.handler = function(   open_items   ){                
+process_uncaughtException.handler = function(   dev_obj   ){
+    open_items  =  dev_obj.open_items               
     process.on('exit',(code) =>{
         console.log(   process_uncaughtException.message,code   )    
         Error.stack != undefined ? console.log(Error.stack) : console.log('trying to show you the error')
@@ -65,12 +66,15 @@ process_uncaughtException.handler = function(   open_items   ){
 
 
     }
-    process.exit() 
+    dev_obj.exit_callback() 
 }       
 
 process.on('uncaughtException',(err)=>{
     console.error(   err   )
-    process_uncaughtException.handler(   process_uncaughtException.open_items  )
+    process_uncaughtException.handler({
+                                        open_items: process_uncaughtException.open_items,
+                                        exit_callback: function(){process.exit()}
+                                      })
 })
 
 
