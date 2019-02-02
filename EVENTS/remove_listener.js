@@ -4,9 +4,9 @@ class MyEmitter extends EventEmitter {}
 
 const myEmitter = new MyEmitter();
 
-const callbackA = () => {
+const callbackA = (e) => {
   console.log('A');
-  myEmitter.removeListener('event', callbackB);
+  myEmitter.removeListener(e, callbackB);
 };
 
 const callbackB = () => {

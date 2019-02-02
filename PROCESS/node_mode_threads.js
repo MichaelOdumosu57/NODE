@@ -28,5 +28,3 @@ module.exports.node_mode_threads   =  [
                                         ['find_D_group',      'closing_client'                   ],
                                         ['find_D_group',      'finding_specific_documents'       ],                           
                                       ] 
-
-                          

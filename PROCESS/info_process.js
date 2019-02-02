@@ -23,6 +23,9 @@ console.log(`process pid \n ${process.pid} \n`)
 console.log(`The parent process pid \n ${process.ppid} \n `);
 console.log(`This platform is \n ${process.platform} \n`);
 console.log('process.release \n ' + JSON.stringify(   process.release,null,2   ) + ' \n')
+console.log(`process.stdin  is connected to a TTY \n ${process.stdin.isTTY} \n`)
+console.log(`process.stdout  is connected to a TTY \n ${process.stdout.isTTY} \n`)
+console.log(`process.stderr  is connected to a TTY \n ${process.stderr.isTTY} \n`)
 
 
 console.log(`The  number representation of how the process ended  \n ${process.exitCode} \n`)

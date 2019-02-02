@@ -3599,7 +3599,7 @@ N                                                                               
 
         the listner returns the actual listnener function object
 
-        FILE : FS/new_listener.js
+        FILE : EVENTS/new_listener.js
 
 
                                                 E
@@ -3614,7 +3614,7 @@ N                                                                               
                 listener <Function> The event handler function
 N                                                                                   D
                 listenes for removed events
-                FS/new_listener.js
+                EVETNS/new_listener.js
 
 
                                                 E
@@ -3707,12 +3707,18 @@ N
             if there are 7 listeners call this 7 times
             if an emit is in the middle of a listener stack nothing is                         D
                  remove until emit is done with the stack
+
             file: EVENTS/remove_listener.js
 
                   O
             N           if you need to turn your listeners on and off put the listener
                         fuction object to a const as in FS/remove_listener.js
                   E
+
+                  O
+            N           off and removeAllListeners need the event to be a string on bare ee
+                        for off you need the string
+                  E                  
 
 
             if you use the once and on methods with the same listener and same event,
@@ -4631,6 +4637,8 @@ when you kill and restart the node app it automattically reconnects
 
 works like a regular debugging tool really the docs are to explain how the client is made
 
+it has acess to declared data after breakpoints and you can perform operations with them 
+
 
 
         <OBJECT></OBJECT>
@@ -5067,7 +5075,8 @@ N                                                                               
 
                     look at their get counterparts for what they do 
                     This function is only available on POSIX platforms 
-                    (i.e. not Windows or Android).                                                                       
+                    (i.e. not Windows or Android).  
+                                                                                     
 
                                                 E                    
 
@@ -5379,17 +5388,58 @@ N                                                                               
 
                                                     E
 
+                                                    O
+
+        process.setUncaughtExceptionCaptureCallback(fn)#
+        Added in: v9.3.0
+        fn <Function> | <null>
+
+        works just like process.om('uncaughtException',fn)
+        difference
+            the 'uncaughtException' event will not be emitted 
+            the --abort-on-uncaught-exception or if set through  v8.setFlagsFromString(), will not abort 
+N                                                                                                                    D
+        to disable
+            process.setUncaughtExceptionCaptureCallback(null)
+            if you dont use null an error is thrown, its not sure what will be happen to your system so be careful 
+
+                                                    E
 
 
-process.setUncaughtExceptionCaptureCallback(fn)#
-Added in: v9.3.0
-fn <Function> | <null>
+process.stderr#
+<Stream>    
+fd 2 = stderr
+its a net.Socket duplex stream unless fd 2 refers to a file, then its a WriteStream
 
-works just like process.om('uncaughtException',fn)
-difference
-    the 'uncaughtException' event will not be emitted 
-    the --abort-on-uncaught-exception or if set through  v8.setFlagsFromString(), will not abort 
 
-to disable
-    process.setUncaughtExceptionCaptureCallback(null)
-    if you dont use null an error is thrown, its not sure what will be happen to your system so be careful 
+
+process.stdin#
+<Stream>
+    a stream connected to stdin (fd 0) its a net.Socket duplex stream unless fd 0 refers to a file 
+        then its a Readable
+
+for legacy process.stdin.resume() is paused by default        
+calling process.stdin.resume() switches a stream to old mode 
+FILE:PROCESS/stdin_process.js 
+
+process.stdout#
+<Stream>
+    coneccted to stdout (fd 1) a net.Socket unless fd 1 is a file then its a Writable 
+    this cannot be closed by the process 
+
+
+process.stdout and process.stderr 
+console.log() and console.error(), respectively.
+
+Writes 
+    Files: synchronous on Windows and POSIX
+    TTYs (Terminals): asynchronous on Windows, synchronous on POSIX
+    Pipes (and sockets): synchronous on Windows, asynchronous on POSIX
+
+    for compatiblity and even expected by some users 
+    synchronous programing is good when you need 
+    to make sure opeations are not interleaved or forgotten
+
+    to check if a stream is connected to a TTY use isTTY
+
+try to figure out how to change the destination of stdout and stderr

@@ -43,7 +43,7 @@ process_uncaughtException.handler = function(   dev_obj   ){
         Error.stack != undefined ? console.log(Error.stack) : console.log('trying to show you the error')
     })    
     for (var open_items_i = open_items.length - 1; open_items_i >= 0; open_items_i--) {
-        // console.log(open_items[open_items_i][1])
+        console.log(open_items[open_items_i][1])
 
         if(   process_uncaughtException[open_items[open_items_i][0]]!= undefined   ){
 
